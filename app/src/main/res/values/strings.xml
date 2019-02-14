@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">OldMusa</string>
+    <string name="underline_register"><u>Register now</u></string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+</resources>
