@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:padding="10dp"
+                                             android:orientation="vertical">
+
+
+    <TextView
+            android:text="Aggiungi mappa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:id="@+id/textView"
+            app:layout_constraintTop_toTopOf="@+id/guideline21"
+            app:layout_constraintStart_toStartOf="@+id/guideline24"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline21"
+                                          android:orientation="horizontal"
+                                          app:layout_constraintGuide_percent="0.05"/>
+    <EditText
+            android:layout_width="273dp"
+            android:layout_height="41dp"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:ems="10"
+            android:id="@+id/editText"
+            app:layout_constraintTop_toTopOf="@+id/guideline22"
+            app:layout_constraintStart_toStartOf="@+id/guideline26"
+            app:layout_constraintEnd_toStartOf="@+id/guideline27" app:layout_constraintHorizontal_bias="1.0"
+            android:hint="name"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline22"
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.15"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline24"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.25"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline25"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.75"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline26"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.15"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline27"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.85"/>
+</android.support.constraint.ConstraintLayout>
