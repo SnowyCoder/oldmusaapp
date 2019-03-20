@@ -10,6 +10,19 @@ import kotlinx.serialization.SerialName
 // Fields are renamed from camelCase to sneak_case trough the SerialName annotation
 
 @Serializable
+data class ApiUser(
+    @Optional val id: Long? = null,
+    @Optional val username: String? = null,
+    @Optional val password: String? = null,
+    @Optional val permission: Char? = null
+)
+
+@Serializable
+data class ApiId(
+        val id: Long
+)
+
+@Serializable
 data class ApiMuseum(
         @Optional val id: Long? = null,
         @Optional val name: String? = null

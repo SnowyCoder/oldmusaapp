@@ -1,10 +1,9 @@
-package com.cnr_isac.oldmusa.api
+package com.cnr_isac.oldmusa.api.rest
 
-import com.cnr_isac.oldmusa.api.rest.ApiConnession
-import com.cnr_isac.oldmusa.api.rest.HttpApiConnession
+import android.util.Log
+import com.cnr_isac.oldmusa.api.*
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.list
-import kotlinx.serialization.serializer
 import java.io.InputStream
 import java.lang.ref.WeakReference
 
@@ -13,13 +12,131 @@ class RestApi(val conn: ApiConnession) : Api {
     private val rooms: MutableMap<Long, WeakReference<Room>> = HashMap()
     private val sensors: MutableMap<Long, WeakReference<Sensor>> = HashMap()
     private val maps: MutableMap<Long, WeakReference<MuseMap>> = HashMap()
+    private val users: MutableMap<Long, WeakReference<User>> = HashMap()
     private val json = Json(encodeDefaults = false)
 
+    val headers = HashMap<String, String>()
+    private var tokenExpirationDate: Long? = null
+
+    private var lastUsername: String? = null
+    private var lastPassword: String? = null
+
+
+    // Utils
+
+    private fun query(method: String, path: String, content: String? = null, parameters: Map<String, String>? = null): String {
+        ensureTokenValidity()
+        return conn.connectRest(method, path, parameters, content, headers)
+    }
+
+    // ---------------- LOGIN ----------------
+
+    @Serializable
+    private class LoginData(val username: String, val password: String)
+
+    @Serializable
+    private class LoginDataResponse(val token: String, val duration: Long)
+
+    override fun login(username: String, password: String) {
+        val raw = conn.connectRest("GET", "token", parameters = mapOf("username" to username, "password" to password))
+        val data = json.parse(LoginDataResponse.serializer(), raw)
+
+        tokenExpirationDate = System.currentTimeMillis() + data.duration * 1000 - 10;
+        Log.i(TAG, "Token accepted, user: $username, duration: ${data.duration}")
+
+        headers["Token"] = data.token
+        lastUsername = username
+        lastPassword = password
+    }
+
+    override fun logout() {
+        headers.remove("Token")
+        tokenExpirationDate = null
+        lastUsername = null
+        lastPassword = null
+    }
+
+    private fun ensureTokenValidity() {
+        val expiration = tokenExpirationDate
+        val user = lastUsername
+        val passw = lastPassword
+
+        if (expiration == null || user == null || passw == null) return
+        if (System.currentTimeMillis() < expiration) return
+
+        // TODO: login retry logic
+        login(user, passw)
+    }
+
+    // ---------------- USER ----------------
+
+    override fun getUserIds(): List<Long> {
+        return json.parse(Long.serializer().list, query("GET", "user"))
+    }
+
+    override fun getUsers(): List<User> {
+        return getUserIds().map { getUser(it) }
+    }
+
+    override fun addUser(data: ApiUser): User {
+        val content = data.let { json.stringify(ApiUser.serializer(), it) }
+        val res = query("POST", "user", content)
+        return getCacheOrCreateUser(json.parse(ApiUser.serializer(), res))
+    }
+
+    override fun getUser(id: Long): User {
+        return getCacheOrCreateUser(
+            json.parse(
+                ApiUser.serializer(),
+                query("GET", "user/$id")
+            )
+        )
+    }
+
+    private fun getCacheOrCreateUser(data: ApiUser): User {
+        users[data.id]?.get()?.let {
+            it.onUpdate(data)
+            return it
+        }
+
+        val user = User(this, data.id!!, data.username!!, null, data.permission!!);
+        users[user.id] = WeakReference(user)
+        return user
+    }
+
+    override fun updateUser(id: Long, data: ApiUser): User {
+        return getCacheOrCreateUser(
+            json.parse(
+                ApiUser.serializer(),
+                query(
+                    "PUT",
+                    "user/$id",
+                    json.stringify(ApiUser.serializer(), data.copy(id = null))
+                )
+            )
+        )
+    }
+
+    override fun deleteUser(id: Long) {
+        query("DELETE", "user/$id")
+    }
+
+    override fun getUserAccessIds(userId: Long): List<Long> {
+        return json.parse(Long.serializer().list, query("GET", "user/$userId/access"))
+    }
+
+    override fun addUserAccess(userId: Long, museumId: Long) {
+        query("POST", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(museumId)))
+    }
+
+    override fun removeUserAccess(userId: Long, museumId: Long) {
+        query("DELETE", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(museumId)))
+    }
 
     // ---------------- MUSEUM ----------------
 
     override fun getMuseumIds(): List<Long> {
-        return json.parse(Long.serializer().list, conn.connectRest("GET", "museum"))
+        return json.parse(Long.serializer().list, query("GET", "museum"))
     }
 
     override fun getMuseums(): List<Museum> {
@@ -28,26 +145,28 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun addMuseum(data: ApiMuseum?): Museum {
         val content = data?.let { json.stringify(ApiMuseum.serializer(), it) }
-        val res = conn.connectRest("POST", "museum", content = content)
+        val res = query("POST", "museum", content)
         return getCacheOrCreateMuseum(json.parse(ApiMuseum.serializer(), res))
     }
 
 
     override fun getMuseum(id: Long): Museum {
         return getCacheOrCreateMuseum(
-                json.parse(
-                        ApiMuseum.serializer(),
-                        conn.connectRest("GET", "museum/$id")
-                )
+            json.parse(
+                ApiMuseum.serializer(),
+                query("GET", "museum/$id")
+            )
         )
     }
 
     private fun getCacheOrCreateMuseum(data: ApiMuseum): Museum {
         museums[data.id]?.get()?.let {
             it.onUpdate(data)
+            println("Reusing museum ${data.id}")
             return it
         }
 
+        println("Creating new museum ${data.id}")
         val mus = Museum(this, data.id!!, data.name);
         museums[mus.id] = WeakReference(mus)
         return mus
@@ -55,57 +174,57 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun updateMuseum(id: Long, data: ApiMuseum): Museum {
         return getCacheOrCreateMuseum(
-                json.parse(
-                        ApiMuseum.serializer(),
-                        conn.connectRest(
-                                "PUT",
-                                "museum/$id",
-                                json.stringify(ApiMuseum.serializer(), data.copy(id=null))
-                        )
+            json.parse(
+                ApiMuseum.serializer(),
+                query(
+                    "PUT",
+                    "museum/$id",
+                    json.stringify(ApiMuseum.serializer(), data.copy(id = null))
                 )
+            )
         )
     }
 
     override fun deleteMuseum(id: Long) {
-        conn.connectRest("DELETE", "museum/$id")
+        query("DELETE", "museum/$id")
     }
 
     override fun getMuseumSensors(museumId: Long): List<Long> {
         return json.parse(
-                Long.serializer().list,
-                conn.connectRest("GET", "museum/$museumId/sensor")
+            Long.serializer().list,
+            query("GET", "museum/$museumId/sensor")
         )
     }
 
     override fun addMuseumSensor(museumId: Long, sensor: ApiSensor?): Sensor {
         val content = sensor?.let { json.stringify(ApiSensor.serializer(), it) }
-        val res = conn.connectRest("POST", "museum/$museumId/sensor", content = content)
+        val res = query("POST", "museum/$museumId/sensor", content)
         return getCacheOrCreateSensor(json.parse(ApiSensor.serializer(), res))
     }
 
     override fun getMuseumRooms(museumId: Long): List<Long> {
         return json.parse(
-                Long.serializer().list,
-                conn.connectRest("GET", "museum/$museumId/room")
+            Long.serializer().list,
+            query("GET", "museum/$museumId/room")
         )
     }
 
     override fun addMuseumRoom(museumId: Long, room: ApiRoom?): Room {
         val content = room?.let { json.stringify(ApiRoom.serializer(), it) }
-        val res = conn.connectRest("POST", "museum/$museumId/room", content = content)
+        val res = query("POST", "museum/$museumId/room", content)
         return getCacheOrCreateRoom(json.parse(ApiRoom.serializer(), res))
     }
 
     override fun getMuseumMaps(museumId: Long): List<Long> {
         return json.parse(
-                Long.serializer().list,
-                conn.connectRest("GET", "museum/$museumId/map")
+            Long.serializer().list,
+            query("GET", "museum/$museumId/map")
         )
     }
 
     override fun addMuseumMap(museumId: Long, map: ApiMap?): MuseMap {
         val content = map?.let { json.stringify(ApiMap.serializer(), it) }
-        val res = conn.connectRest("POST", "museum/$museumId/map", content = content)
+        val res = query("POST", "museum/$museumId/map", content)
         return getCacheOrCreateMap(json.parse(ApiMap.serializer(), res))
     }
 
@@ -113,10 +232,10 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun getMap(id: Long): MuseMap {
         return getCacheOrCreateMap(
-                json.parse(
-                        ApiMap.serializer(),
-                        conn.connectRest("GET", "map/$id")
-                )
+            json.parse(
+                ApiMap.serializer(),
+                query("GET", "map/$id")
+            )
         )
     }
 
@@ -130,8 +249,8 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun getMapSensors(id: Long): List<Long> {
         return json.parse(
-                Long.serializer().list,
-                conn.connectRest("GET", "map/$id/sensor")
+            Long.serializer().list,
+            query("GET", "map/$id/sensor")
         )
     }
 
@@ -148,19 +267,19 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun updateMap(id: Long, data: ApiMap): MuseMap {
         return getCacheOrCreateMap(
-                json.parse(
-                        ApiMap.serializer(),
-                        conn.connectRest(
-                                "PUT",
-                                "map/$id",
-                                json.stringify(ApiMap.serializer(), data.copy(id = null, museumId = null))
-                        )
+            json.parse(
+                ApiMap.serializer(),
+                query(
+                    "PUT",
+                    "map/$id",
+                    json.stringify(ApiMap.serializer(), data.copy(id = null, museumId = null))
                 )
+            )
         )
     }
 
     override fun deleteMap(id: Long) {
-        conn.connectRest("DELETE", "map/$id")
+        query("DELETE", "map/$id")
     }
 
 
@@ -168,10 +287,10 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun getRoom(id: Long): Room {
         return getCacheOrCreateRoom(
-                json.parse(
-                        ApiRoom.serializer(),
-                        conn.connectRest("GET", "room/$id")
-                )
+            json.parse(
+                ApiRoom.serializer(),
+                query("GET", "room/$id")
+            )
         )
     }
 
@@ -188,29 +307,29 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun updateRoom(id: Long, data: ApiRoom): Room {
         return getCacheOrCreateRoom(
-                json.parse(
-                        ApiRoom.serializer(),
-                        conn.connectRest(
-                                "PUT",
-                                "room/$id",
-                                json.stringify(ApiRoom.serializer(), data.copy(id = null, museumId = null))
-                        )
+            json.parse(
+                ApiRoom.serializer(),
+                query(
+                    "PUT",
+                    "room/$id",
+                    json.stringify(ApiRoom.serializer(), data.copy(id = null, museumId = null))
                 )
+            )
         )
     }
 
     override fun deleteRoom(id: Long) {
-        conn.connectRest("DELETE", "room/$id")
+        query("DELETE", "room/$id")
     }
 
     // ---------------- SENSOR ----------------
 
     override fun getSensor(id: Long): Sensor {
         return getCacheOrCreateSensor(
-                json.parse(
-                        ApiSensor.serializer(),
-                        conn.connectRest("GET", "sensor/$id")
-                )
+            json.parse(
+                ApiSensor.serializer(),
+                query("GET", "sensor/$id")
+            )
         )
     }
 
@@ -220,31 +339,35 @@ class RestApi(val conn: ApiConnession) : Api {
             return it
         }
 
-        val sensor = Sensor(this, data.id!!, data.museumId!!, data.name, data.room,
-                data.rangeMin, data.rangeMax, data.locMap, data.locX, data.locY,
-                data.enabled, data.status)
+        val sensor = Sensor(
+            this, data.id!!, data.museumId!!, data.name, data.room,
+            data.rangeMin, data.rangeMax, data.locMap, data.locX, data.locY,
+            data.enabled, data.status
+        )
         sensors[sensor.id] = WeakReference(sensor)
         return sensor
     }
 
     override fun updateSensor(id: Long, data: ApiSensor): Sensor {
         return getCacheOrCreateSensor(
-                json.parse(
-                        ApiSensor.serializer(),
-                        conn.connectRest(
-                                "PUT",
-                                "sensor/$id",
-                                json.stringify(ApiSensor.serializer(), data.copy(id = null, museumId = null))
-                        )
+            json.parse(
+                ApiSensor.serializer(),
+                query(
+                    "PUT",
+                    "sensor/$id",
+                    json.stringify(ApiSensor.serializer(), data.copy(id = null, museumId = null))
                 )
+            )
         )
     }
 
     override fun deleteSensor(id: Long) {
-        conn.connectRest("DELETE", "sensor/$id")
+        query("DELETE", "sensor/$id")
     }
 
     companion object {
+        private const val TAG = "RestApi"
+
         fun httpRest(url: String): RestApi {
             return RestApi(HttpApiConnession(url))
         }

@@ -12,15 +12,17 @@ interface ApiConnession {
     fun connect(
             method: String,
             path: String,
+            parameters: Map<String, String>? = null,
             content: InputStream? = null,
             contentType: String = "application/json",
-            parameters: Map<String, String>? = null
+            headers: Map<String, String>? = null
     ): InputStream
 
     fun connectRest(
             method: String,
             path: String,
+            parameters: Map<String, String>? = null,
             content: String? = null,
-            parameters: Map<String, String>? = null
+            headers: Map<String, String>? = null
     ): String
 }

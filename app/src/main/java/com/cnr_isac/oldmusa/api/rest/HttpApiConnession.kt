@@ -1,5 +1,6 @@
 package com.cnr_isac.oldmusa.api.rest
 
+import com.cnr_isac.oldmusa.api.RestException
 import java.io.InputStream
 import okhttp3.*
 import okhttp3.internal.http.HttpMethod.requiresRequestBody
@@ -9,22 +10,31 @@ import java.lang.RuntimeException
 /**
  * Connection where the REST calls get delivered trough an HTTP/HTTPS channel
  */
-class HttpApiConnession(val apiUrl: String) : ApiConnession {
+class HttpApiConnession(apiUrl: String) : ApiConnession {
     val client = OkHttpClient()
+    private val httpApiUrl = HttpUrl.parse(apiUrl)!!
 
     private fun rawRequest(
             method: String,
             path: String,
+            parameters: Map<String, String>?,
             content: RequestBody?,
-            parameters: Map<String, String>?
+            headers: Map<String, String>?
     ): Response {
-        val fullUrl = apiUrl + path
+        val fullUrl = httpApiUrl.newBuilder().addPathSegment(path)
+
+        if (parameters != null) {
+            for ((key, value) in parameters) {
+                fullUrl.addQueryParameter(key, value)
+            }
+        }
+
         val req = Request.Builder().run {
-            url(fullUrl)
+            url(fullUrl.build())
             val corrContent = if (content == null && requiresRequestBody(method)) EMPTY_BODY else content
             method(method, corrContent)
-            if (parameters != null) {
-                headers(Headers.of(parameters))
+            if (headers != null) {
+                headers(Headers.of(headers))
             }
             build()
         }
@@ -32,7 +42,8 @@ class HttpApiConnession(val apiUrl: String) : ApiConnession {
         if (!res.isSuccessful) {
             val code = res.code()
             val message = res.message()
-            throw RuntimeException("$code: '$message' on '$method' '$fullUrl'")
+            val verbose = res.body()?.string()
+            throw RestException(code, message, method, fullUrl.toString(), verbose)
         }
         return res
     }
@@ -40,29 +51,33 @@ class HttpApiConnession(val apiUrl: String) : ApiConnession {
     override fun connect(
             method: String,
             path: String,
+            parameters: Map<String, String>?,
             content: InputStream?,
             contentType: String,
-            parameters: Map<String, String>?
+            headers: Map<String, String>?
     ): InputStream {
         return rawRequest(
-                method,
-                path,
-                content?.let { RequestBody.create(MediaType.get(contentType), it.readBytes()) },
-                parameters
+            method,
+            path,
+            parameters,
+            content?.let { RequestBody.create(MediaType.get(contentType), it.readBytes()) },
+            headers
         ).use { it.body()!!.byteStream().readBytes().inputStream() }
     }
 
     override fun connectRest(
             method: String,
             path: String,
+            parameters: Map<String, String>?,
             content: String?,
-            parameters: Map<String, String>?
+            headers: Map<String, String>?
     ): String {
         return rawRequest(
-                method,
-                path,
-                content?.let { RequestBody.create(JSON, it) },
-                parameters
+            method,
+            path,
+            parameters,
+            content?.let { RequestBody.create(JSON, it) },
+            headers
         ).use { it.body()!!.string() }
     }
 

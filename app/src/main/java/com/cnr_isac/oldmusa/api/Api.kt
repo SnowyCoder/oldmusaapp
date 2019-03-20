@@ -11,6 +11,33 @@ import java.io.InputStream
  * construct the higher level APIs.
  */
 interface Api {
+
+    // ---------------- LOGIN ----------------
+
+    fun login(username: String, password: String)
+
+    fun logout()
+
+    // ---------------- USER ----------------
+
+    fun getUserIds(): List<Long>
+
+    fun getUsers(): List<User>
+
+    fun addUser(data: ApiUser): User
+
+    fun getUser(id: Long): User
+
+    fun updateUser(id: Long, data: ApiUser): User
+
+    fun deleteUser(id: Long)
+
+    fun getUserAccessIds(userId: Long): List<Long>
+
+    fun addUserAccess(userId: Long, museumId: Long)
+
+    fun removeUserAccess(userId: Long, museumId: Long)
+
     // ---------------- MUSEUM ----------------
 
     fun getMuseumIds(): List<Long>

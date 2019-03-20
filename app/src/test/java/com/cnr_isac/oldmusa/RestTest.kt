@@ -2,14 +2,15 @@ package com.cnr_isac.oldmusa
 
 import com.cnr_isac.oldmusa.api.ApiRoom
 import com.cnr_isac.oldmusa.api.ApiSensor
-import com.cnr_isac.oldmusa.api.RestApi
+import com.cnr_isac.oldmusa.api.ApiUser
+import com.cnr_isac.oldmusa.api.RestException
+import com.cnr_isac.oldmusa.api.rest.RestApi
 import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
+import java.io.FileNotFoundException
 import java.nio.charset.StandardCharsets
 import kotlin.test.assertFailsWith
 
@@ -24,15 +25,21 @@ class RestTest {
     val url = "http://localhost:8080/api/"// Server URL
     val api = RestApi.httpRest(url)// Connection type (rest over http)
 
+    val rootPassword = System.getenv("ROOT_PASSWORD") ?: "password"
+
     @Test
     fun generalTest() {
+        api.login("root", rootPassword)
+
+        val headers = api.headers
+
         // Create museum
         val museum = api.addMuseum()
         museum.name = "testmuse"
         museum.commit()// Commit sends the field changes to the server
         // Check the name change
         assertThat(
-                api.conn.connectRest("GET", "museum/${museum.id}"),
+                api.conn.connectRest("GET", "museum/${museum.id}", headers = headers),
                 containsString("testmuse")
         )
 
@@ -46,7 +53,7 @@ class RestTest {
         assertEquals("testsensor", sensor.name)
 
         // Foreign key tests
-        assertFailsWith<Exception> {
+        assertFailsWith<RestException> {
             sensor.locMapId = 199999
             sensor.commit()
         }
@@ -60,7 +67,7 @@ class RestTest {
         sensor.locY = 5678
         sensor.commit()
 
-        val retSensor = Json.parse(ApiSensor.serializer(), api.conn.connectRest("GET", "sensor/${sensor.id}"))
+        val retSensor = Json.parse(ApiSensor.serializer(), api.conn.connectRest("GET", "sensor/${sensor.id}", headers = headers))
         assertEquals(sensor.locMapId, retSensor.locMap)
         assertEquals(1234L, retSensor.locX)
         assertEquals(5678L, retSensor.locY)
@@ -86,5 +93,30 @@ class RestTest {
         assertEquals(0, museum.rooms.size)
 
         museum.delete()
+    }
+
+    @Test
+    fun permissionViewTest() {
+        api.login("root", rootPassword)
+
+        val mus1 = api.addMuseum()
+        val mus2 = api.addMuseum()
+        val mus3 = api.addMuseum()
+
+        val user = api.addUser(ApiUser(username = "paolo", password = "123"))
+        user.addAccess(mus1)
+        user.addAccess(mus2)
+
+        assertTrue("Cannot see every museum", api.getMuseums().containsAll(listOf(mus1, mus2, mus3)))
+
+        api.logout()
+        api.login("paolo", "123")
+
+        assertEquals(api.getMuseums(), listOf(mus1, mus2))
+
+        // The user cannot see the third museum so it throws 404
+        assertFailsWith<RestException> {
+            api.getMuseum(mus3.id)
+        }
     }
 }
