@@ -1,6 +1,5 @@
 package com.cnr_isac.oldmusa
 
-import com.cnr_isac.oldmusa.api.ApiRoom
 import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.ApiUser
 import com.cnr_isac.oldmusa.api.RestException
@@ -43,10 +42,6 @@ class RestTest {
                 containsString("testmuse")
         )
 
-        // Add room
-        val room = museum.addRoom(ApiRoom(name = "testroom"))
-        assertEquals("testroom", room.name)
-
         // Add sensor
         val sensor = museum.addSensor(ApiSensor(name = "testsensor"))
         assertEquals(museum.id, sensor.museumId)
@@ -88,10 +83,6 @@ class RestTest {
         map.delete()
         assertTrue(museum.maps.isEmpty())
 
-        assertEquals(1, museum.rooms.size)
-        room.delete()
-        assertEquals(0, museum.rooms.size)
-
         museum.delete()
     }
 
@@ -118,5 +109,10 @@ class RestTest {
         assertFailsWith<RestException> {
             api.getMuseum(mus3.id)
         }
+
+        api.logout()
+        api.login("root", rootPassword)
+
+        user.delete()
     }
 }

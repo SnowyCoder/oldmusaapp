@@ -7,7 +7,7 @@ import java.io.InputStream
  * This is interface is usually implemented in RestApi, but might be replaced by
  * another class in a simulation environment.
  * The purpose of this class is not to provide a high level interface (that is done by Museum,
- * Room, Sensor... classes) but to provide a lower level data source that will be used to
+ * Channel, Sensor... classes) but to provide a lower level data source that will be used to
  * construct the higher level APIs.
  */
 interface Api {
@@ -52,10 +52,6 @@ interface Api {
 
     fun addMuseumSensor(museumId: Long, sensor: ApiSensor?): Sensor
 
-    fun getMuseumRooms(museumId: Long): List<Long>
-
-    fun addMuseumRoom(museumId: Long, room: ApiRoom?): Room
-
     fun getMuseumMaps(museumId: Long): List<Long>
 
     fun addMuseumMap(museumId: Long, map: ApiMap?): MuseMap
@@ -79,14 +75,6 @@ interface Api {
     fun deleteMap(id: Long)
 
 
-    // ---------------- ROOM ----------------
-
-    fun getRoom(id: Long): Room
-
-    fun updateRoom(id: Long, data: ApiRoom): Room
-
-    fun deleteRoom(id: Long)
-
     // ---------------- SENSOR ----------------
 
     fun getSensor(id: Long): Sensor
@@ -94,4 +82,18 @@ interface Api {
     fun updateSensor(id: Long, data: ApiSensor): Sensor
 
     fun deleteSensor(id: Long)
+
+    fun addSensorChannel(sensorId: Long, data: ApiChannel?): Channel
+
+    fun getSensorChannels(sensorId: Long): List<Long>
+
+
+    // ---------------- CHANNEL ----------------
+
+    fun getChannel(id: Long): Channel
+
+    fun updateChannel(id: Long, data: ApiChannel): Channel
+
+    fun deleteChannel(id: Long)
+
 }

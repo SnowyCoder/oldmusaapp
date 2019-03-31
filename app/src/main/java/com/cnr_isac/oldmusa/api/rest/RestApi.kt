@@ -9,8 +9,8 @@ import java.lang.ref.WeakReference
 
 class RestApi(val conn: ApiConnession) : Api {
     private val museums: MutableMap<Long, WeakReference<Museum>> = HashMap()
-    private val rooms: MutableMap<Long, WeakReference<Room>> = HashMap()
     private val sensors: MutableMap<Long, WeakReference<Sensor>> = HashMap()
+    private val channels: MutableMap<Long, WeakReference<Channel>> = HashMap()
     private val maps: MutableMap<Long, WeakReference<MuseMap>> = HashMap()
     private val users: MutableMap<Long, WeakReference<User>> = HashMap()
     private val json = Json(encodeDefaults = false)
@@ -162,11 +162,9 @@ class RestApi(val conn: ApiConnession) : Api {
     private fun getCacheOrCreateMuseum(data: ApiMuseum): Museum {
         museums[data.id]?.get()?.let {
             it.onUpdate(data)
-            println("Reusing museum ${data.id}")
             return it
         }
 
-        println("Creating new museum ${data.id}")
         val mus = Museum(this, data.id!!, data.name);
         museums[mus.id] = WeakReference(mus)
         return mus
@@ -202,19 +200,6 @@ class RestApi(val conn: ApiConnession) : Api {
         return getCacheOrCreateSensor(json.parse(ApiSensor.serializer(), res))
     }
 
-    override fun getMuseumRooms(museumId: Long): List<Long> {
-        return json.parse(
-            Long.serializer().list,
-            query("GET", "museum/$museumId/room")
-        )
-    }
-
-    override fun addMuseumRoom(museumId: Long, room: ApiRoom?): Room {
-        val content = room?.let { json.stringify(ApiRoom.serializer(), it) }
-        val res = query("POST", "museum/$museumId/room", content)
-        return getCacheOrCreateRoom(json.parse(ApiRoom.serializer(), res))
-    }
-
     override fun getMuseumMaps(museumId: Long): List<Long> {
         return json.parse(
             Long.serializer().list,
@@ -240,11 +225,11 @@ class RestApi(val conn: ApiConnession) : Api {
     }
 
     override fun getMapImage(id: Long): InputStream {
-        return conn.connect("GET", "map/$id/image")
+        return conn.connect("GET", "map/$id/image", headers = headers)
     }
 
     override fun setMapImage(id: Long, data: InputStream) {
-        conn.connect("PUT", "map/$id/image", content = data, contentType = "image/png")
+        conn.connect("PUT", "map/$id/image", content = data, contentType = "image/png", headers = headers)
     }
 
     override fun getMapSensors(id: Long): List<Long> {
@@ -282,46 +267,6 @@ class RestApi(val conn: ApiConnession) : Api {
         query("DELETE", "map/$id")
     }
 
-
-    // ---------------- ROOM ----------------
-
-    override fun getRoom(id: Long): Room {
-        return getCacheOrCreateRoom(
-            json.parse(
-                ApiRoom.serializer(),
-                query("GET", "room/$id")
-            )
-        )
-    }
-
-    private fun getCacheOrCreateRoom(data: ApiRoom): Room {
-        rooms[data.id]?.get()?.let {
-            it.onUpdate(data)
-            return it
-        }
-
-        val room = Room(this, data.id!!, data.museumId!!, data.name);
-        rooms[room.id] = WeakReference(room)
-        return room
-    }
-
-    override fun updateRoom(id: Long, data: ApiRoom): Room {
-        return getCacheOrCreateRoom(
-            json.parse(
-                ApiRoom.serializer(),
-                query(
-                    "PUT",
-                    "room/$id",
-                    json.stringify(ApiRoom.serializer(), data.copy(id = null, museumId = null))
-                )
-            )
-        )
-    }
-
-    override fun deleteRoom(id: Long) {
-        query("DELETE", "room/$id")
-    }
-
     // ---------------- SENSOR ----------------
 
     override fun getSensor(id: Long): Sensor {
@@ -333,6 +278,19 @@ class RestApi(val conn: ApiConnession) : Api {
         )
     }
 
+    override fun addSensorChannel(sensorId: Long, data: ApiChannel?): Channel {
+        val content = data?.let { json.stringify(ApiChannel.serializer(), it) }
+        val res = query("POST", "sensor/$sensorId/channel", content)
+        return getCacheOrCreateChannel(json.parse(ApiChannel.serializer(), res))
+    }
+
+    override fun getSensorChannels(sensorId: Long): List<Long> {
+        return json.parse(
+            Long.serializer().list,
+            query("GET", "sensor/$sensorId/channel")
+        )
+    }
+
     private fun getCacheOrCreateSensor(data: ApiSensor): Sensor {
         sensors[data.id]?.get()?.let {
             it.onUpdate(data)
@@ -340,8 +298,8 @@ class RestApi(val conn: ApiConnession) : Api {
         }
 
         val sensor = Sensor(
-            this, data.id!!, data.museumId!!, data.name, data.room,
-            data.rangeMin, data.rangeMax, data.locMap, data.locX, data.locY,
+            this, data.id!!, data.museumId!!, data.name,
+            data.locMap, data.locX, data.locY,
             data.enabled, data.status
         )
         sensors[sensor.id] = WeakReference(sensor)
@@ -363,6 +321,45 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun deleteSensor(id: Long) {
         query("DELETE", "sensor/$id")
+    }
+
+    // ---------------- CHANNEL ----------------
+
+    override fun getChannel(id: Long): Channel {
+        return getCacheOrCreateChannel(
+            json.parse(
+                ApiChannel.serializer(),
+                query("GET", "channel/$id")
+            )
+        )
+    }
+
+    private fun getCacheOrCreateChannel(data: ApiChannel): Channel {
+        channels[data.id]?.get()?.let {
+            it.onUpdate(data)
+            return it
+        }
+
+        val channel = Channel(this, data.id!!, data.sensorId!!, data.cnrId, data.name, data.measureUnit, data.rangeMin, data.rangeMax);
+        channels[channel.id] = WeakReference(channel)
+        return channel
+    }
+
+    override fun updateChannel(id: Long, data: ApiChannel): Channel {
+        return getCacheOrCreateChannel(
+            json.parse(
+                ApiChannel.serializer(),
+                query(
+                    "PUT",
+                    "channel/$id",
+                    json.stringify(ApiChannel.serializer(), data.copy(id = null, sensorId = null))
+                )
+            )
+        )
+    }
+
+    override fun deleteChannel(id: Long) {
+        query("DELETE", "channel/$id")
     }
 
     companion object {
