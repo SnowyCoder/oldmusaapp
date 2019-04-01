@@ -13,4 +13,17 @@
             android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
             android:paddingTop="10dp"/>
 
+    <Button
+            android:id="@+id/settings"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/ic_settings"
+            />
+
+    <Button
+            android:id="@+id/delete"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/ic_delete"/>
+
 </LinearLayout>

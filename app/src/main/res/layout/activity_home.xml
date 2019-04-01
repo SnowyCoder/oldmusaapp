@@ -14,6 +14,53 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <ListView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/simpleListView"
+                android:layout_width="321dp"
+                android:layout_height="518dp"
+                tools:context="abhiandroid.com.listexample.MainActivity"
+                app:layout_constraintStart_toStartOf="@+id/guideline29"
+                app:layout_constraintEnd_toStartOf="@+id/guideline30"
+                app:layout_constraintTop_toTopOf="@+id/guideline31" android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/addSiti">
+        </ListView>
+
+        <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/addSiti"
+                android:background="@drawable/ic_circle_button"
+                android:drawableStart="@drawable/ic_plus"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                app:layout_constraintStart_toStartOf="@+id/guideline13"
+                app:layout_constraintTop_toTopOf="@+id/guideline23"
+                app:layout_constraintEnd_toStartOf="@+id/guideline13"
+                app:layout_constraintBottom_toTopOf="@+id/guideline28"/>
+
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline13"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.50"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline23"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.85"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline28"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.90"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline29"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.10"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline30"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.90"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline31"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.10"/>
     </android.support.constraint.ConstraintLayout>
 
     <!--android.support.design.widget.NavigationView

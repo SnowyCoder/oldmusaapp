@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:padding="10dp"
+                                             android:orientation="vertical">
+
+
+    <!-- TextView
+            android:text="Aggiungi museo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:id="@+id/textView"
+            app:layout_constraintTop_toTopOf="@+id/guideline21"
+            app:layout_constraintStart_toStartOf="@+id/guideline24"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"/-->
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline21"
+                                          android:orientation="horizontal"
+                                          app:layout_constraintGuide_percent="0.15"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:id="@+id/nameMuseum"
+            app:layout_constraintTop_toTopOf="@+id/guideline22"
+            app:layout_constraintStart_toStartOf="@+id/guideline26"
+            app:layout_constraintEnd_toStartOf="@+id/guideline27"
+            android:hint="name"
+    />
+
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline22"
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.30"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline24"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.30"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline25"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.70"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline26"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.15"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline27"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.85"/>
+    <Button
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:id="@+id/AddButtonM"
+            android:text="Aggiungi"
+            app:layout_constraintEnd_toStartOf="@+id/guideline25"
+            app:layout_constraintStart_toStartOf="@+id/guideline24"
+            app:layout_constraintHorizontal_bias="0.489"
+            app:layout_constraintTop_toTopOf="@+id/guideline33"
+    />
+
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline33"
+                                          android:orientation="horizontal"
+                                          app:layout_constraintGuide_percent="0.70"/>
+</android.support.constraint.ConstraintLayout>

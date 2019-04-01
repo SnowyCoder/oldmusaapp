@@ -6,9 +6,9 @@
                                              android:layout_height="match_parent">
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars[3]"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/cnr"
             android:id="@+id/logo1"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
@@ -54,7 +54,8 @@
             app:layout_constraintTop_toTopOf="@+id/guideline6"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            android:hint="Username"/>
+            android:hint="Username"
+            android:drawableLeft="@drawable/ic_person"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline6"
                                           android:orientation="horizontal"
@@ -64,6 +65,7 @@
             android:layout_height="45dp"
             android:inputType="textPassword"
             android:ems="10"
+            android:drawableLeft="@drawable/ic_lock"
             android:id="@+id/pass"
             app:layout_constraintStart_toStartOf="@+id/guideline2" app:layout_constraintEnd_toStartOf="@+id/guideline2"
             android:hint="Password" app:layout_constraintTop_toTopOf="@+id/guideline7"/>
@@ -73,28 +75,32 @@
                                           app:layout_constraintGuide_percent="0.47742817"/>
     <Button
             android:text="Login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="110dp"
+            android:layout_height="42dp"
             android:id="@+id/loginButton" app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.511"
             app:layout_constraintTop_toTopOf="@+id/guideline8"
-            android:onClick="login"/>
+            android:onClick="login"
+            android:background="@drawable/ic_login_button"
+    />
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline8"
                                           android:orientation="horizontal"
                                           app:layout_constraintGuide_percent="0.6169631"/>
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="137dp" tools:srcCompat="@tools:sample/avatars[15]"
+            android:layout_width="137dp"
+            android:layout_height="137dp"
+            android:src="@drawable/logo_isac"
             android:id="@+id/logo2"
             app:layout_constraintTop_toTopOf="@+id/guideline10"
             app:layout_constraintBottom_toTopOf="@+id/guideline9" app:layout_constraintVertical_bias="0.428"
             app:layout_constraintStart_toStartOf="@+id/guideline11"/>
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" tools:srcCompat="@tools:sample/avatars[13]"
+            android:layout_width="137dp"
+            android:layout_height="137dp"
             android:id="@+id/logo3"
+            android:src="@drawable/logo_isac"
             app:layout_constraintTop_toTopOf="@+id/guideline10"
             app:layout_constraintBottom_toTopOf="@+id/guideline9" app:layout_constraintEnd_toStartOf="@+id/guideline12"
     />
