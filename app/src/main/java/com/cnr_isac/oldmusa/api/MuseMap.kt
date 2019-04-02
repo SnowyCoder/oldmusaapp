@@ -2,7 +2,7 @@ package com.cnr_isac.oldmusa.api
 
 import java.io.InputStream
 
-class MuseMap(api: Api, id: Long, val museumId: Long) : ApiEntity(api, id) {
+class MuseMap(api: Api, id: Long, val siteId: Long) : ApiEntity(api, id) {
 
     val sensors: List<Sensor>
         get() = api.getMapSensors(id).map { api.getSensor(it) }
@@ -18,11 +18,11 @@ class MuseMap(api: Api, id: Long, val museumId: Long) : ApiEntity(api, id) {
 
     fun onUpdate(data: ApiMap) {
         assert(id == data.id)
-        assert(museumId == data.museumId)
+        assert(siteId == data.siteId)
     }
 
     fun serialize(): ApiMap {
-        return ApiMap(id, museumId)
+        return ApiMap(id, siteId)
     }
 
     fun commit() {

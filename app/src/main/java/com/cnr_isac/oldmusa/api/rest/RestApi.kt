@@ -8,7 +8,7 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 
 class RestApi(val conn: ApiConnession) : Api {
-    private val museums: MutableMap<Long, WeakReference<Museum>> = HashMap()
+    private val sites: MutableMap<Long, WeakReference<Site>> = HashMap()
     private val sensors: MutableMap<Long, WeakReference<Sensor>> = HashMap()
     private val channels: MutableMap<Long, WeakReference<Channel>> = HashMap()
     private val maps: MutableMap<Long, WeakReference<MuseMap>> = HashMap()
@@ -42,7 +42,7 @@ class RestApi(val conn: ApiConnession) : Api {
         val data = json.parse(LoginDataResponse.serializer(), raw)
 
         tokenExpirationDate = System.currentTimeMillis() + data.duration * 1000 - 10;
-        Log.i(TAG, "Token accepted, user: $username, duration: ${data.duration}")
+        //Log.i(TAG, "Token accepted, user: $username, duration: ${data.duration}")
 
         headers["Token"] = data.token
         lastUsername = username
@@ -125,91 +125,95 @@ class RestApi(val conn: ApiConnession) : Api {
         return json.parse(Long.serializer().list, query("GET", "user/$userId/access"))
     }
 
-    override fun addUserAccess(userId: Long, museumId: Long) {
-        query("POST", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(museumId)))
+    override fun addUserAccess(userId: Long, siteId: Long) {
+        query("POST", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(siteId)))
     }
 
-    override fun removeUserAccess(userId: Long, museumId: Long) {
-        query("DELETE", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(museumId)))
+    override fun removeUserAccess(userId: Long, siteId: Long) {
+        query("DELETE", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(siteId)))
     }
 
-    // ---------------- MUSEUM ----------------
-
-    override fun getMuseumIds(): List<Long> {
-        return json.parse(Long.serializer().list, query("GET", "museum"))
+    override fun getMe(): User {
+        return getCacheOrCreateUser(json.parse(ApiUser.serializer(), query("GET", "user_me")))
     }
 
-    override fun getMuseums(): List<Museum> {
-        return getMuseumIds().map { getMuseum(it) }
+    // ---------------- SITE ----------------
+
+    override fun getSiteIds(): List<Long> {
+        return json.parse(Long.serializer().list, query("GET", "site"))
     }
 
-    override fun addMuseum(data: ApiMuseum?): Museum {
-        val content = data?.let { json.stringify(ApiMuseum.serializer(), it) }
-        val res = query("POST", "museum", content)
-        return getCacheOrCreateMuseum(json.parse(ApiMuseum.serializer(), res))
+    override fun getSites(): List<Site> {
+        return getSiteIds().map { getSite(it) }
+    }
+
+    override fun addSite(data: ApiSite?): Site {
+        val content = data?.let { json.stringify(ApiSite.serializer(), it) }
+        val res = query("POST", "site", content)
+        return getCacheOrCreateSite(json.parse(ApiSite.serializer(), res))
     }
 
 
-    override fun getMuseum(id: Long): Museum {
-        return getCacheOrCreateMuseum(
+    override fun getSite(id: Long): Site {
+        return getCacheOrCreateSite(
             json.parse(
-                ApiMuseum.serializer(),
-                query("GET", "museum/$id")
+                ApiSite.serializer(),
+                query("GET", "site/$id")
             )
         )
     }
 
-    private fun getCacheOrCreateMuseum(data: ApiMuseum): Museum {
-        museums[data.id]?.get()?.let {
+    private fun getCacheOrCreateSite(data: ApiSite): Site {
+        sites[data.id]?.get()?.let {
             it.onUpdate(data)
             return it
         }
 
-        val mus = Museum(this, data.id!!, data.name);
-        museums[mus.id] = WeakReference(mus)
+        val mus = Site(this, data.id!!, data.name);
+        sites[mus.id] = WeakReference(mus)
         return mus
     }
 
-    override fun updateMuseum(id: Long, data: ApiMuseum): Museum {
-        return getCacheOrCreateMuseum(
+    override fun updateSite(id: Long, data: ApiSite): Site {
+        return getCacheOrCreateSite(
             json.parse(
-                ApiMuseum.serializer(),
+                ApiSite.serializer(),
                 query(
                     "PUT",
-                    "museum/$id",
-                    json.stringify(ApiMuseum.serializer(), data.copy(id = null))
+                    "site/$id",
+                    json.stringify(ApiSite.serializer(), data.copy(id = null))
                 )
             )
         )
     }
 
-    override fun deleteMuseum(id: Long) {
-        query("DELETE", "museum/$id")
+    override fun deleteSite(id: Long) {
+        query("DELETE", "site/$id")
     }
 
-    override fun getMuseumSensors(museumId: Long): List<Long> {
+    override fun getSiteSensors(siteId: Long): List<Long> {
         return json.parse(
             Long.serializer().list,
-            query("GET", "museum/$museumId/sensor")
+            query("GET", "site/$siteId/sensor")
         )
     }
 
-    override fun addMuseumSensor(museumId: Long, sensor: ApiSensor?): Sensor {
+    override fun addSiteSensor(siteId: Long, sensor: ApiSensor?): Sensor {
         val content = sensor?.let { json.stringify(ApiSensor.serializer(), it) }
-        val res = query("POST", "museum/$museumId/sensor", content)
+        val res = query("POST", "site/$siteId/sensor", content)
         return getCacheOrCreateSensor(json.parse(ApiSensor.serializer(), res))
     }
 
-    override fun getMuseumMaps(museumId: Long): List<Long> {
+    override fun getSiteMaps(siteId: Long): List<Long> {
         return json.parse(
             Long.serializer().list,
-            query("GET", "museum/$museumId/map")
+            query("GET", "site/$siteId/map")
         )
     }
 
-    override fun addMuseumMap(museumId: Long, map: ApiMap?): MuseMap {
+    override fun addSiteMap(siteId: Long, map: ApiMap?): MuseMap {
         val content = map?.let { json.stringify(ApiMap.serializer(), it) }
-        val res = query("POST", "museum/$museumId/map", content)
+        val res = query("POST", "site/$siteId/map", content)
         return getCacheOrCreateMap(json.parse(ApiMap.serializer(), res))
     }
 
@@ -245,7 +249,7 @@ class RestApi(val conn: ApiConnession) : Api {
             return it
         }
 
-        val map = MuseMap(this, data.id!!, data.museumId!!);
+        val map = MuseMap(this, data.id!!, data.siteId!!);
         maps[map.id] = WeakReference(map)
         return map
     }
@@ -257,7 +261,7 @@ class RestApi(val conn: ApiConnession) : Api {
                 query(
                     "PUT",
                     "map/$id",
-                    json.stringify(ApiMap.serializer(), data.copy(id = null, museumId = null))
+                    json.stringify(ApiMap.serializer(), data.copy(id = null, siteId = null))
                 )
             )
         )
@@ -298,7 +302,7 @@ class RestApi(val conn: ApiConnession) : Api {
         }
 
         val sensor = Sensor(
-            this, data.id!!, data.museumId!!, data.name,
+            this, data.id!!, data.siteId!!, data.name,
             data.locMap, data.locX, data.locY,
             data.enabled, data.status
         )
@@ -313,7 +317,7 @@ class RestApi(val conn: ApiConnession) : Api {
                 query(
                     "PUT",
                     "sensor/$id",
-                    json.stringify(ApiSensor.serializer(), data.copy(id = null, museumId = null))
+                    json.stringify(ApiSensor.serializer(), data.copy(id = null, siteId = null))
                 )
             )
         )

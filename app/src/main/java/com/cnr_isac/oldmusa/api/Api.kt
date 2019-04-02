@@ -6,7 +6,7 @@ import java.io.InputStream
  * Anything that can answer the API requests,
  * This is interface is usually implemented in RestApi, but might be replaced by
  * another class in a simulation environment.
- * The purpose of this class is not to provide a high level interface (that is done by Museum,
+ * The purpose of this class is not to provide a high level interface (that is done by Site,
  * Channel, Sensor... classes) but to provide a lower level data source that will be used to
  * construct the higher level APIs.
  */
@@ -34,31 +34,33 @@ interface Api {
 
     fun getUserAccessIds(userId: Long): List<Long>
 
-    fun addUserAccess(userId: Long, museumId: Long)
+    fun addUserAccess(userId: Long, siteId: Long)
 
-    fun removeUserAccess(userId: Long, museumId: Long)
+    fun removeUserAccess(userId: Long, siteId: Long)
 
-    // ---------------- MUSEUM ----------------
+    fun getMe(): User
 
-    fun getMuseumIds(): List<Long>
+    // ---------------- SITE ----------------
 
-    fun getMuseums(): List<Museum>
+    fun getSiteIds(): List<Long>
 
-    fun addMuseum(data: ApiMuseum? = null): Museum
+    fun getSites(): List<Site>
 
-    fun getMuseum(id: Long): Museum
+    fun addSite(data: ApiSite? = null): Site
 
-    fun getMuseumSensors(museumId: Long): List<Long>
+    fun getSite(id: Long): Site
 
-    fun addMuseumSensor(museumId: Long, sensor: ApiSensor?): Sensor
+    fun getSiteSensors(siteId: Long): List<Long>
 
-    fun getMuseumMaps(museumId: Long): List<Long>
+    fun addSiteSensor(siteId: Long, sensor: ApiSensor?): Sensor
 
-    fun addMuseumMap(museumId: Long, map: ApiMap?): MuseMap
+    fun getSiteMaps(siteId: Long): List<Long>
 
-    fun updateMuseum(id: Long, data: ApiMuseum): Museum
+    fun addSiteMap(siteId: Long, map: ApiMap?): MuseMap
 
-    fun deleteMuseum(id: Long)
+    fun updateSite(id: Long, data: ApiSite): Site
+
+    fun deleteSite(id: Long)
 
     // ---------------- MAP ----------------
 

@@ -3,7 +3,7 @@ package com.cnr_isac.oldmusa.api
 class Sensor(
         api: Api,
         id: Long,
-        val museumId: Long,
+        val siteId: Long,
         var name: String?,
         var locMapId: Long?,
         var locX: Long?,
@@ -23,7 +23,7 @@ class Sensor(
 
     fun onUpdate(data: ApiSensor) {
         assert(id == data.id)
-        assert(museumId == data.museumId)
+        assert(siteId == data.siteId)
         this.name = data.name
         this.locMapId = data.locMap
         this.locX = data.locX
@@ -33,7 +33,7 @@ class Sensor(
     }
 
     fun serialize(): ApiSensor {
-        return ApiSensor(id, museumId, name, locMapId, locX, locY, enabled, status)
+        return ApiSensor(id, siteId, name, locMapId, locX, locY, enabled, status)
     }
 
     fun commit() {

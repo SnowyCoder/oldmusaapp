@@ -1,32 +1,32 @@
 package com.cnr_isac.oldmusa.api
 
-class Museum(api: Api, id: Long, var name: String?) : ApiEntity(api, id) {
+class Site(api: Api, id: Long, var name: String?) : ApiEntity(api, id) {
 
     val sensors: List<Sensor>
-        get() = api.getMuseumSensors(id).map { api.getSensor(it) }
+        get() = api.getSiteSensors(id).map { api.getSensor(it) }
 
     val maps: List<MuseMap>
-        get() = api.getMuseumMaps(id).map { api.getMap(it) }
+        get() = api.getSiteMaps(id).map { api.getMap(it) }
 
 
-    fun addSensor(data: ApiSensor? = null) = api.addMuseumSensor(id, data)
+    fun addSensor(data: ApiSensor? = null) = api.addSiteSensor(id, data)
 
-    fun addMap(data: ApiMap? = null) = api.addMuseumMap(id, data)
+    fun addMap(data: ApiMap? = null) = api.addSiteMap(id, data)
 
-    fun onUpdate(data: ApiMuseum) {
+    fun onUpdate(data: ApiSite) {
         assert(id == data.id)
         this.name = data.name
     }
 
-    fun serialize(): ApiMuseum {
-        return ApiMuseum(id, name)
+    fun serialize(): ApiSite {
+        return ApiSite(id, name)
     }
 
     fun commit() {
-        api.updateMuseum(id, serialize())
+        api.updateSite(id, serialize())
     }
 
     fun delete() {
-        api.deleteMuseum(id)
+        api.deleteSite(id)
     }
 }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 
 // Those are the data definitions for the JSON client-server connection
-// Note that id and museumId are optional because the client should omit them
+// Note that id and siteId are optional because the client should omit them
 // in some cases (for ex. in an update call).
 // Fields are renamed from camelCase to sneak_case trough the SerialName annotation
 
@@ -23,7 +23,7 @@ data class ApiId(
 )
 
 @Serializable
-data class ApiMuseum(
+data class ApiSite(
     @Optional val id: Long? = null,
     @Optional val name: String? = null
 )
@@ -31,7 +31,7 @@ data class ApiMuseum(
 @Serializable
 data class ApiMap(
     @Optional val id: Long? = null,
-    @Optional @SerialName("museum_id") val museumId: Long? = null
+    @Optional @SerialName("site_id") val siteId: Long? = null
 )
 
 
@@ -51,7 +51,7 @@ data class ApiChannel(
 @Serializable
 data class ApiSensor(
     @Optional val id: Long? = null,
-    @Optional @SerialName("museum_id") val museumId: Long? = null,
+    @Optional @SerialName("site_id") val siteId: Long? = null,
     @Optional val name: String? = null,
     @Optional @SerialName("loc_map") val locMap: Long? = null,
     @Optional @SerialName("loc_x") val locX: Long? = null,
