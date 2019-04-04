@@ -1,9 +1,9 @@
 package com.cnr_isac.oldmusa.api
 
-import kotlinx.serialization.Optional
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerialName
-import java.time.LocalDate
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // Those are the data definitions for the JSON client-server connection
 // Note that id and siteId are optional because the client should omit them
@@ -65,10 +65,24 @@ data class ApiSensor(
 
 @Serializable
 data class ChannelReading(
-    val date: LocalDate,
+    @Serializable(LocalDateTimeSerializer::class) val date: LocalDateTime,
     @SerialName("value_min") val valueMin: Long,
-    @Optional @SerialName("value_avg") val valueAvg: Long?,
-    @Optional @SerialName("value_max") val valueMax: Long?,
-    @Optional val deviation: Long?,
-    @Optional val error: Char
+    @Optional @SerialName("value_avg") val valueAvg: Long? = null,
+    @Optional @SerialName("value_max") val valueMax: Long? = null,
+    @Optional val deviation: Long? = null,
+    @Optional val error: Char? = null
 )
+
+@Serializer(forClass = LocalDateTime::class)
+object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+    override val descriptor: SerialDescriptor = StringDescriptor.withName("DateSerializer")
+    private val formatter = DateTimeFormatter.ISO_LOCAL_TIME
+
+    override fun serialize(encoder: Encoder, obj: LocalDateTime) {
+        encoder.encodeString(formatter.format(obj))
+    }
+
+    override fun deserialize(decoder: Decoder): LocalDateTime {
+        return LocalDateTime.parse(decoder.decodeString(), formatter)
+    }
+}

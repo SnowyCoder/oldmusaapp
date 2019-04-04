@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class RestApi(val conn: ApiConnession) : Api {
@@ -367,7 +368,7 @@ class RestApi(val conn: ApiConnession) : Api {
         query("DELETE", "channel/$id")
     }
 
-    override fun getChannelReadings(channelId: Long, start: LocalDate, end: LocalDate, precision: String): List<ChannelReading> {
+    override fun getChannelReadings(channelId: Long, start: LocalDateTime, end: LocalDateTime, precision: String): List<ChannelReading> {
         val res = query("GET", "channel/$channelId/readings", parameters = mapOf(
             "start" to DateTimeFormatter.ISO_LOCAL_TIME.format(start),
             "end" to DateTimeFormatter.ISO_LOCAL_TIME.format(end),
