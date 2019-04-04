@@ -169,7 +169,7 @@ class RestApi(val conn: ApiConnession) : Api {
             return it
         }
 
-        val mus = Site(this, data.id!!, data.name);
+        val mus = Site(this, data.id!!, data.idCnr, data.name);
         sites[mus.id] = WeakReference(mus)
         return mus
     }
@@ -302,7 +302,7 @@ class RestApi(val conn: ApiConnession) : Api {
         }
 
         val sensor = Sensor(
-            this, data.id!!, data.siteId!!, data.name,
+            this, data.id!!, data.siteId!!, data.idCnr, data.name,
             data.locMap, data.locX, data.locY,
             data.enabled, data.status
         )
@@ -344,7 +344,7 @@ class RestApi(val conn: ApiConnession) : Api {
             return it
         }
 
-        val channel = Channel(this, data.id!!, data.sensorId!!, data.cnrId, data.name, data.measureUnit, data.rangeMin, data.rangeMax);
+        val channel = Channel(this, data.id!!, data.sensorId!!, data.idCnr, data.name, data.measureUnit, data.rangeMin, data.rangeMax);
         channels[channel.id] = WeakReference(channel)
         return channel
     }
