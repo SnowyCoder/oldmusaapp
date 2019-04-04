@@ -37,14 +37,13 @@
                                           android:id="@+id/guideline17"
                                           android:orientation="horizontal" app:layout_constraintGuide_percent="0.85"/>
     <Button
-            android:text="Add Map"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/addMapbutton"
             android:background="@drawable/ic_circle_button"
             android:drawableStart="@drawable/ic_plus"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingLeft="11dp"
+            android:paddingRight="11dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline18"
             app:layout_constraintStart_toStartOf="@+id/guideline19" android:layout_marginStart="8dp"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -58,13 +57,12 @@
                                           android:orientation="vertical" app:layout_constraintGuide_percent="0.95"/>
 
     <Button
-            android:text="Add Sensor"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/addSensorbutton"
             android:background="@drawable/ic_circle_button"
             android:drawableStart="@drawable/ic_plus"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp" app:layout_constraintBottom_toTopOf="@+id/guideline18"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp" app:layout_constraintBottom_toTopOf="@+id/guideline18"
             app:layout_constraintEnd_toStartOf="@+id/guideline20" android:layout_marginEnd="8dp"/>
 </android.support.constraint.ConstraintLayout>

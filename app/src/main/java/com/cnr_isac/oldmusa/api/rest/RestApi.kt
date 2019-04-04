@@ -1,6 +1,5 @@
 package com.cnr_isac.oldmusa.api.rest
 
-import android.util.Log
 import com.cnr_isac.oldmusa.api.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json

@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Eliminare il sensore?"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Eliminare il sensore?"
+            app:layout_constraintStart_toStartOf="@+id/guideline34"
+            app:layout_constraintEnd_toStartOf="@+id/guideline36"
+            app:layout_constraintTop_toTopOf="@+id/guideline37"
+            android:textStyle="bold"
+            android:textSize="20dp"/>
 
     <Button
-            android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Si"/>
+            android:layout_width="50dp" android:layout_height="50dp"
+            android:text="Si"
+            app:layout_constraintBottom_toTopOf="@+id/guideline44"
+            app:layout_constraintStart_toStartOf="@+id/guideline34"/>
 
     <Button
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        android:text="No"/>
-</LinearLayout>
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="No"
+            app:layout_constraintBottom_toTopOf="@+id/guideline44" app:layout_constraintEnd_toStartOf="@+id/guideline36"
+    />
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline34"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.25"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline36"
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.75"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline37"
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.06"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline44"
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.22"/>
+</android.support.constraint.ConstraintLayout>

@@ -25,7 +25,7 @@ data class ApiId(
 @Serializable
 data class ApiSite(
     @Optional val id: Long? = null,
-    @Optional @SerialName("id_cnr") val idCnr: Long? = null,
+    @Optional @SerialName("id_cnr") val idCnr: String? = null,
     @Optional val name: String? = null
 )
 

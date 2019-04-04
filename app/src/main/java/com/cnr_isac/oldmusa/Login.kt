@@ -31,7 +31,7 @@ class Login : AppCompatActivity() {
         val name = findViewById<EditText>(R.id.user)
         val pass = findViewById<EditText>(R.id.pass)
 
-        //try {
+        try {
 
             api.login(name.text.toString(), pass.text.toString())
             if (api.getMe().permission == 'A') {
@@ -40,15 +40,16 @@ class Login : AppCompatActivity() {
             val intent = Intent(this, Home::class.java)
             startActivity(intent)
 
-        /*} catch (E: Exception){
+        } catch (E: Exception) {
 
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Username o Password errati")
-                .setPositiveButton("OK") { _, _ -> finish()
+                .setPositiveButton("OK") { dialogInterface, _ ->
+                    dialogInterface.cancel()
                 }
             val alert = dialogBuilder.create()
             alert.setTitle("Error")
             alert.show()
-        }*/
+        }
     }
 }

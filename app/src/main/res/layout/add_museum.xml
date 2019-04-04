@@ -21,7 +21,7 @@
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline21"
                                           android:orientation="horizontal"
-                                          app:layout_constraintGuide_percent="0.15"/>
+                                          app:layout_constraintGuide_percent="0.45"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="50dp"
@@ -35,7 +35,7 @@
 
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline22"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.30"/>
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.2"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline24"
                                           android:orientation="vertical" app:layout_constraintGuide_percent="0.30"/>
@@ -62,5 +62,13 @@
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline33"
                                           android:orientation="horizontal"
-                                          app:layout_constraintGuide_percent="0.70"/>
+                                          app:layout_constraintGuide_percent="0.75"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:id="@+id/idCnr"
+            app:layout_constraintTop_toTopOf="@+id/guideline21"
+            app:layout_constraintEnd_toStartOf="@+id/guideline27"
+            app:layout_constraintStart_toStartOf="@+id/guideline26" android:hint="cnr id"/>
 </android.support.constraint.ConstraintLayout>

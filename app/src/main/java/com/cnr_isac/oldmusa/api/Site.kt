@@ -1,6 +1,6 @@
 package com.cnr_isac.oldmusa.api
 
-class Site(api: Api, id: Long, var idCnr: Long?, var name: String?) : ApiEntity(api, id) {
+class Site(api: Api, id: Long, var idCnr: String?, var name: String?) : ApiEntity(api, id) {
 
     val sensors: List<Sensor>
         get() = api.getSiteSensors(id).map { api.getSensor(it) }

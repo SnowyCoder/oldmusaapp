@@ -1,23 +1,23 @@
 package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.add_museum.view.*
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ListView
 import com.cnr_isac.oldmusa.Login.Companion.api
+import com.cnr_isac.oldmusa.api.ApiSite
 import kotlinx.android.synthetic.main.add_museum.*
 import java.util.*
 
@@ -39,18 +39,16 @@ class Home : AppCompatActivity() {
             list.add(museum.name!!)
         }
 
+        Log.e("test", list.toString())
+
         val listView = findViewById<ListView>(R.id.ListMuseum)
 
         val adapter = ArrayAdapter<String>(this, R.layout.list_museum_item, list)
-        listView.setAdapter(adapter)
+        listView.adapter = adapter
 
-        listView.onItemClickListener = object : AdapterView.OnItemClickListener {
-
-            override fun onItemClick(parent: AdapterView<*>, view: View,
-                                     position: Int, id: Long) {
-                val intent = Intent(this, Museum::class.java)
-                startActivity(intent)
-            }
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, _, _ ->
+            val intent = Intent(this, Museum::class.java)
+            startActivity(intent)
         }
 
         mDrawerlayout = findViewById(R.id.drawer)
@@ -79,6 +77,13 @@ class Home : AppCompatActivity() {
             }
         }
 
+    }
+
+    fun addMuseum (view: View) {
+        val museumName = findViewById<EditText>(R.id.nameMuseum)
+        val idCnr = findViewById<EditText>(R.id.idCnr)
+        val newMuseum = api.addSite(ApiSite(idCnr = idCnr.text.toString(), name = museumName.text.toString()))
+        newMuseum.commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
