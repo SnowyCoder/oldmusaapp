@@ -3,6 +3,7 @@ package com.cnr_isac.oldmusa.api.rest
 import com.cnr_isac.oldmusa.api.RestException
 import java.io.InputStream
 import okhttp3.*
+import okhttp3.internal.Util
 import okhttp3.internal.http.HttpMethod.requiresRequestBody
 import java.lang.RuntimeException
 
@@ -31,7 +32,7 @@ class HttpApiConnession(apiUrl: String) : ApiConnession {
 
         val req = Request.Builder().run {
             url(fullUrl.build())
-            val corrContent = if (content == null && requiresRequestBody(method)) EMPTY_BODY else content
+            val corrContent = if (content == null && requiresRequestBody(method)) Util.EMPTY_REQUEST else content
             method(method, corrContent)
             if (headers != null) {
                 headers(Headers.of(headers))
@@ -83,6 +84,6 @@ class HttpApiConnession(apiUrl: String) : ApiConnession {
 
     companion object {
         val JSON = MediaType.get("application/json; charset=utf-8")
-        val EMPTY_BODY = RequestBody.create(null, "")
+        // val EMPTY_BODY = RequestBody.create(null, "")
     }
 }

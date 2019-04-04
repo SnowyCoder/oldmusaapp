@@ -2,6 +2,7 @@ package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.widget.DrawerLayout
@@ -13,7 +14,12 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.add_museum.view.*
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import com.cnr_isac.oldmusa.Login.Companion.api
 import kotlinx.android.synthetic.main.add_museum.*
+import java.util.*
 
 
 class Home : AppCompatActivity() {
@@ -27,6 +33,25 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        var list = ArrayList<String>()
+        for (museum in api.getSites()) {
+            list.add(museum.name!!)
+        }
+
+        val listView = findViewById<ListView>(R.id.ListMuseum)
+
+        val adapter = ArrayAdapter<String>(this, R.layout.list_museum_item, list)
+        listView.setAdapter(adapter)
+
+        listView.onItemClickListener = object : AdapterView.OnItemClickListener {
+
+            override fun onItemClick(parent: AdapterView<*>, view: View,
+                                     position: Int, id: Long) {
+                val intent = Intent(this, Museum::class.java)
+                startActivity(intent)
+            }
+        }
 
         mDrawerlayout = findViewById(R.id.drawer)
         mToggle = ActionBarDrawerToggle(this, mDrawerlayout, R.string.open, R.string.close)
