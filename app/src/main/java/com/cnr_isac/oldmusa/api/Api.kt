@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa.api
 
 import java.io.InputStream
+import java.time.LocalDate
 
 /**
  * Anything that can answer the API requests,
@@ -98,4 +99,5 @@ interface Api {
 
     fun deleteChannel(id: Long)
 
+    fun getChannelReadings(channelId: Long, start: LocalDate, end: LocalDate, precision: String = "atomic"): List<ChannelReading>
 }

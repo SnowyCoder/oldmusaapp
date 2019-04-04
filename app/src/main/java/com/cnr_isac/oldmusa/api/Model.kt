@@ -3,6 +3,7 @@ package com.cnr_isac.oldmusa.api
 import kotlinx.serialization.Optional
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import java.time.LocalDate
 
 // Those are the data definitions for the JSON client-server connection
 // Note that id and siteId are optional because the client should omit them
@@ -60,4 +61,14 @@ data class ApiSensor(
     @Optional @SerialName("loc_y") val locY: Long? = null,
     @Optional val enabled: Boolean = false,
     @Optional val status: String = "ok"
+)
+
+@Serializable
+data class ChannelReading(
+    val date: LocalDate,
+    @SerialName("value_min") val valueMin: Long,
+    @Optional @SerialName("value_avg") val valueAvg: Long?,
+    @Optional @SerialName("value_max") val valueMax: Long?,
+    @Optional val deviation: Long?,
+    @Optional val error: Char
 )
