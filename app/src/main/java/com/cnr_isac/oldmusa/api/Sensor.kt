@@ -4,6 +4,7 @@ class Sensor(
         api: Api,
         id: Long,
         val siteId: Long,
+        var idCnr: Long?,
         var name: String?,
         var locMapId: Long?,
         var locX: Long?,
@@ -33,7 +34,7 @@ class Sensor(
     }
 
     fun serialize(): ApiSensor {
-        return ApiSensor(id, siteId, name, locMapId, locX, locY, enabled, status)
+        return ApiSensor(id, idCnr, siteId, name, locMapId, locX, locY, enabled, status)
     }
 
     fun commit() {

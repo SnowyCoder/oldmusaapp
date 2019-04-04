@@ -25,6 +25,7 @@ data class ApiId(
 @Serializable
 data class ApiSite(
     @Optional val id: Long? = null,
+    @Optional @SerialName("id_cnr") val idCnr: Long? = null,
     @Optional val name: String? = null
 )
 
@@ -39,7 +40,7 @@ data class ApiMap(
 data class ApiChannel(
     @Optional val id: Long? = null,
     @Optional @SerialName("sensor_id") val sensorId: Long? = null,
-    @Optional @SerialName("id_cnr") val cnrId: Long? = null,
+    @Optional @SerialName("id_cnr") val idCnr: Long? = null,
 
     @Optional val name: String? = null,
 
@@ -52,6 +53,7 @@ data class ApiChannel(
 data class ApiSensor(
     @Optional val id: Long? = null,
     @Optional @SerialName("site_id") val siteId: Long? = null,
+    @Optional @SerialName("id_cnr") val idCnr: Long? = null,
     @Optional val name: String? = null,
     @Optional @SerialName("loc_map") val locMap: Long? = null,
     @Optional @SerialName("loc_x") val locX: Long? = null,

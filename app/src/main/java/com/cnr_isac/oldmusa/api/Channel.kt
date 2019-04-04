@@ -5,7 +5,7 @@ class Channel(
     api: Api,
     id: Long,
     val sensorId: Long,
-    val cnrId: Long?,
+    val idCnr: Long?,
     var name: String?,
     var measureUnit: String?,
     var rangeMin: Double?,
@@ -14,8 +14,8 @@ class Channel(
 
     fun onUpdate(data: ApiChannel) {
         assert(id == data.id)
-        assert(cnrId == data.cnrId)
         assert(sensorId == data.sensorId)
+        assert(idCnr == data.idCnr)
         this.name = data.name
         this.measureUnit = data.measureUnit
         this.rangeMin = data.rangeMin
@@ -23,7 +23,7 @@ class Channel(
     }
 
     fun serialize(): ApiChannel {
-        return ApiChannel(id, sensorId, cnrId, name, measureUnit, rangeMin, rangeMax)
+        return ApiChannel(id, sensorId, idCnr, name, measureUnit, rangeMin, rangeMax)
     }
 
     fun commit() {

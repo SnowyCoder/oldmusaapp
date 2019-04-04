@@ -1,6 +1,6 @@
 package com.cnr_isac.oldmusa.api
 
-class Site(api: Api, id: Long, var name: String?) : ApiEntity(api, id) {
+class Site(api: Api, id: Long, var idCnr: Long?, var name: String?) : ApiEntity(api, id) {
 
     val sensors: List<Sensor>
         get() = api.getSiteSensors(id).map { api.getSensor(it) }
@@ -19,7 +19,7 @@ class Site(api: Api, id: Long, var name: String?) : ApiEntity(api, id) {
     }
 
     fun serialize(): ApiSite {
-        return ApiSite(id, name)
+        return ApiSite(id, idCnr, name)
     }
 
     fun commit() {
