@@ -21,7 +21,7 @@ import kotlin.test.assertFailsWith
  */
 @Ignore// You don't want this test running if there isn't any server
 class RestTest {
-    val url = "http://localhost:8080/api/"// Server URL
+    val url = "http://hgame.gq:8081/api/"// Server URL
     val api = RestApi.httpRest(url)// Connection type (rest over http)
 
     val rootPassword = System.getenv("ROOT_PASSWORD") ?: "password"

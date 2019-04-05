@@ -33,10 +33,11 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
+0
+        val sites = api.getSites()
         var list = ArrayList<String>()
-        for (museum in api.getSites()) {
-            list.add(museum.name!!)
+        for (museum in sites) {
+            list.add(museum.name ?: "null")
         }
 
         Log.e("test", list.toString())
@@ -46,8 +47,9 @@ class Home : AppCompatActivity() {
         val adapter = ArrayAdapter<String>(this, R.layout.list_museum_item, list)
         listView.adapter = adapter
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, _, _ ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, Museum::class.java)
+            intent.putExtra("site", sites[position].id)
             startActivity(intent)
         }
 
@@ -71,18 +73,23 @@ class Home : AppCompatActivity() {
             d.show()
             d.window!!.attributes = lp
 
-            d.AddButtonM.setOnClickListener {
+            d.AddButtonM.setOnClickListener { view ->
                 d.dismiss()
-
+                addMuseum(view)
             }
         }
 
     }
 
     fun addMuseum (view: View) {
-        val museumName = findViewById<EditText>(R.id.nameMuseum)
-        val idCnr = findViewById<EditText>(R.id.idCnr)
-        val newMuseum = api.addSite(ApiSite(idCnr = idCnr.text.toString(), name = museumName.text.toString()))
+        Log.e("start", "start add museum")
+        val museumName = view.findViewById<EditText>(R.id.nameMuseum)!!
+        val idCnr = view.findViewById<EditText>(R.id.idCnr)!!
+        val newMuseum = api.addSite()
+        newMuseum.name = museumName.text.toString()
+        Log.e("text", newMuseum.name)
+        newMuseum.idCnr = idCnr.text.toString()
+        Log.e("text", newMuseum.idCnr)
         newMuseum.commit()
     }
 

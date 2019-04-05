@@ -19,8 +19,8 @@
                                           android:id="@+id/guideline14"
                                           android:orientation="horizontal" app:layout_constraintGuide_percent="0.10"/>
 
-    <ExpandableListView
-            android:id="@+id/lvExp"
+    <ListView
+            android:id="@+id/SensorList"
             android:layout_height="229dp"
             android:layout_width="320dp"
             app:layout_constraintTop_toTopOf="@+id/guideline16"
