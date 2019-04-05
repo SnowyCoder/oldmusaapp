@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        android:text="Modifica sensore"/>
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:text="Modifica sensore" tools:layout_editor_absoluteY="59dp" tools:layout_editor_absoluteX="151dp"/>
 
     <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        android:hint="name"
-        android:text="Nome sensore"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="name"
+            android:text="Nome sensore" tools:layout_editor_absoluteY="110dp" tools:layout_editor_absoluteX="46dp"/>
 
     <NumberPicker
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/posx"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/posx" tools:layout_editor_absoluteY="261dp" tools:layout_editor_absoluteX="212dp"/>
 
     <NumberPicker
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/posy"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/posy" tools:layout_editor_absoluteY="254dp" tools:layout_editor_absoluteX="98dp"/>
 
     <CheckBox
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-    android:text="Temperatura"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temperatura" tools:layout_editor_absoluteY="167dp" tools:layout_editor_absoluteX="57dp"/>
 
 
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

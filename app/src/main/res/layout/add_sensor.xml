@@ -7,17 +7,6 @@
                                              android:padding="10dp"
                                              android:orientation="vertical">
 
-    <TextView
-            android:text="Aggiungi Sensore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            android:id="@+id/textView"
-            app:layout_constraintTop_toTopOf="@+id/guideline35"
-            app:layout_constraintStart_toStartOf="@+id/guideline38"
-            app:layout_constraintEnd_toStartOf="@+id/guideline39"/>
-
     <EditText
             android:layout_width="273dp"
             android:layout_height="41dp"
@@ -114,21 +103,21 @@
                                           android:orientation="horizontal" app:layout_constraintGuide_percent="0.10"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline38"
-                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.15"/>
+                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.1"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline39"
                                           android:orientation="vertical" app:layout_constraintGuide_percent="0.85"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline40"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.20"/>
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.15"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline41"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.28"/>
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.24"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline42"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.38"/>
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.33"/>
     <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                           android:id="@+id/guideline43"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.80"/>
+                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.89"/>
 
 </android.support.constraint.ConstraintLayout>
