@@ -6,6 +6,7 @@ import android.content.Intent
 import android.drm.DrmStore
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.StrictMode
 import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -45,7 +46,10 @@ class Museum : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(activity_museum)
 
-        // get sites
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        // get site
         val site = api.getSite(intent.getLongExtra("site", -1))
         val list = ArrayList<String>()
         for (sensor in site.sensors) {
@@ -60,7 +64,7 @@ class Museum : AppCompatActivity() {
         listView.adapter = adapter
 
         // add event listener to array items
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, _, _ ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, _, _ ->
             val mBuilder = AlertDialog.Builder(this)
             mBuilder.setTitle("Crea grafico")
             val d = mBuilder.setView(LayoutInflater.from(this).inflate(create_graph, null)).create()
@@ -71,12 +75,11 @@ class Museum : AppCompatActivity() {
             lp.height = (resources.displayMetrics.heightPixels * 0.80).toInt()
             d.show()
             d.window!!.attributes = lp
-
             // set up calendar
             val nextYear = Calendar.getInstance()
             nextYear.add(Calendar.YEAR, 1)
 
-            calendar = findViewById<View>(R.id.calendar_view) as CalendarPickerView
+            /*calendar = d.findViewById<CalendarPickerView>(R.id.calendar_view)
             val today = Date()
             calendar.init(today, nextYear.time)
                 .withSelectedDate(today)
@@ -86,7 +89,7 @@ class Museum : AppCompatActivity() {
             // submit graph button listener
             /*d.create.setOnClickListener { view -> // create = bottone invio
                 d.dismiss()
-            }*/
+            }*/*/
         }
 
         // open map options modal

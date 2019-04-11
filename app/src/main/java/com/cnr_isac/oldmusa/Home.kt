@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.StrictMode
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
@@ -33,10 +34,14 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-0
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
         val sites = api.getSites()
         var list = ArrayList<String>()
         for (museum in sites) {
+            Log.e("museum", museum.name)
             list.add(museum.name ?: "null")
         }
 

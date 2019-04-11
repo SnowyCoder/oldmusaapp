@@ -30,9 +30,5 @@
             android:layout_height="wrap_content"
             android:text="Temperatura" tools:layout_editor_absoluteY="167dp" tools:layout_editor_absoluteX="57dp"/>
 
-    <com.squareup.timessquare.CalendarPickerView android:layout_height="match_parent"
-                                                 android:layout_width="match_parent"
-                                                 android:id="@+id/CalendarView"/>
-
 
 </android.support.constraint.ConstraintLayout>
