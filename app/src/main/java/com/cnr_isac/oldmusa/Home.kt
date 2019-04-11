@@ -56,6 +56,7 @@ class Home : AppCompatActivity() {
             val intent = Intent(this, Museum::class.java)
             intent.putExtra("site", sites[position].id)
             startActivity(intent)
+            finish()
         }
 
         mDrawerlayout = findViewById(R.id.drawer)

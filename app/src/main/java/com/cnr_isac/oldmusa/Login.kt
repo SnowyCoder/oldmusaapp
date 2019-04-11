@@ -32,14 +32,7 @@ class Login : AppCompatActivity() {
         val pass = findViewById<EditText>(R.id.pass)
 
         try {
-
             api.login(name.text.toString(), pass.text.toString())
-            if (api.getMe().permission == 'A') {
-                isAdmin = true
-            }
-            val intent = Intent(this, Home::class.java)
-            startActivity(intent)
-
         } catch (E: Exception) {
 
             val dialogBuilder = AlertDialog.Builder(this)
@@ -51,5 +44,12 @@ class Login : AppCompatActivity() {
             alert.setTitle("Error")
             alert.show()
         }
+
+        if (api.getMe().permission == 'A') {
+            isAdmin = true
+        }
+
+        val intent = Intent(this, Home::class.java)
+        startActivity(intent)
+        finish()
     }
-}
