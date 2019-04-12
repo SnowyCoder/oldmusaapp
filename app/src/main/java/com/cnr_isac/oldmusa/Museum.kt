@@ -4,9 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.drm.DrmStore
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -33,7 +35,12 @@ import java.util.ArrayList
 import java.util.Date
 import java.util.Calendar
 import android.widget.Toast
+import com.cnr_isac.oldmusa.api.ApiSensor
+import com.cnr_isac.oldmusa.api.MuseMap
+import com.cnr_isac.oldmusa.api.Sensor
+import com.cnr_isac.oldmusa.api.Site
 import kotlinx.serialization.typeTokenOf
+import java.lang.Exception
 
 
 class Museum : AppCompatActivity() {
@@ -47,6 +54,10 @@ class Museum : AppCompatActivity() {
     lateinit var mToggle: ActionBarDrawerToggle
         private set
 
+    private lateinit var site: Site
+
+    private lateinit var map: MuseMap
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activity_museum)
@@ -55,13 +66,19 @@ class Museum : AppCompatActivity() {
         StrictMode.setThreadPolicy(policy)
 
         // get site
-        val site = api.getSite(intent.getLongExtra("site", -1))
+        site = api.getSite(intent.getLongExtra("site", -1))
         val list = ArrayList<String>()
         for (sensor in site.sensors) {
             list.add(sensor.name ?: "null")
         }
 
         e("test", list.toString())
+
+        val map = findViewById<ImageView>(R.id.mapMuseum)
+
+            val imageMap = site.maps[0].getImage()
+            //e("decodeStream", BitmapFactory.decodeStream(imageMap).toString())
+            map.setImageBitmap(BitmapFactory.decodeStream(imageMap))
 
         val listView = findViewById<ListView>(R.id.SensorList)
 
@@ -80,6 +97,7 @@ class Museum : AppCompatActivity() {
             lp.height = (resources.displayMetrics.heightPixels * 0.80).toInt()
             d.show()
             d.window!!.attributes = lp
+
             // set up calendar
             val nextYear = Calendar.getInstance()
             nextYear.add(Calendar.YEAR, 1)
@@ -115,25 +133,28 @@ class Museum : AppCompatActivity() {
 
             val img_pick_btn = d.findViewById<Button>(R.id.img_pick_btn)
 
+
             img_pick_btn.setOnClickListener {
                 //check runtime permission
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_DENIED){
                         //permission denied
-                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                         //show popup to request runtime permission
-                        requestPermissions(permissions, Museum.PERMISSION_CODE);
+                        requestPermissions(permissions, Museum.PERMISSION_CODE)
                     }
                     else{
                         //permission already granted
-                        pickImageFromGallery();
+                        pickImageFromGallery()
                     }
                 }
                 else{
                     //system OS is < Marshmallow
-                    pickImageFromGallery();
+                    pickImageFromGallery()
+
                 }
+
             }
         }
 
@@ -144,7 +165,7 @@ class Museum : AppCompatActivity() {
         mToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // open sensor options modal
+        // open add sensor modal
         addSensorbutton.setOnClickListener{
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
 
@@ -159,12 +180,21 @@ class Museum : AppCompatActivity() {
             d.show()
             d.window!!.attributes = lp
 
-            d.AddButtonS.setOnClickListener { view ->
+            d.AddButtonS.setOnClickListener {
+                val nameSensor = d.findViewById<EditText>(R.id.nameSensore)
+                e("print", nameSensor.toString())
+                //val mappaSensor = view.findViewById<EditText>(R.id.mappaSensore)
+                val idcnrSensor = d.findViewById<EditText>(R.id.idcnrSensore)
+                e("print", idcnrSensor.toString())
+
+                site.addSensor(ApiSensor(name = nameSensor.text.toString(), idCnr = idcnrSensor.text.toString().toLong()))
+
                 d.dismiss()
+                val refresh = Intent(this, Museum::class.java)
+                refresh.putExtra("site", site.id)
+                startActivity(refresh)
             }
         }
-
-
 
     }
 
@@ -176,7 +206,7 @@ class Museum : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        when (id) {
+        /*when (id) {
             R.id.action_settings -> return true
             R.id.action_next -> {
                 val selectedDates = calendar
@@ -187,7 +217,7 @@ class Museum : AppCompatActivity() {
                 ).show()
                 return true
             }
-        }
+        }*/
         return super.onOptionsItemSelected(item)
     }
 
@@ -217,9 +247,9 @@ class Museum : AppCompatActivity() {
 
     companion object {
         //image pick code
-        private val IMAGE_PICK_CODE = 1000;
+        private val IMAGE_PICK_CODE = 1000
         //Permission code
-        private val PERMISSION_CODE = 1001;
+        private val PERMISSION_CODE = 1001
     }
 
     //handle requested permission result
@@ -241,11 +271,23 @@ class Museum : AppCompatActivity() {
 
     //handle result of picked image
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //setContentView(add_map)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
-            val image_map = findViewById<ImageView>(R.id.image_map)
             e("print", data.toString())
             //image_map.setImageURI(data?.data)
-            e("print", data?.type.toString())
+            e("print", data?.data.toString())
+            //val text = findViewById<TextView>(R.id.imagePath)
+            //text.text = data?.data.toString()
+            //var map = site.addMap(null)
+            e("print", contentResolver.openInputStream(data?.data).toString())
+            map = site.addMap(null)
+            map.setImage(contentResolver.openInputStream(data?.data))
+            val img = api.getMapImage(map.id)
+            e("api", img.toString())
+
+            val refresh = Intent(this, Museum::class.java)
+            refresh.putExtra("site", site.id)
+            startActivity(refresh)
         }
     }
 
