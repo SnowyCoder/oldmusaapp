@@ -57,9 +57,9 @@ class Graph : AppCompatActivity() {
         lineDataSets.add(lineDataSet1)
         lineDataSets.add(lineDataSet2)
 
-        lineChart.data = LineData(xaxes, lineDataSets)
-        lineChart.setVisibleXRangeMaximum(65f)
+        /*lineChart.data = LineData(xaxes, lineDataSets)
+        lineChart.setVisibleXRangeMaximum(65f)*/
     }
-    }
+
 
 }

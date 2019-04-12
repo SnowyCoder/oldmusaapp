@@ -1,9 +1,13 @@
 package com.cnr_isac.oldmusa
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.drm.DrmStore
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
@@ -11,6 +15,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
+import android.util.Log.e
 import android.view.*
 import android.widget.*
 import com.cnr_isac.oldmusa.Login.Companion.api
@@ -28,7 +33,7 @@ import java.util.ArrayList
 import java.util.Date
 import java.util.Calendar
 import android.widget.Toast
-
+import kotlinx.serialization.typeTokenOf
 
 
 class Museum : AppCompatActivity() {
@@ -56,7 +61,7 @@ class Museum : AppCompatActivity() {
             list.add(sensor.name ?: "null")
         }
 
-        Log.e("test", list.toString())
+        e("test", list.toString())
 
         val listView = findViewById<ListView>(R.id.SensorList)
 
@@ -94,16 +99,41 @@ class Museum : AppCompatActivity() {
 
         // open map options modal
         addMapbutton.setOnClickListener {
-            val mDialogView = LayoutInflater.from(this).inflate(add_map, null)
-
             val mBuilder = AlertDialog.Builder(this)
-                .setView(mDialogView)
-                .setTitle("Aggiungi un sensore")
+            mBuilder.setTitle("Aggiungi mappa")
+            val d = mBuilder.setView(LayoutInflater.from(this).inflate(add_map, null)).create()
+            val lp = WindowManager.LayoutParams()
+            lp.copyFrom(d.window!!.attributes)
+            lp.width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.80).toInt()
+            d.show()
+            d.window!!.attributes = lp
 
-            val mAlertDialog = mBuilder.show()
+            /*d.AddButtonM.setOnClickListener { view ->
+                d.dismiss()
+            }*/
 
-            mDialogView.AddButtonM.setOnClickListener {
-                mAlertDialog.dismiss()
+            val img_pick_btn = d.findViewById<Button>(R.id.img_pick_btn)
+
+            img_pick_btn.setOnClickListener {
+                //check runtime permission
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                        PackageManager.PERMISSION_DENIED){
+                        //permission denied
+                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        //show popup to request runtime permission
+                        requestPermissions(permissions, Museum.PERMISSION_CODE);
+                    }
+                    else{
+                        //permission already granted
+                        pickImageFromGallery();
+                    }
+                }
+                else{
+                    //system OS is < Marshmallow
+                    pickImageFromGallery();
+                }
             }
         }
 
@@ -176,6 +206,47 @@ class Museum : AppCompatActivity() {
             holidays.add(date)
         }
         return holidays
+    }
+
+    private fun pickImageFromGallery() {
+        //Intent to pick image
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    companion object {
+        //image pick code
+        private val IMAGE_PICK_CODE = 1000;
+        //Permission code
+        private val PERMISSION_CODE = 1001;
+    }
+
+    //handle requested permission result
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode){
+            PERMISSION_CODE -> {
+                if (grantResults.size >0 && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED){
+                    //permission from popup granted
+                    pickImageFromGallery()
+                }
+                else{
+                    //permission from popup denied
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    //handle result of picked image
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
+            val image_map = findViewById<ImageView>(R.id.image_map)
+            e("print", data.toString())
+            //image_map.setImageURI(data?.data)
+            e("print", data?.type.toString())
+        }
     }
 
 }
