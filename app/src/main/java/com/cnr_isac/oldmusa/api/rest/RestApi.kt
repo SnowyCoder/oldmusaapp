@@ -18,7 +18,6 @@ class RestApi(val conn: ApiConnession) : Api {
     private val json = Json(encodeDefaults = false)
 
     val headers = HashMap<String, String>()
-    private var tokenExpirationDate: Long? = null
 
 
     // Utils
@@ -33,7 +32,7 @@ class RestApi(val conn: ApiConnession) : Api {
     private class LoginData(val username: String, val password: String)
 
     @Serializable
-    private class LoginDataResponse(val token: String, val duration: Long)
+    private class LoginDataResponse(val token: String)
 
     override fun getCurrentToken(): String? {
         return headers["Token"]
@@ -48,15 +47,11 @@ class RestApi(val conn: ApiConnession) : Api {
         val raw = conn.connectRest("GET", "token", parameters = mapOf("username" to username, "password" to password))
         val data = json.parse(LoginDataResponse.serializer(), raw)
 
-        tokenExpirationDate = System.currentTimeMillis() + data.duration * 1000 - 10
-        //Log.i(TAG, "Token accepted, user: $username, duration: ${data.duration}")
-
         useToken(data.token)
     }
 
     override fun logout() {
         headers.remove("Token")
-        tokenExpirationDate = null
     }
 
     // ---------------- USER ----------------
