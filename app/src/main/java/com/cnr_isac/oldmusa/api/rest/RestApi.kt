@@ -20,14 +20,10 @@ class RestApi(val conn: ApiConnession) : Api {
     val headers = HashMap<String, String>()
     private var tokenExpirationDate: Long? = null
 
-    private var lastUsername: String? = null
-    private var lastPassword: String? = null
-
 
     // Utils
 
     private fun query(method: String, path: String, content: String? = null, parameters: Map<String, String>? = null): String {
-        ensureTokenValidity()
         return conn.connectRest(method, path, parameters, content, headers)
     }
 
@@ -39,35 +35,28 @@ class RestApi(val conn: ApiConnession) : Api {
     @Serializable
     private class LoginDataResponse(val token: String, val duration: Long)
 
+    override fun getCurrentToken(): String? {
+        return headers["Token"]
+    }
+
+    override fun useToken(token: String?) {
+        if (token == null) headers.remove("Token")
+        else headers["Token"] = token
+    }
+
     override fun login(username: String, password: String) {
         val raw = conn.connectRest("GET", "token", parameters = mapOf("username" to username, "password" to password))
         val data = json.parse(LoginDataResponse.serializer(), raw)
 
-        tokenExpirationDate = System.currentTimeMillis() + data.duration * 1000 - 10;
+        tokenExpirationDate = System.currentTimeMillis() + data.duration * 1000 - 10
         //Log.i(TAG, "Token accepted, user: $username, duration: ${data.duration}")
 
-        headers["Token"] = data.token
-        lastUsername = username
-        lastPassword = password
+        useToken(data.token)
     }
 
     override fun logout() {
         headers.remove("Token")
         tokenExpirationDate = null
-        lastUsername = null
-        lastPassword = null
-    }
-
-    private fun ensureTokenValidity() {
-        val expiration = tokenExpirationDate
-        val user = lastUsername
-        val passw = lastPassword
-
-        if (expiration == null || user == null || passw == null) return
-        if (System.currentTimeMillis() < expiration) return
-
-        // TODO: login retry logic
-        login(user, passw)
     }
 
     // ---------------- USER ----------------
@@ -133,6 +122,14 @@ class RestApi(val conn: ApiConnession) : Api {
 
     override fun removeUserAccess(userId: Long, siteId: Long) {
         query("DELETE", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(siteId)))
+    }
+
+    override fun addUserContactFCM(userId: Long, token: String) {
+        query("PUT", "user/$userId/contact/fcm/$token")
+    }
+
+    override fun removeUserContactFCM(userId: Long, token: String) {
+        query("DELETE", "user/$userId/contact/fcm/$token")
     }
 
     override fun getMe(): User {

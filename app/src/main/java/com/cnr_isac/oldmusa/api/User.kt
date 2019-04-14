@@ -6,6 +6,8 @@ class User(api: Api, id: Long, var username: String, password: String?, var perm
     val access: List<Site>
         get() = api.getUserAccessIds(id).map { api.getSite(it) }
 
+    val isAdmin: Boolean = permission == 'A'
+
     /**
      * Rewrites the password with the new one,
      * Use [commit] to apply changes
@@ -22,6 +24,14 @@ class User(api: Api, id: Long, var username: String, password: String?, var perm
 
     fun removeAccess(site: Site) {
         api.removeUserAccess(id, site.id)
+    }
+
+    fun addContactFCM(token: String) {
+        api.addUserContactFCM(id, token)
+    }
+
+    fun removeContactFCM(token: String) {
+        api.removeUserContactFCM(id, token)
     }
 
 

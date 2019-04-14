@@ -1,22 +1,36 @@
 package com.cnr_isac.oldmusa
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.os.StrictMode
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.EditText
-import com.cnr_isac.oldmusa.api.rest.RestApi
-import android.os.StrictMode
-
+import com.cnr_isac.oldmusa.Account.api
+import com.cnr_isac.oldmusa.firebase.FirebaseUtil
 
 
 class Login : AppCompatActivity() {
-
     companion object {
-        private const val url = "http://51.77.151.174:8081/api/"// Server URL
-        val api = RestApi.httpRest(url)// Connection type (rest over http)
-        var isAdmin = false
+        val TAG = "Login"
+    }
+
+    private fun isLoginNeeded(): Boolean {
+        // TODO: we need a better solution to this
+        if (api.getCurrentToken().isNullOrBlank()) return true
+        try {
+            api.getMe()
+        } catch (e: RuntimeException) {
+            api.logout()
+            Account.saveToken(applicationContext)
+            return true
+        }
+        return false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,24 +39,23 @@ class Login : AppCompatActivity() {
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
+
+        createNotificationChannel()
+
+        // If the api is already logged in, skip
+        if (!isLoginNeeded()) {
+            goToHome()
+        }
     }
 
     fun login(view: View) {
         val name = findViewById<EditText>(R.id.user)
         val pass = findViewById<EditText>(R.id.pass)
 
+
         try {
             api.login(name.text.toString(), pass.text.toString())
-
-            if (api.getMe().permission == 'A') {
-                isAdmin = true
-            }
-
-            val intent = Intent(this, Home::class.java)
-            startActivity(intent)
-            finish()
-
-        } catch (E: Exception) {
+        } catch (e: Exception) {
 
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Username o Password errati")
@@ -52,6 +65,34 @@ class Login : AppCompatActivity() {
             val alert = dialogBuilder.create()
             alert.setTitle("Error")
             alert.show()
+        }
+
+        Account.saveToken(applicationContext) // Save the current account to file
+        FirebaseUtil.publishFCMToken(api) // Publish the current FCM token to the server (used to send notifications)
+
+        goToHome()
+    }
+
+    fun goToHome() {
+        val intent = Intent(this, Home::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("alarm", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }

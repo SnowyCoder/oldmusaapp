@@ -2,4 +2,7 @@
     <string name="app_name">OldMusa</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string name="channel_name" translatable="false">alarm</string>
+    <string name="channel_description">Alarm channel</string>
 </resources>

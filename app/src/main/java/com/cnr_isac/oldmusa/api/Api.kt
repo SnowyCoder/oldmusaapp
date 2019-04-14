@@ -16,6 +16,10 @@ interface Api {
 
     // ---------------- LOGIN ----------------
 
+    fun useToken(token: String?)
+
+    fun getCurrentToken(): String?
+
     fun login(username: String, password: String)
 
     fun logout()
@@ -39,6 +43,10 @@ interface Api {
     fun addUserAccess(userId: Long, siteId: Long)
 
     fun removeUserAccess(userId: Long, siteId: Long)
+
+    fun addUserContactFCM(userId: Long, token: String)
+
+    fun removeUserContactFCM(userId: Long, token: String)
 
     fun getMe(): User
 

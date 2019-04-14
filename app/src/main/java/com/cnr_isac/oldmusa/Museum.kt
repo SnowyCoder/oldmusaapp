@@ -20,7 +20,6 @@ import android.util.Log
 import android.util.Log.e
 import android.view.*
 import android.widget.*
-import com.cnr_isac.oldmusa.Login.Companion.api
 import com.cnr_isac.oldmusa.R.layout.*
 import com.squareup.timessquare.CalendarPickerView
 import kotlinx.android.synthetic.main.activity_home.*
@@ -35,6 +34,7 @@ import java.util.ArrayList
 import java.util.Date
 import java.util.Calendar
 import android.widget.Toast
+import com.cnr_isac.oldmusa.Account.api
 import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.MuseMap
 import com.cnr_isac.oldmusa.api.Sensor

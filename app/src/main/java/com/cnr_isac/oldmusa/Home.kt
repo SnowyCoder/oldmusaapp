@@ -17,8 +17,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
-import com.cnr_isac.oldmusa.Login.Companion.api
-import com.cnr_isac.oldmusa.api.ApiSite
+import com.cnr_isac.oldmusa.Account.api
 import kotlinx.android.synthetic.main.add_museum.*
 import java.util.*
 
