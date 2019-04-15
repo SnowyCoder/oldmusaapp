@@ -8,74 +8,103 @@
         android:layout_height="match_parent"
         tools:context=".Home">
 
-<android.support.constraint.ConstraintLayout
-        android:id="@+id/museumLayout"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".Museum">
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/museumLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".Museum">
 
-    <ImageView
-            android:layout_width="355dp"
-            android:layout_height="258dp" tools:srcCompat="@tools:sample/avatars[8]"
-            android:id="@+id/mapMuseum"
-            app:layout_constraintTop_toTopOf="@+id/guideline14"
-            app:layout_constraintBottom_toTopOf="@+id/guideline15"
-            app:layout_constraintStart_toStartOf="@+id/guideline19"
-            app:layout_constraintEnd_toStartOf="@+id/guideline20"/>
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline14"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.10"/>
+        <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp" tools:srcCompat="@tools:sample/avatars[8]"
+                android:id="@+id/mapMuseum"
+                app:layout_constraintTop_toTopOf="@+id/guideline14"
+                app:layout_constraintBottom_toTopOf="@+id/guideline15"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline14"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.10"/>
 
-    <ListView
-            android:id="@+id/SensorList"
-            android:layout_height="229dp"
-            android:layout_width="320dp"
-            app:layout_constraintTop_toTopOf="@+id/guideline16"
-            app:layout_constraintBottom_toTopOf="@+id/guideline17" app:layout_constraintEnd_toStartOf="@+id/guideline20"
-            app:layout_constraintStart_toStartOf="@+id/guideline19"
+        <ListView
+                android:id="@+id/SensorList"
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                app:layout_constraintTop_toTopOf="@+id/guideline16"
+                app:layout_constraintBottom_toTopOf="@+id/guideline17"
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
 
-    />
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline15"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.50"/>
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline16"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.53"/>
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline17"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.85"/>
-    <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/addMapbutton"
-            android:background="@drawable/ic_circle_button"
-            android:drawableStart="@drawable/ic_plus"
-            android:paddingLeft="11dp"
-            android:paddingRight="11dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline18"
-            app:layout_constraintStart_toStartOf="@+id/guideline19" android:layout_marginStart="8dp"/>
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline18"
-                                          android:orientation="horizontal" app:layout_constraintGuide_percent="0.95"/>
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline19"
-                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.05"/>
-    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                          android:id="@+id/guideline20"
-                                          android:orientation="vertical" app:layout_constraintGuide_percent="0.95"/>
+        />
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline15"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.50"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline16"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.53"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline17"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.85"/>
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/addMapbutton"
+                android:background="@drawable/ic_circle_button"
+                android:drawableStart="@drawable/ic_plus"
+                android:paddingLeft="11dp"
+                android:paddingRight="11dp"
+                app:layout_constraintBottom_toTopOf="@+id/guideline18"
+                app:layout_constraintStart_toStartOf="@+id/guideline19" android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@+id/guideline67"
+                app:layout_constraintEnd_toStartOf="@+id/guideline68"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline18"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.95"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline19"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.05"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline20"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.95"/>
 
-    <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/addSensorbutton"
-            android:background="@drawable/ic_circle_button"
-            android:drawableStart="@drawable/ic_plus"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" app:layout_constraintBottom_toTopOf="@+id/guideline18"
-            app:layout_constraintEnd_toStartOf="@+id/guideline20" android:layout_marginEnd="8dp"/>
-</android.support.constraint.ConstraintLayout>
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/addSensorbutton"
+                android:background="@drawable/ic_circle_button"
+                android:drawableStart="@drawable/ic_plus"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp" app:layout_constraintBottom_toTopOf="@+id/guideline18"
+                app:layout_constraintEnd_toStartOf="@+id/guideline20" android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toTopOf="@+id/guideline67"
+                app:layout_constraintStart_toStartOf="@+id/guideline69"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline67"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.88"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline68"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.19"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline69"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.81"/>
+        <Button
+                android:text="Button"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                tools:layout_editor_absoluteX="161dp" android:id="@+id/addChannelButton"
+                android:background="@drawable/ic_circle_button"
+                android:drawableStart="@drawable/ic_plus"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp" app:layout_constraintTop_toTopOf="@+id/guideline67"
+                app:layout_constraintBottom_toTopOf="@+id/guideline18"/>
+    </android.support.constraint.ConstraintLayout>
+
+
 
 </android.support.v4.widget.DrawerLayout>
