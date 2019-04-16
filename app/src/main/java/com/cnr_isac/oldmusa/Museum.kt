@@ -65,6 +65,19 @@ class Museum : AppCompatActivity() {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
+        // permission
+        if (!api.getMe().isAdmin)
+        {
+            val buttonVisible1 = findViewById(R.id.addMapbutton) as Button
+            buttonVisible1.visibility=View.GONE
+
+            val buttonVisible2 = findViewById(R.id.addSensorbutton) as Button
+            buttonVisible2.visibility=View.GONE
+
+            val buttonVisible3 = findViewById(R.id.addChannelButton) as Button
+            buttonVisible3.visibility=View.GONE
+        }
+
         // get site
         site = api.getSite(intent.getLongExtra("site", -1))
         val list = ArrayList<String>()

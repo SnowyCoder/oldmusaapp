@@ -13,10 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.activity_home.*
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.*
 import com.cnr_isac.oldmusa.Account.api
 import kotlinx.android.synthetic.main.add_museum.*
 import java.util.*
@@ -36,6 +33,13 @@ class Home : AppCompatActivity() {
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
+
+        // permission
+        if (!api.getMe().isAdmin)
+        {
+            val buttonVisible = findViewById(R.id.addSiti) as Button
+            buttonVisible.visibility=View.GONE
+        }
 
         val sites = api.getSites()
         var list = ArrayList<String>()
