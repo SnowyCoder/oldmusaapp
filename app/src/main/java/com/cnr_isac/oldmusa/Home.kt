@@ -2,21 +2,22 @@ package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.StrictMode
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import kotlinx.android.synthetic.main.activity_home.*
 import android.view.WindowManager
 import android.widget.*
 import com.cnr_isac.oldmusa.Account.api
+import com.cnr_isac.oldmusa.api.Site
+import com.cnr_isac.oldmusa.util.ApiUtil.query
+import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.add_museum.*
-import java.util.*
 
 
 class Home : AppCompatActivity() {
@@ -27,12 +28,13 @@ class Home : AppCompatActivity() {
     lateinit var mToggle: ActionBarDrawerToggle
         private set
 
+    lateinit var sites: List<Site>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
+        val listView = findViewById<ListView>(R.id.ListMuseum)
 
         // permission
         if (!api.getMe().isAdmin)
@@ -41,19 +43,18 @@ class Home : AppCompatActivity() {
             buttonVisible.visibility=View.GONE
         }
 
-        val sites = api.getSites()
-        var list = ArrayList<String>()
-        for (museum in sites) {
-            Log.e("museum", museum.name)
-            list.add(museum.name ?: "null")
-        }
+        query {
+            api.getSites()
+        }.onResult { sites ->
+            this.sites = sites
 
-        Log.e("test", list.toString())
+            val nameList = sites.map { it.name ?: "null" }
 
-        val listView = findViewById<ListView>(R.id.ListMuseum)
+            Log.e(TAG, nameList.toString())
 
-        val adapter = ArrayAdapter<String>(this, R.layout.list_museum_item, list)
-        listView.adapter = adapter
+            val adapter = ArrayAdapter<String>(this, R.layout.list_museum_item, nameList)
+            listView.adapter = adapter
+        }.withLoading(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, Museum::class.java)
@@ -94,12 +95,14 @@ class Home : AppCompatActivity() {
         Log.e("start", "start add museum")
         val museumName = view.findViewById<EditText>(R.id.nameMuseum)!!
         val idCnr = view.findViewById<EditText>(R.id.idCnr)!!
-        val newMuseum = api.addSite()
-        newMuseum.name = museumName.text.toString()
-        Log.e("text", newMuseum.name)
-        newMuseum.idCnr = idCnr.text.toString()
-        Log.e("text", newMuseum.idCnr)
-        newMuseum.commit()
+        query {
+            val newMuseum = api.addSite()
+            newMuseum.name = museumName.text.toString()
+            Log.e("text", newMuseum.name)
+            newMuseum.idCnr = idCnr.text.toString()
+            Log.e("text", newMuseum.idCnr)
+            newMuseum.commit()
+        }.withLoading(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -107,5 +110,9 @@ class Home : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        const val TAG = "Home"
     }
 }

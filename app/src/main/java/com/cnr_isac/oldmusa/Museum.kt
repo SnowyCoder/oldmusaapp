@@ -39,6 +39,8 @@ import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.MuseMap
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
+import com.cnr_isac.oldmusa.util.ApiUtil.query
+import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
 import kotlinx.serialization.typeTokenOf
 import java.lang.Exception
 
@@ -62,8 +64,7 @@ class Museum : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(activity_museum)
 
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
+        // get site
 
         // permission
         if (!api.getMe().isAdmin)
@@ -79,19 +80,24 @@ class Museum : AppCompatActivity() {
         }
 
         // get site
-        site = api.getSite(intent.getLongExtra("site", -1))
         val list = ArrayList<String>()
-        for (sensor in site.sensors) {
-            list.add(sensor.name ?: "null")
-        }
+        query {
+            // Query everything needed in async
+            site = api.getSite(intent.getLongExtra("site", -1))
+            Pair(site.sensors, site.maps[0].getImage())
+        }.onResult { (sensors, imageMap) ->
+            // Then use it in the sync thread
+            for (sensor in sensors) {
+                list.add(sensor.name ?: "null")
+            }
 
-        e("test", list.toString())
+            val map = findViewById<ImageView>(R.id.mapMuseum)
 
-        val map = findViewById<ImageView>(R.id.mapMuseum)
-
-            val imageMap = site.maps[0].getImage()
             //e("decodeStream", BitmapFactory.decodeStream(imageMap).toString())
             map.setImageBitmap(BitmapFactory.decodeStream(imageMap))
+        }.withLoading(this)
+
+        e("test", list.toString())
 
         val listView = findViewById<ListView>(R.id.SensorList)
 
@@ -200,12 +206,19 @@ class Museum : AppCompatActivity() {
                 val idcnrSensor = d.findViewById<EditText>(R.id.idcnrSensore)
                 e("print", idcnrSensor.toString())
 
-                site.addSensor(ApiSensor(name = nameSensor.text.toString(), idCnr = idcnrSensor.text.toString().toLong()))
-
-                d.dismiss()
-                val refresh = Intent(this, Museum::class.java)
-                refresh.putExtra("site", site.id)
-                startActivity(refresh)
+                query {
+                    site.addSensor(
+                        ApiSensor(
+                            name = nameSensor.text.toString(),
+                            idCnr = idcnrSensor.text.toString().toLong()
+                        )
+                    )
+                }.onResult {
+                    d.dismiss()
+                    val refresh = Intent(this, Museum::class.java)
+                    refresh.putExtra("site", site.id)
+                    startActivity(refresh)
+                }
             }
         }
 

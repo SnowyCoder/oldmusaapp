@@ -3,6 +3,7 @@ package com.cnr_isac.oldmusa.firebase
 import android.util.Log
 import com.cnr_isac.oldmusa.Login
 import com.cnr_isac.oldmusa.api.Api
+import com.cnr_isac.oldmusa.util.ApiUtil.RawQuery
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 
@@ -21,7 +22,9 @@ object FirebaseUtil {
                 // Log and push
                 Log.d(Login.TAG, "Publishing FCM id: $token")
 
-                api.getMe().addContactFCM(token)
+                RawQuery {
+                    api.getMe().addContactFCM(token)
+                }
             })
     }
 }
