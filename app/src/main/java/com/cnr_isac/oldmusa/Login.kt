@@ -50,7 +50,7 @@ class Login : AppCompatActivity() {
 
         // If the api is already logged in, skip
         query { isLoginNeeded() }.onResult {
-            if (!it) goToHome()
+            //if (!it) goToHome()
         }
     }
 

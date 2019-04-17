@@ -37,10 +37,10 @@ class Home : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.ListMuseum)
 
         // permission
-        if (!api.getMe().isAdmin)
+        if (api.getMe().isAdmin)
         {
             val buttonVisible = findViewById(R.id.addSiti) as Button
-            buttonVisible.visibility=View.GONE
+            buttonVisible.visibility=View.VISIBLE
         }
 
         query {

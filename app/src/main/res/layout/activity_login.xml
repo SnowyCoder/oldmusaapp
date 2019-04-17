@@ -24,11 +24,11 @@
                                           app:layout_constraintGuide_percent="0.31"/>
     <TextView
             android:text="@string/app_name"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/projecName"
             app:layout_constraintTop_toTopOf="@+id/guideline64"
-            android:textSize="35dp"
+            android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/guideline5" app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -38,8 +38,8 @@
                                           android:orientation="horizontal"
                                           app:layout_constraintGuide_percent="0.38"/>
     <EditText
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/user"
@@ -54,8 +54,8 @@
                                           android:orientation="horizontal"
                                           app:layout_constraintGuide_percent="0.47"/>
     <EditText
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
             android:drawableLeft="@drawable/ic_lock"

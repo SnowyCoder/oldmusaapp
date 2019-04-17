@@ -67,42 +67,38 @@ class Museum : AppCompatActivity() {
         // get site
 
         // permission
-        if (!api.getMe().isAdmin)
+        if (api.getMe().isAdmin)
         {
             val buttonVisible1 = findViewById(R.id.addMapbutton) as Button
-            buttonVisible1.visibility=View.GONE
+            buttonVisible1.visibility=View.VISIBLE
 
             val buttonVisible2 = findViewById(R.id.addSensorbutton) as Button
-            buttonVisible2.visibility=View.GONE
+            buttonVisible2.visibility=View.VISIBLE
 
             val buttonVisible3 = findViewById(R.id.addChannelButton) as Button
-            buttonVisible3.visibility=View.GONE
+            buttonVisible3.visibility=View.VISIBLE
         }
 
+        val listView = findViewById<ListView>(R.id.SensorList)
+
+
         // get site
-        val list = ArrayList<String>()
         query {
             // Query everything needed in async
             site = api.getSite(intent.getLongExtra("site", -1))
             Pair(site.sensors, site.maps[0].getImage())
         }.onResult { (sensors, imageMap) ->
             // Then use it in the sync thread
-            for (sensor in sensors) {
-                list.add(sensor.name ?: "null")
-            }
+            val list = sensors.map { it.name ?: "null"}
 
             val map = findViewById<ImageView>(R.id.mapMuseum)
 
             //e("decodeStream", BitmapFactory.decodeStream(imageMap).toString())
             map.setImageBitmap(BitmapFactory.decodeStream(imageMap))
+
+            val adapter = ArrayAdapter<String>(this, list_sensor_item, list)
+            listView.adapter = adapter
         }.withLoading(this)
-
-        e("test", list.toString())
-
-        val listView = findViewById<ListView>(R.id.SensorList)
-
-        val adapter = ArrayAdapter<String>(this, list_sensor_item, list)
-        listView.adapter = adapter
 
         // add event listener to array items
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, _, _ ->
