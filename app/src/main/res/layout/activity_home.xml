@@ -10,7 +10,6 @@
         tools:context=".Home">
 
     <android.support.constraint.ConstraintLayout
-            android:background="@drawable/ic_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -27,16 +26,17 @@
                 app:layout_constraintBottom_toTopOf="@+id/guideline23">
         </ListView>
 
-        <Button
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+        <ImageButton
+                android:layout_width="55sp"
+                android:layout_height="55sp"
                 android:id="@+id/addSiti"
                 android:background="@drawable/ic_circle_button"
-                android:drawableLeft="@drawable/ic_museum"
+                android:src="@drawable/ic_museum"
                 app:layout_constraintStart_toStartOf="@+id/guideline65"
                 app:layout_constraintEnd_toStartOf="@+id/guideline13"
                 app:layout_constraintBottom_toTopOf="@+id/guideline28"
-                app:layout_constraintTop_toTopOf="@+id/guideline66" />
+                app:layout_constraintTop_toTopOf="@+id/guideline66"
+                android:visibility="gone"/>
 
         <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                               android:id="@+id/guideline13"

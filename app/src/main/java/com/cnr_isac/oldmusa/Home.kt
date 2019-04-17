@@ -39,7 +39,7 @@ class Home : AppCompatActivity() {
         // permission
         if (api.getMe().isAdmin)
         {
-            val buttonVisible = findViewById(R.id.addSiti) as Button
+            val buttonVisible = findViewById<ImageButton>(R.id.addSiti)
             buttonVisible.visibility=View.VISIBLE
         }
 

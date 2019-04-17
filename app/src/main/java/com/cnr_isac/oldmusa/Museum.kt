@@ -69,13 +69,13 @@ class Museum : AppCompatActivity() {
         // permission
         if (api.getMe().isAdmin)
         {
-            val buttonVisible1 = findViewById(R.id.addMapbutton) as Button
+            val buttonVisible1 = findViewById<ImageButton>(R.id.addMapbutton)
             buttonVisible1.visibility=View.VISIBLE
 
-            val buttonVisible2 = findViewById(R.id.addSensorbutton) as Button
+            val buttonVisible2 = findViewById<ImageButton>(R.id.addSensorbutton)
             buttonVisible2.visibility=View.VISIBLE
 
-            val buttonVisible3 = findViewById(R.id.addChannelButton) as Button
+            val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
             buttonVisible3.visibility=View.VISIBLE
         }
 
@@ -114,10 +114,10 @@ class Museum : AppCompatActivity() {
             d.window!!.attributes = lp
 
             // set up calendar
-            val nextYear = Calendar.getInstance()
+            /*val nextYear = Calendar.getInstance()
             nextYear.add(Calendar.YEAR, 1)
 
-            /*calendar = d.findViewById<CalendarPickerView>(R.id.calendar_view)
+            calendar = d.findViewById<CalendarPickerView>(R.id.calendar_view)
             val today = Date()
             calendar.init(today, nextYear.time)
                 .withSelectedDate(today)
@@ -125,9 +125,9 @@ class Museum : AppCompatActivity() {
             calendar.highlightDates(getHolidays())
 
             // submit graph button listener
-            /*d.create.setOnClickListener { view -> // create = bottone invio
+            d.create.setOnClickListener { view -> // create = bottone invio
                 d.dismiss()
-            }*/*/
+            }*/
         }
 
         // open map options modal
@@ -137,8 +137,8 @@ class Museum : AppCompatActivity() {
             val d = mBuilder.setView(LayoutInflater.from(this).inflate(add_map, null)).create()
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(d.window!!.attributes)
-            lp.width = (resources.displayMetrics.widthPixels * 0.90).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.80).toInt()
+            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.40).toInt()
             d.show()
             d.window!!.attributes = lp
 
@@ -190,8 +190,8 @@ class Museum : AppCompatActivity() {
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(d.window!!.attributes)
             lp.title = "Aggiungi sensore"
-            lp.width = (resources.displayMetrics.widthPixels * 0.90).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.80).toInt()
+            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.60).toInt()
             d.show()
             d.window!!.attributes = lp
 

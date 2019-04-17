@@ -49,18 +49,17 @@
                                               android:id="@+id/guideline17"
                                               android:orientation="horizontal"
                                               app:layout_constraintGuide_percent="0.85"/>
-        <Button
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+        <ImageButton
+                android:layout_width="55sp"
+                android:layout_height="55sp"
                 android:id="@+id/addMapbutton"
                 android:background="@drawable/ic_circle_button"
-                android:drawableStart="@drawable/ic_map"
-                android:paddingLeft="11dp"
-                android:paddingRight="11dp"
+                android:src="@drawable/ic_map"
                 app:layout_constraintBottom_toTopOf="@+id/guideline18"
-                app:layout_constraintStart_toStartOf="@+id/guideline19" android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
                 app:layout_constraintTop_toTopOf="@+id/guideline67"
-                app:layout_constraintEnd_toStartOf="@+id/guideline68" android:visibility="gone"/>
+                app:layout_constraintEnd_toStartOf="@+id/guideline68"
+                android:visibility="gone"/>
         <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                               android:id="@+id/guideline18"
                                               android:orientation="horizontal"
@@ -72,17 +71,17 @@
                                               android:id="@+id/guideline20"
                                               android:orientation="vertical" app:layout_constraintGuide_percent="0.95"/>
 
-        <Button
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+        <ImageButton
+                android:layout_width="55sp"
+                android:layout_height="55sp"
                 android:id="@+id/addSensorbutton"
                 android:background="@drawable/ic_circle_button"
-                android:drawableStart="@drawable/ic_sensor"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp" app:layout_constraintBottom_toTopOf="@+id/guideline18"
-                app:layout_constraintEnd_toStartOf="@+id/guideline20" android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_sensor"
+                app:layout_constraintBottom_toTopOf="@+id/guideline18"
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"
                 app:layout_constraintTop_toTopOf="@+id/guideline67"
-                app:layout_constraintStart_toStartOf="@+id/guideline69" android:visibility="gone"/>
+                app:layout_constraintStart_toStartOf="@+id/guideline69"
+                android:visibility="gone"/>
         <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                               android:id="@+id/guideline67"
                                               android:orientation="horizontal"
@@ -93,17 +92,18 @@
         <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                               android:id="@+id/guideline69"
                                               android:orientation="vertical" app:layout_constraintGuide_percent="0.81"/>
-        <Button
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+        <ImageButton
+                android:layout_width="55sp"
+                android:layout_height="55sp"
                 android:id="@+id/addChannelButton"
                 android:background="@drawable/ic_circle_button"
-                android:drawableStart="@drawable/ic_channel"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp" app:layout_constraintTop_toTopOf="@+id/guideline67"
-                app:layout_constraintBottom_toTopOf="@+id/guideline18" app:layout_constraintVertical_bias="0.0"
+                android:src="@drawable/ic_channel"
+                app:layout_constraintTop_toTopOf="@+id/guideline67"
+                app:layout_constraintBottom_toTopOf="@+id/guideline18"
                 app:layout_constraintStart_toStartOf="@+id/guideline70"
-                app:layout_constraintEnd_toStartOf="@+id/guideline71" android:visibility="gone"/>
+                app:layout_constraintEnd_toStartOf="@+id/guideline71"
+                android:visibility="gone"
+        />
         <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                               android:id="@+id/guideline70"
                                               android:orientation="vertical" app:layout_constraintGuide_percent="0.44"/>

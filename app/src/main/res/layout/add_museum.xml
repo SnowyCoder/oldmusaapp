@@ -54,6 +54,7 @@
             android:id="@+id/AddButtonM"
             android:text="Aggiungi"
             android:onClick="addMuseum"
+            android:background="#FFB74D"
             app:layout_constraintEnd_toStartOf="@+id/guideline25"
             app:layout_constraintStart_toStartOf="@+id/guideline24"
             app:layout_constraintHorizontal_bias="0.489"

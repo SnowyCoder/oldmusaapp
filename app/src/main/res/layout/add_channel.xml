@@ -17,6 +17,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:id="@+id/AddButtonC"
+        android:background="#FFB74D"
         android:text="Aggiungi"
         android:onClick="addChannel"
         />
