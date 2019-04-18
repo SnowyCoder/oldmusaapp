@@ -81,6 +81,9 @@ class Museum : AppCompatActivity() {
 
         val listView = findViewById<ListView>(R.id.SensorList)
 
+        
+        //view.bringToFront();
+
 
         // get site
         query {

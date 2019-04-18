@@ -16,7 +16,7 @@
 
         <ImageView
                 android:layout_width="0dp"
-                android:layout_height="0dp" tools:srcCompat="@tools:sample/avatars[8]"
+                android:layout_height="0dp"
                 android:id="@+id/mapMuseum"
                 app:layout_constraintTop_toTopOf="@+id/guideline14"
                 app:layout_constraintBottom_toTopOf="@+id/guideline15"
@@ -110,6 +110,35 @@
         <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                               android:id="@+id/guideline71"
                                               android:orientation="vertical" app:layout_constraintGuide_percent="0.56"/>
+        <TextView
+                android:text="Nessuna mappa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView" app:layout_constraintEnd_toStartOf="@+id/guideline74"
+                app:layout_constraintStart_toStartOf="@+id/guideline73"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/guideline77"
+                android:textSize="16dp"/>
+        <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp" app:srcCompat="@drawable/ic_sad"
+                android:id="@+id/imageView" app:layout_constraintEnd_toStartOf="@+id/guideline74"
+                app:layout_constraintStart_toStartOf="@+id/guideline73"
+                app:layout_constraintTop_toTopOf="@+id/guideline76"
+                app:layout_constraintBottom_toTopOf="@+id/guideline77"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline73"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.35"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline74"
+                                              android:orientation="vertical" app:layout_constraintGuide_percent="0.65"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline76"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.20"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline77"
+                                              android:orientation="horizontal"
+                                              app:layout_constraintGuide_percent="0.30"/>
     </android.support.constraint.ConstraintLayout>
 
 
