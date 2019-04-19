@@ -1,17 +1,26 @@
 package com.cnr_isac.oldmusa.api
 
+import java.io.InputStream
+
 class Site(api: Api, id: Long, var idCnr: String?, var name: String?) : ApiEntity(api, id) {
 
     val sensors: List<Sensor>
         get() = api.getSiteSensors(id).map { api.getSensor(it) }
 
-    val maps: List<MuseMap>
-        get() = api.getSiteMaps(id).map { api.getMap(it) }
-
 
     fun addSensor(data: ApiSensor? = null) = api.addSiteSensor(id, data)
 
-    fun addMap(data: ApiMap? = null) = api.addSiteMap(id, data)
+    fun getMap(): InputStream? {
+        return api.getSiteMap(id)
+    }
+
+    fun setMap(os: InputStream) {
+        api.setSiteMap(id, os)
+    }
+
+    fun deleteMap() {
+        api.deleteSiteMap(id)
+    }
 
     fun onUpdate(data: ApiSite) {
         assert(id == data.id)

@@ -6,19 +6,11 @@ class Sensor(
         val siteId: Long,
         var idCnr: Long?,
         var name: String?,
-        var locMapId: Long?,
         var locX: Long?,
         var locY: Long?,
         var enabled: Boolean,
         var status: String
 ) : ApiEntity(api, id) {
-
-    var locMap: MuseMap?
-        get() = locMapId?.let { api.getMap(it) }
-        set(value) {
-            locMapId = value?.id
-        }
-
     val channels: List<Channel>
         get() = api.getSensorChannels(id).map { api.getChannel(it) }
 
@@ -26,7 +18,6 @@ class Sensor(
         assert(id == data.id)
         assert(siteId == data.siteId)
         this.name = data.name
-        this.locMapId = data.locMap
         this.locX = data.locX
         this.locY = data.locY
         this.enabled = data.enabled
@@ -34,7 +25,7 @@ class Sensor(
     }
 
     fun serialize(): ApiSensor {
-        return ApiSensor(id, idCnr, siteId, name, locMapId, locX, locY, enabled, status)
+        return ApiSensor(id, idCnr, siteId, name, locX, locY, enabled, status)
     }
 
     fun commit() {

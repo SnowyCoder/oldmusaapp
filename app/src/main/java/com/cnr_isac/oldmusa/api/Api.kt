@@ -64,28 +64,15 @@ interface Api {
 
     fun addSiteSensor(siteId: Long, sensor: ApiSensor?): Sensor
 
-    fun getSiteMaps(siteId: Long): List<Long>
+    fun getSiteMap(id: Long): InputStream?
 
-    fun addSiteMap(siteId: Long, map: ApiMap?): MuseMap
+    fun setSiteMap(id: Long, data: InputStream)
+
+    fun deleteSiteMap(id: Long)
 
     fun updateSite(id: Long, data: ApiSite): Site
 
     fun deleteSite(id: Long)
-
-    // ---------------- MAP ----------------
-
-    fun getMap(id: Long): MuseMap
-
-    fun getMapImage(id: Long): InputStream
-
-    fun setMapImage(id: Long, data: InputStream)
-
-    fun getMapSensors(id: Long): List<Long>
-
-    fun updateMap(id: Long, data: ApiMap): MuseMap
-
-    fun deleteMap(id: Long)
-
 
     // ---------------- SENSOR ----------------
 

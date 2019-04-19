@@ -47,6 +47,7 @@ object Account {
         }
     }
 
+    @Synchronized
     fun getApi(context: Context): Api {
         lapi?.let { return it }
         val api = loadApi(context)

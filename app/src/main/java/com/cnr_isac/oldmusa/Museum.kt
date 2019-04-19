@@ -4,45 +4,31 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.drm.DrmStore
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.StrictMode
-import android.support.constraint.ConstraintLayout
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.Log.e
 import android.view.*
 import android.widget.*
-import com.cnr_isac.oldmusa.R.layout.*
-import com.squareup.timessquare.CalendarPickerView
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_museum.*
-import kotlinx.android.synthetic.main.add_museum.*
-import kotlinx.android.synthetic.main.add_museum.view.*
-import kotlinx.android.synthetic.main.add_sensor.*
-import kotlinx.android.synthetic.main.add_sensor.view.*
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.ArrayList
-import java.util.Date
-import java.util.Calendar
-import android.widget.Toast
 import com.cnr_isac.oldmusa.Account.api
+import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
-import com.cnr_isac.oldmusa.api.MuseMap
-import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
-import kotlinx.serialization.typeTokenOf
-import java.lang.Exception
+import com.cnr_isac.oldmusa.util.StreamUtil.getMd5
+import com.squareup.timessquare.CalendarPickerView
+import kotlinx.android.synthetic.main.activity_museum.*
+import kotlinx.android.synthetic.main.add_sensor.*
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class Museum : AppCompatActivity() {
@@ -57,8 +43,6 @@ class Museum : AppCompatActivity() {
         private set
 
     private lateinit var site: Site
-
-    private lateinit var map: MuseMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,20 +68,22 @@ class Museum : AppCompatActivity() {
         
         //view.bringToFront();
 
-
         // get site
         query {
             // Query everything needed in async
             site = api.getSite(intent.getLongExtra("site", -1))
-            Pair(site.sensors, site.maps[0].getImage())
-        }.onResult { (sensors, imageMap) ->
+            Pair(site.sensors, site.getMap())
+        }.onResult { (sensors, mapData) ->
             // Then use it in the sync thread
             val list = sensors.map { it.name ?: "null"}
 
             val map = findViewById<ImageView>(R.id.mapMuseum)
 
-            //e("decodeStream", BitmapFactory.decodeStream(imageMap).toString())
-            map.setImageBitmap(BitmapFactory.decodeStream(imageMap))
+            val data = mapData?.readBytes()
+
+            data?.let {
+                map.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
+            }
 
             val adapter = ArrayAdapter<String>(this, list_sensor_item, list)
             listView.adapter = adapter
@@ -270,13 +256,6 @@ class Museum : AppCompatActivity() {
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
-    companion object {
-        //image pick code
-        private val IMAGE_PICK_CODE = 1000
-        //Permission code
-        private val PERMISSION_CODE = 1001
-    }
-
     //handle requested permission result
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode){
@@ -296,24 +275,27 @@ class Museum : AppCompatActivity() {
 
     //handle result of picked image
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        //setContentView(add_map)
+        if (data == null) return
+
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
-            e("print", data.toString())
-            //image_map.setImageURI(data?.data)
-            e("print", data?.data.toString())
-            //val text = findViewById<TextView>(R.id.imagePath)
-            //text.text = data?.data.toString()
-            //var map = site.addMap(null)
-            e("print", contentResolver.openInputStream(data?.data).toString())
-            map = site.addMap(null)
-            map.setImage(contentResolver.openInputStream(data?.data))
-            val img = api.getMapImage(map.id)
-            e("api", img.toString())
+            val bytes = contentResolver.openInputStream(data.data!!)!!.readBytes()
+
+            Log.i(TAG, "Loading image: ${bytes.getMd5()}")
+
+            site.setMap(contentResolver.openInputStream(data.data!!)!!)
 
             val refresh = Intent(this, Museum::class.java)
             refresh.putExtra("site", site.id)
             startActivity(refresh)
+            finish()
         }
     }
 
+    companion object {
+        //image pick code
+        private val IMAGE_PICK_CODE = 1000
+        //Permission code
+        private val PERMISSION_CODE = 1001
+        private const val TAG = "Museum"
+    }
 }

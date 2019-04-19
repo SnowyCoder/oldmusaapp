@@ -13,7 +13,6 @@ class RestApi(val conn: ApiConnession) : Api {
     private val sites: MutableMap<Long, WeakReference<Site>> = HashMap()
     private val sensors: MutableMap<Long, WeakReference<Sensor>> = HashMap()
     private val channels: MutableMap<Long, WeakReference<Channel>> = HashMap()
-    private val maps: MutableMap<Long, WeakReference<MuseMap>> = HashMap()
     private val users: MutableMap<Long, WeakReference<User>> = HashMap()
     private val json = Json(encodeDefaults = false)
 
@@ -198,71 +197,21 @@ class RestApi(val conn: ApiConnession) : Api {
         return getCacheOrCreateSensor(json.parse(ApiSensor.serializer(), res))
     }
 
-    override fun getSiteMaps(siteId: Long): List<Long> {
-        return json.parse(
-            Long.serializer().list,
-            query("GET", "site/$siteId/map")
-        )
-    }
-
-    override fun addSiteMap(siteId: Long, map: ApiMap?): MuseMap {
-        val content = map?.let { json.stringify(ApiMap.serializer(), it) }
-        val res = query("POST", "site/$siteId/map", content)
-        return getCacheOrCreateMap(json.parse(ApiMap.serializer(), res))
-    }
-
-    // ---------------- MAP ----------------
-
-    override fun getMap(id: Long): MuseMap {
-        return getCacheOrCreateMap(
-            json.parse(
-                ApiMap.serializer(),
-                query("GET", "map/$id")
-            )
-        )
-    }
-
-    override fun getMapImage(id: Long): InputStream {
-        return conn.connect("GET", "map/$id/image", headers = headers)
-    }
-
-    override fun setMapImage(id: Long, data: InputStream) {
-        conn.connect("PUT", "map/$id/image", content = data, contentType = "image/png", headers = headers)
-    }
-
-    override fun getMapSensors(id: Long): List<Long> {
-        return json.parse(
-            Long.serializer().list,
-            query("GET", "map/$id/sensor")
-        )
-    }
-
-    private fun getCacheOrCreateMap(data: ApiMap): MuseMap {
-        maps[data.id]?.get()?.let {
-            it.onUpdate(data)
-            return it
+    override fun getSiteMap(id: Long): InputStream? {
+        return try {
+            conn.connect("GET", "site/$id/map", headers = headers)
+        } catch (e: RestException) {
+            if (e.code != 404) throw e
+            null
         }
-
-        val map = MuseMap(this, data.id!!, data.siteId!!);
-        maps[map.id] = WeakReference(map)
-        return map
     }
 
-    override fun updateMap(id: Long, data: ApiMap): MuseMap {
-        return getCacheOrCreateMap(
-            json.parse(
-                ApiMap.serializer(),
-                query(
-                    "PUT",
-                    "map/$id",
-                    json.stringify(ApiMap.serializer(), data.copy(id = null, siteId = null))
-                )
-            )
-        )
+    override fun setSiteMap(id: Long, data: InputStream) {
+        conn.connect("PUT", "site/$id/map", content = data, contentType = "image/png", headers = headers)
     }
 
-    override fun deleteMap(id: Long) {
-        query("DELETE", "map/$id")
+    override fun deleteSiteMap(id: Long) {
+        query("DELETE", "site/$id/map")
     }
 
     // ---------------- SENSOR ----------------
@@ -297,7 +246,7 @@ class RestApi(val conn: ApiConnession) : Api {
 
         val sensor = Sensor(
             this, data.id!!, data.siteId!!, data.idCnr, data.name,
-            data.locMap, data.locX, data.locY,
+            data.locX, data.locY,
             data.enabled, data.status
         )
         sensors[sensor.id] = WeakReference(sensor)
