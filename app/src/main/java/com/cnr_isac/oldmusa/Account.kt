@@ -2,14 +2,20 @@ package com.cnr_isac.oldmusa
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import com.cnr_isac.oldmusa.api.Api
 import com.cnr_isac.oldmusa.api.rest.RestApi
+import com.cnr_isac.oldmusa.util.ApiUtil
 import java.io.File
 import java.nio.charset.StandardCharsets
 
 object Account {
     private var lapi: Api? = null
     const val DEFAULT_URL = "http://localhost/api/"// Server URL
+    private const val TAG = "Account"
+
+    private var cacheToken: String? = null
+    private var isAdmin: Boolean? = null
 
 
     private fun loadToken(context: Context): String {
@@ -49,11 +55,48 @@ object Account {
 
     @Synchronized
     fun getApi(context: Context): Api {
+        //assert(!isMainThread()) { "Never request the api trough the main thread" } TODO: enable
         lapi?.let { return it }
         val api = loadApi(context)
         lapi = api
+
         return api
     }
+
+    fun getApi(context: Context, f: (a: Api) -> Unit) {
+        lapi?.let {
+            f(it)
+            return
+        }
+        ApiUtil.RawQuery {
+            Account.getApi(context)
+        }.onResult(f)
+    }
+
+    @Synchronized
+    fun cacheCheckSame(api: Api) {
+        val token = api.getCurrentToken()
+        if (token != this.cacheToken) {
+            this.isAdmin = null
+        }
+    }
+
+    fun isAdmin(api: Api, callback: (bool: Boolean) -> Unit) {
+        cacheCheckSame(api)
+        isAdmin?.let{
+            callback(it)
+            return
+        }
+        ApiUtil.RawQuery {
+            isAdmin = api.getMe().isAdmin
+            return@RawQuery isAdmin!!
+        }.onResult(callback).onRestError { Log.e(TAG, "Error querying user rights", it) }
+    }
+
+    fun ContextWrapper.isAdmin(f: (Boolean) -> Unit) {
+        Account.getApi(this) { isAdmin(it, f) }
+    }
+
 
     val ContextWrapper.api: Api
         inline get() = getApi(applicationContext)

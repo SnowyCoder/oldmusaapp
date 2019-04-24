@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.AsyncTask
+import android.os.Looper
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.util.Log
@@ -127,4 +128,6 @@ object ApiUtil {
         }
         return this
     }
+
+    fun isMainThread(): Boolean = Looper.myLooper() == Looper.getMainLooper()
 }

@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.cnr_isac.oldmusa.Account.api
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
@@ -37,10 +38,11 @@ class Home : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.ListMuseum)
 
         // permission
-        if (api.getMe().isAdmin)
-        {
+        isAdmin {
+            if (!it) return@isAdmin
+
             val buttonVisible = findViewById<ImageButton>(R.id.addSiti)
-            buttonVisible.visibility=View.VISIBLE
+            buttonVisible.visibility = View.VISIBLE
         }
 
         query {

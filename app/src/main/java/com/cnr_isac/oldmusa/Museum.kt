@@ -17,6 +17,7 @@ import android.util.Log.e
 import android.view.*
 import android.widget.*
 import com.cnr_isac.oldmusa.Account.api
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.Site
@@ -51,8 +52,9 @@ class Museum : AppCompatActivity() {
         // get site
 
         // permission
-        if (api.getMe().isAdmin)
-        {
+        isAdmin {
+            if (!it) return@isAdmin
+
             val buttonVisible1 = findViewById<ImageButton>(R.id.addMapbutton)
             buttonVisible1.visibility=View.VISIBLE
 
