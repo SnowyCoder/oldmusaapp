@@ -84,6 +84,8 @@ class Museum : AppCompatActivity() {
             val data = mapData?.readBytes()
 
             data?.let {
+                findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
+                findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
                 map.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
             }
 
