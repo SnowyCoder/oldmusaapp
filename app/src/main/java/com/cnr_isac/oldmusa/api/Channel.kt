@@ -1,5 +1,7 @@
 package com.cnr_isac.oldmusa.api
 
+import java.time.LocalDateTime
+
 
 class Channel(
     api: Api,
@@ -11,6 +13,11 @@ class Channel(
     var rangeMin: Double?,
     var rangeMax: Double?
 ) : ApiEntity(api, id) {
+
+
+    fun getReadings(start: LocalDateTime, end: LocalDateTime, precision: String = "atomic"): List<ChannelReading> {
+        return api.getChannelReadings(id, start, end)
+    }
 
     fun onUpdate(data: ApiChannel) {
         assert(id == data.id)

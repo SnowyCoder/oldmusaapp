@@ -5,4 +5,7 @@
 
     <string name="channel_name" translatable="false">alarm</string>
     <string name="channel_description">Alarm channel</string>
+    <string name="dash">-</string>
+    <string name="current_date">Showing date %s</string>
+    <string name="change_date">Change date</string>
 </resources>

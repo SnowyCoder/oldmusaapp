@@ -59,23 +59,23 @@ data class ApiSensor(
 @Serializable
 data class ChannelReading(
     @Serializable(LocalDateTimeSerializer::class) val date: LocalDateTime,
-    @SerialName("value_min") val valueMin: Long,
-    @Optional @SerialName("value_avg") val valueAvg: Long? = null,
-    @Optional @SerialName("value_max") val valueMax: Long? = null,
-    @Optional val deviation: Long? = null,
+    @SerialName("value_min") val valueMin: Double,
+    @Optional @SerialName("value_avg") val valueAvg: Double? = null,
+    @Optional @SerialName("value_max") val valueMax: Double? = null,
+    @Optional val deviation: Double? = null,
     @Optional val error: Char? = null
 )
 
 @Serializer(forClass = LocalDateTime::class)
 object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override val descriptor: SerialDescriptor = StringDescriptor.withName("DateSerializer")
-    private val formatter = DateTimeFormatter.ISO_LOCAL_TIME
+    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
     override fun serialize(encoder: Encoder, obj: LocalDateTime) {
         encoder.encodeString(formatter.format(obj))
     }
 
     override fun deserialize(decoder: Decoder): LocalDateTime {
-        return LocalDateTime.parse(decoder.decodeString(), formatter)
+        return LocalDateTime.parse(decoder.decodeString().trimEnd('Z'), formatter)
     }
 }

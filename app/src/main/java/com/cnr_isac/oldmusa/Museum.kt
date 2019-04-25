@@ -20,6 +20,7 @@ import com.cnr_isac.oldmusa.Account.api
 import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
+import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
@@ -44,6 +45,13 @@ class Museum : AppCompatActivity() {
         private set
 
     private lateinit var site: Site
+
+
+    data class SensorData(val handle: Sensor) {
+        override fun toString(): String {
+            return handle.name ?: handle.id.toString()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +85,7 @@ class Museum : AppCompatActivity() {
             Pair(site.sensors, site.getMap())
         }.onResult { (sensors, mapData) ->
             // Then use it in the sync thread
-            val list = sensors.map { it.name ?: "null"}
+            val list = sensors.map { SensorData(it) }
 
             val map = findViewById<ImageView>(R.id.mapMuseum)
 
@@ -89,13 +97,19 @@ class Museum : AppCompatActivity() {
                 map.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
             }
 
-            val adapter = ArrayAdapter<String>(this, list_sensor_item, list)
+            val adapter = ArrayAdapter<SensorData>(this, list_sensor_item, list)
             listView.adapter = adapter
         }.withLoading(this)
 
         // add event listener to array items
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, _, _ ->
-            val mBuilder = AlertDialog.Builder(this)
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
+            val sensor = listView.adapter.getItem(index) as SensorData
+
+            val intent = Intent(this, QuickGraph::class.java)
+            intent.putExtra("sensor", sensor.handle.id)
+            startActivity(intent)
+
+            /*val mBuilder = AlertDialog.Builder(this)
             mBuilder.setTitle("Crea grafico")
             val d = mBuilder.setView(LayoutInflater.from(this).inflate(create_graph, null)).create()
             val lp = WindowManager.LayoutParams()
@@ -107,7 +121,7 @@ class Museum : AppCompatActivity() {
             d.window!!.attributes = lp
 
             // set up calendar
-            /*val nextYear = Calendar.getInstance()
+            val nextYear = Calendar.getInstance()
             nextYear.add(Calendar.YEAR, 1)
 
             calendar = d.findViewById<CalendarPickerView>(R.id.calendar_view)
