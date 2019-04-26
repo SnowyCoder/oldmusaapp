@@ -9,13 +9,13 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.Log.e
 import android.view.*
 import android.widget.*
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import com.cnr_isac.oldmusa.Account.api
 import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.R.layout.*
@@ -69,8 +69,8 @@ class Museum : AppCompatActivity() {
             val buttonVisible2 = findViewById<ImageButton>(R.id.addSensorbutton)
             buttonVisible2.visibility=View.VISIBLE
 
-            val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
-            buttonVisible3.visibility=View.VISIBLE
+            /*val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
+            buttonVisible3.visibility=View.VISIBLE*/
         }
 
         val listView = findViewById<ListView>(R.id.SensorList)
@@ -293,6 +293,7 @@ class Museum : AppCompatActivity() {
 
     //handle result of picked image
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (data == null) return
 
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){

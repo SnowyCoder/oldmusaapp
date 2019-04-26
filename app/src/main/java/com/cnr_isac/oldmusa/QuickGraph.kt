@@ -3,10 +3,10 @@ package com.cnr_isac.oldmusa
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.cnr_isac.oldmusa.Account.api
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.ChannelReading

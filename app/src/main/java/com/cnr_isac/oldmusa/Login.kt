@@ -1,5 +1,6 @@
 package com.cnr_isac.oldmusa
 
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -7,11 +8,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import com.cnr_isac.oldmusa.Account.api
 import com.cnr_isac.oldmusa.firebase.FirebaseUtil
 import com.cnr_isac.oldmusa.util.ApiUtil
