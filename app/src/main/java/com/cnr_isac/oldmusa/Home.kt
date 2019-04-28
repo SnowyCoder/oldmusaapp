@@ -1,47 +1,41 @@
 package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
-import com.cnr_isac.oldmusa.Account.api
-import com.cnr_isac.oldmusa.Account.isAdmin
+import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.cnr_isac.oldmusa.api.Site
+import com.cnr_isac.oldmusa.util.ApiUtil.api
+import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.add_museum.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
-class Home : AppCompatActivity() {
-
-    lateinit var mDrawerlayout: DrawerLayout
-        private set
-
-    lateinit var mToggle: ActionBarDrawerToggle
-        private set
+class Home : Fragment() {
 
     lateinit var sites: List<Site>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
 
-        val listView = findViewById<ListView>(R.id.ListMuseum)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+
+        val listView = view.findViewById<ListView>(R.id.ListMuseum)
 
         // permission
         isAdmin {
             if (!it) return@isAdmin
 
-            val buttonVisible = findViewById<ImageButton>(R.id.addSiti)
+            val buttonVisible = view.findViewById<ImageButton>(R.id.addSiti)
             buttonVisible.visibility = View.VISIBLE
         }
 
@@ -54,28 +48,21 @@ class Home : AppCompatActivity() {
 
             Log.e(TAG, nameList.toString())
 
-            val adapter = ArrayAdapter<String>(this, R.layout.list_museum_item, nameList)
+            val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
             listView.adapter = adapter
         }.withLoading(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val intent = Intent(this, Museum::class.java)
-            intent.putExtra("site", sites[position].id)
-            startActivity(intent)
+            val action = HomeDirections.actionHomeToSite(sites[position].id)
+            view.findNavController().navigate(action)
         }
 
-        mDrawerlayout = findViewById(R.id.drawer)
-        mToggle = ActionBarDrawerToggle(this, mDrawerlayout, R.string.open, R.string.close)
-        mDrawerlayout.addDrawerListener(mToggle)
-        mToggle.syncState()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        addSiti.setOnClickListener{
+        view.findViewById<ImageButton>(R.id.addSiti).setOnClickListener{
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
 
-            val mBuilder = AlertDialog.Builder(this)
+            val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi museo")
-            val d = mBuilder.setView(LayoutInflater.from(this).inflate(R.layout.add_museum, null)).create()
+            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_museum, null)).create()
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(d.window!!.attributes)
             lp.title = "Aggiungi museo"
@@ -90,6 +77,7 @@ class Home : AppCompatActivity() {
             }
         }
 
+        return view
     }
 
     fun addMuseum (view: View) {
@@ -104,13 +92,6 @@ class Home : AppCompatActivity() {
             Log.e("text", newMuseum.idCnr)
             newMuseum.commit()
         }.withLoading(this)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (mToggle.onOptionsItemSelected(item)) {
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     companion object {

@@ -69,7 +69,7 @@ object Account {
             return
         }
         ApiUtil.RawQuery {
-            Account.getApi(context)
+            getApi(context)
         }.onResult(f)
     }
 
@@ -92,12 +92,4 @@ object Account {
             return@RawQuery isAdmin!!
         }.onResult(callback).onRestError { Log.e(TAG, "Error querying user rights", it) }
     }
-
-    fun ContextWrapper.isAdmin(f: (Boolean) -> Unit) {
-        Account.getApi(this) { isAdmin(it, f) }
-    }
-
-
-    val ContextWrapper.api: Api
-        inline get() = getApi(applicationContext)
 }

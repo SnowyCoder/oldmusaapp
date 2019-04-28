@@ -1,7 +1,6 @@
 package com.cnr_isac.oldmusa
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -9,43 +8,30 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.Log.e
 import android.view.*
 import android.widget.*
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
-import com.cnr_isac.oldmusa.Account.api
-import com.cnr_isac.oldmusa.Account.isAdmin
+import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
+import com.cnr_isac.oldmusa.util.ApiUtil.api
+import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
-import com.cnr_isac.oldmusa.util.StreamUtil.getMd5
-import com.squareup.timessquare.CalendarPickerView
-import kotlinx.android.synthetic.main.activity_museum.*
 import kotlinx.android.synthetic.main.add_sensor.*
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.android.synthetic.main.fragment_museum.*
 
 
-class Museum : AppCompatActivity() {
+class Site : Fragment() {
+    private lateinit var listView: ListView
 
-    lateinit var calendar: CalendarPickerView
-        private set
+    val args: SiteArgs by navArgs()
 
-    lateinit var mDrawerLayout: DrawerLayout
-        private set
-
-    lateinit var mToggle: ActionBarDrawerToggle
-        private set
-
-    private lateinit var site: Site
-
+    lateinit var currentSite: Site
 
     data class SensorData(val handle: Sensor) {
         override fun toString(): String {
@@ -53,61 +39,36 @@ class Museum : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(activity_museum)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
 
-        // get site
+        val view = inflater.inflate(fragment_museum, container, false)
 
         // permission
         isAdmin {
             if (!it) return@isAdmin
 
-            val buttonVisible1 = findViewById<ImageButton>(R.id.addMapbutton)
+            val buttonVisible1 = view.findViewById<ImageButton>(R.id.addMapbutton)
             buttonVisible1.visibility=View.VISIBLE
 
-            val buttonVisible2 = findViewById<ImageButton>(R.id.addSensorbutton)
+            val buttonVisible2 = view.findViewById<ImageButton>(R.id.addSensorbutton)
             buttonVisible2.visibility=View.VISIBLE
 
             /*val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
             buttonVisible3.visibility=View.VISIBLE*/
         }
 
-        val listView = findViewById<ListView>(R.id.SensorList)
+        listView = view.findViewById(R.id.SensorList)
 
         
         //view.bringToFront();
-
-        // get site
-        query {
-            // Query everything needed in async
-            site = api.getSite(intent.getLongExtra("site", -1))
-            Pair(site.sensors, site.getMap())
-        }.onResult { (sensors, mapData) ->
-            // Then use it in the sync thread
-            val list = sensors.map { SensorData(it) }
-
-            val map = findViewById<ImageView>(R.id.mapMuseum)
-
-            val data = mapData?.readBytes()
-
-            data?.let {
-                findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
-                findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
-                map.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
-            }
-
-            val adapter = ArrayAdapter<SensorData>(this, list_sensor_item, list)
-            listView.adapter = adapter
-        }.withLoading(this)
 
         // add event listener to array items
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
             val sensor = listView.adapter.getItem(index) as SensorData
 
-            val intent = Intent(this, QuickGraph::class.java)
-            intent.putExtra("sensor", sensor.handle.id)
-            startActivity(intent)
+
+            view.findNavController().navigate(SiteDirections.actionSiteToQuickGraph(sensor.handle.id))
 
             /*val mBuilder = AlertDialog.Builder(this)
             mBuilder.setTitle("Crea grafico")
@@ -138,10 +99,10 @@ class Museum : AppCompatActivity() {
         }
 
         // open map options modal
-        addMapbutton.setOnClickListener {
-            val mBuilder = AlertDialog.Builder(this)
+        view.findViewById<ImageButton>(R.id.addMapbutton).setOnClickListener {
+            val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi mappa")
-            val d = mBuilder.setView(LayoutInflater.from(this).inflate(add_map, null)).create()
+            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_map, null)).create()
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(d.window!!.attributes)
             lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
@@ -159,12 +120,12 @@ class Museum : AppCompatActivity() {
             img_pick_btn.setOnClickListener {
                 //check runtime permission
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    if (context!!.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_DENIED){
                         //permission denied
                         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                         //show popup to request runtime permission
-                        requestPermissions(permissions, Museum.PERMISSION_CODE)
+                        requestPermissions(permissions, PERMISSION_CODE)
                     }
                     else{
                         //permission already granted
@@ -180,20 +141,13 @@ class Museum : AppCompatActivity() {
             }
         }
 
-        // setup drawer layout for modals
-        mDrawerLayout = findViewById(R.id.drawerSite)
-        mToggle = ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close)
-        mDrawerLayout.addDrawerListener(mToggle)
-        mToggle.syncState()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         // open add sensor modal
-        addSensorbutton.setOnClickListener{
+        view.findViewById<ImageButton>(R.id.addSensorbutton).setOnClickListener{
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
 
-            val mBuilder = AlertDialog.Builder(this)
+            val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi sensore")
-            val d = mBuilder.setView(LayoutInflater.from(this).inflate(add_sensor, null)).create()
+            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_sensor, null)).create()
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(d.window!!.attributes)
             lp.title = "Aggiungi sensore"
@@ -210,7 +164,7 @@ class Museum : AppCompatActivity() {
                 e("print", idcnrSensor.toString())
 
                 query {
-                    site.addSensor(
+                    currentSite.addSensor(
                         ApiSensor(
                             name = nameSensor.text.toString(),
                             idCnr = idcnrSensor.text.toString().toLong()
@@ -218,19 +172,42 @@ class Museum : AppCompatActivity() {
                     )
                 }.onResult {
                     d.dismiss()
-                    val refresh = Intent(this, Museum::class.java)
-                    refresh.putExtra("site", site.id)
-                    startActivity(refresh)
+                    reloadSite()
                 }
             }
         }
 
+        return view
     }
 
-    @SuppressLint("ResourceType")
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.layout.menu_main, menu)
-        return true
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        reloadSite()
+    }
+
+    fun reloadSite() {
+        val siteId = args.siteId
+
+        query {
+            // Query everything needed in async
+            val site = api.getSite(siteId)
+            Pair(site.sensors, site.getMap())
+        }.onResult { (sensors, mapData) ->
+            // Then use it in the sync thread
+            val list = sensors.map { SensorData(it) }
+
+            val map = view!!.findViewById<ImageView>(R.id.mapMuseum)
+
+            val data = mapData?.readBytes()
+
+            data?.let {
+                view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
+                view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
+                map.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
+            }
+
+            val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
+            listView.adapter = adapter
+        }.withLoading(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -241,30 +218,13 @@ class Museum : AppCompatActivity() {
                 val selectedDates = calendar
                     .selectedDates as ArrayList<Date>
                 Toast.makeText(
-                    this@Museum, selectedDates.toString(),
+                    this@Site, selectedDates.toString(),
                     Toast.LENGTH_LONG
                 ).show()
                 return true
             }
         }*/
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun getHolidays(): ArrayList<Date> {
-        val sdf = SimpleDateFormat("dd-M-yyyy")
-        val dateInString = "21-04-2015"
-        var date: Date? = null
-        try {
-            date = sdf.parse(dateInString)
-        } catch (e: ParseException) {
-            e.printStackTrace()
-        }
-
-        val holidays = ArrayList<Date>()
-        if (date != null) {
-            holidays.add(date)
-        }
-        return holidays
     }
 
     private fun pickImageFromGallery() {
@@ -285,7 +245,7 @@ class Museum : AppCompatActivity() {
                 }
                 else{
                     //permission from popup denied
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context!!, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -297,16 +257,11 @@ class Museum : AppCompatActivity() {
         if (data == null) return
 
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
-            val bytes = contentResolver.openInputStream(data.data!!)!!.readBytes()
+            val bytes = context!!.contentResolver.openInputStream(data.data!!)!!.readBytes()
 
-            Log.i(TAG, "Loading image: ${bytes.getMd5()}")
+            currentSite.setMap(context!!.contentResolver.openInputStream(data.data!!)!!)
 
-            site.setMap(contentResolver.openInputStream(data.data!!)!!)
-
-            val refresh = Intent(this, Museum::class.java)
-            refresh.putExtra("site", site.id)
-            startActivity(refresh)
-            finish()
+            reloadSite()
         }
     }
 
@@ -315,6 +270,6 @@ class Museum : AppCompatActivity() {
         private val IMAGE_PICK_CODE = 1000
         //Permission code
         private val PERMISSION_CODE = 1001
-        private const val TAG = "Museum"
+        private const val TAG = "Site"
     }
 }

@@ -10,12 +10,11 @@ import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import android.util.Log
-import com.cnr_isac.oldmusa.Account.api
-import com.cnr_isac.oldmusa.Account.getApi
 import com.cnr_isac.oldmusa.Login
 import com.cnr_isac.oldmusa.R
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
+import com.cnr_isac.oldmusa.util.ApiUtil.api
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
 
 class AppFirebaseMessagingService : FirebaseMessagingService() {
     /**

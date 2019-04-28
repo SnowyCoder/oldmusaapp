@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/login">
+
+    <fragment
+        android:id="@+id/login"
+        android:name="com.cnr_isac.oldmusa.Login"
+        android:label="Login" >
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/home" />
+    </fragment>
+    <fragment
+        android:id="@+id/home"
+        android:name="com.cnr_isac.oldmusa.Home"
+        android:label="Home" >
+        <action
+            android:id="@+id/action_home_to_site"
+            app:destination="@id/site" />
+    </fragment>
+    <fragment
+        android:id="@+id/site"
+        android:name="com.cnr_isac.oldmusa.Site"
+        android:label="Site">
+        <action
+            android:id="@+id/action_site_to_quickGraph"
+            app:destination="@id/quickGraph" />
+        <argument
+            android:name="siteId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/quickGraph"
+        android:name="com.cnr_isac.oldmusa.QuickGraph"
+        android:label="QuickGraph" >
+        <argument
+            android:name="sensorId"
+            app:argType="long" />
+    </fragment>
+</navigation>

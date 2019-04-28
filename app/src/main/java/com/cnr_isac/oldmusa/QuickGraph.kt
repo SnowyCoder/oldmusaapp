@@ -4,29 +4,39 @@ import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.cnr_isac.oldmusa.Account.api
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.ChannelReading
+import com.cnr_isac.oldmusa.api.Sensor
+import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
+import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import com.github.mikephil.charting.formatter.ValueFormatter
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 
-class QuickGraph : AppCompatActivity() {
+class QuickGraph : Fragment() {
+
+    val args: QuickGraphArgs by navArgs()
 
     lateinit var chart: LineChart
     lateinit var data: LineData
-    private var currentDate: LocalDate = LocalDate.of(2014, 4, 1)// TODO: replace with LocalDate.now(), this is for testing purposes
+    private lateinit var currentDate: LocalDate
+
+    private lateinit var currentSensor: Sensor
 
 
     // TODO: please pick better colors (Material ones for example)
@@ -34,19 +44,19 @@ class QuickGraph : AppCompatActivity() {
         Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.GRAY
     )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
 
-        setContentView(R.layout.activity_quickgraph)
+        val view = inflater.inflate(R.layout.fragment_quickgraph, container, false)
 
-        findViewById<Button>(R.id.change_date).setOnClickListener {
-            val datePicker = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+        view.findViewById<Button>(R.id.change_date).setOnClickListener {
+            val datePicker = DatePickerDialog(context!!, { _, year, month, dayOfMonth ->
                 onDateChange(LocalDate.of(year, month + 1, dayOfMonth))
             }, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
             datePicker.show()
         }
 
-        chart = findViewById<LineChart>(R.id.chart).apply {
+        chart = view.findViewById<LineChart>(R.id.chart).apply {
             setBackgroundColor(Color.WHITE)
             description.isEnabled = true
             setTouchEnabled(true)
@@ -75,7 +85,7 @@ class QuickGraph : AppCompatActivity() {
         yAxis.enableGridDashedLine(10f, 10f, 0f)
 
 
-        onDateChange(currentDate)
+        onSensorLoad()
 
         /*var x = 0.0f
         val numDataPoints : Int = 1000
@@ -103,29 +113,44 @@ class QuickGraph : AppCompatActivity() {
 
         chart.data = LineData(sinDataSet, cosDataSet)
         */
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        onSensorLoad()
+    }
+
+    fun onSensorLoad() {
+        // Setup first date
+        currentDate =  LocalDate.of(2014, 4, 1)// TODO: replace with LocalDate.now(), this is for testing purposes
+        onDateChange(currentDate)
     }
 
 
+
     fun onDateChange(day: LocalDate) {
-        val sensorId = intent.getLongExtra("sensor", -1)
+        val sensorId = args.sensorId
         val from = day.atStartOfDay()
         val to = from.plusDays(1)
 
 
         query {
-            api.getSensor(sensorId).channels.map {
+            currentSensor = api.getSensor(sensorId)
+            currentSensor.channels.map {
                 Pair(it, it.getReadings(from, to))
             }
         }.onResult {
             Log.d(TAG, "Data: $it")
             onDataReceived(day, it)
-        }
+        }.withLoading(this)
     }
 
     fun onDataReceived(day: LocalDate, data: List<Pair<Channel, List<ChannelReading>>>) {
         currentDate = day
 
-        findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(day)
+        view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(day)
 
         val start = day.atStartOfDay()
 

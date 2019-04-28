@@ -2,7 +2,6 @@ package com.cnr_isac.oldmusa.api
 
 import java.time.LocalDateTime
 
-
 class Channel(
     api: Api,
     id: Long,

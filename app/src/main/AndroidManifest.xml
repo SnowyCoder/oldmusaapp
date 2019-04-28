@@ -13,18 +13,14 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-        <activity android:name=".Museum" android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".Home" android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".Login" android:screenOrientation="portrait">
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".QuickGraph"/>
 
         <service
                 android:name=".firebase.AppFirebaseMessagingService"

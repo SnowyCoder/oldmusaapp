@@ -15,6 +15,9 @@ import android.widget.Toast
 import com.cnr_isac.oldmusa.api.RestException
 import android.widget.RelativeLayout
 import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
+import com.cnr_isac.oldmusa.Account
+import com.cnr_isac.oldmusa.api.Api
 import kotlinx.android.synthetic.main.list_item.view.*
 
 
@@ -94,8 +97,12 @@ object ApiUtil {
         }
     }
 
-    fun <R> ContextWrapper.query(f: () -> R): RawQuery<R> {
+    fun <R> Context.query(f: () -> R): RawQuery<R> {
         return RawQuery(true, f).onRestError { handleRestError(this.applicationContext, it) }
+    }
+
+    fun <R> Fragment.query(f: () -> R): RawQuery<R> {
+        return RawQuery(true, f).onRestError { handleRestError(this.context!!.applicationContext, it) }
     }
 
     fun handleRestError(ctx: Context, e: RestException) {
@@ -127,6 +134,24 @@ object ApiUtil {
             (layout.parent as ViewGroup).removeView(layout)
         }
         return this
+    }
+
+    fun <P> RawQuery<P>.withLoading(context: Fragment): RawQuery<P> {
+        return withLoading(context.activity!!)
+    }
+
+    val Context.api: Api
+        inline get() = Account.getApi(applicationContext)
+
+    val Fragment.api: Api
+        inline get() = Account.getApi(this.context!!.applicationContext)
+
+    fun Context.isAdmin(f: (Boolean) -> Unit) {
+        Account.getApi(this) { Account.isAdmin(it, f) }
+    }
+
+    fun Fragment.isAdmin(f: (Boolean) -> Unit) {
+        Account.getApi(context!!) { Account.isAdmin(it, f) }
     }
 
     fun isMainThread(): Boolean = Looper.myLooper() == Looper.getMainLooper()
