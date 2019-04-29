@@ -8,22 +8,19 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.firebase.FirebaseUtil
 import com.cnr_isac.oldmusa.util.ApiUtil
 import com.cnr_isac.oldmusa.util.ApiUtil.handleRestError
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import kotlinx.android.synthetic.main.activity_login.view.*
 
 
-class Login : Fragment() {
+class Login : AppCompatActivity() {
     companion object {
         val TAG = "Login"
     }
@@ -35,16 +32,16 @@ class Login : Fragment() {
             api.getMe()
         } catch (e: RuntimeException) {
             api.logout()
-            Account.saveToken(context!!)
+            Account.saveToken(this)
             return true
         }
         return false
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-        val view = inflater.inflate(R.layout.fragment_login, container, false)
+        setContentView(R.layout.activity_login)
 
         // TODO: Remove, we can keep a strong policy if we use the query API
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
@@ -56,20 +53,21 @@ class Login : Fragment() {
         query { isLoginNeeded() }.onResult {
             if (!it) goToHome()
         }
-
-        return view
     }
 
     fun login(view: View) {
-        val name = view.findViewById<EditText>(R.id.user)
-        val pass = view.findViewById<EditText>(R.id.pass)
+        val name = findViewById<EditText>(R.id.user).text
+        val pass = findViewById<EditText>(R.id.pass).text
+
+        if (name.isNullOrEmpty() or pass.isNullOrEmpty()) return
+
 
 
         ApiUtil.RawQuery {
-            api.login(name.text.toString(), pass.text.toString())
+            api.login(name.toString(), pass.toString())
         }.onRestError {
             if (it.code == 401) {
-                val dialogBuilder = AlertDialog.Builder(context!!)
+                val dialogBuilder = AlertDialog.Builder(this)
                 dialogBuilder.setMessage("Username o Password errati")
                     .setPositiveButton("OK") { dialogInterface, _ ->
                         dialogInterface.cancel()
@@ -77,9 +75,9 @@ class Login : Fragment() {
                 val alert = dialogBuilder.create()
                 alert.setTitle("Error")
                 alert.show()
-            } else handleRestError(context!!, it)
+            } else handleRestError(this, it)
         }.onResult {
-            Account.saveToken(context!!) // Save the current account to file
+            Account.saveToken(this) // Save the current account to file
             FirebaseUtil.publishFCMToken(api) // Publish the current FCM token to the server (used to send notifications)
 
             goToHome()
@@ -87,7 +85,9 @@ class Login : Fragment() {
     }
 
     fun goToHome() {
-        view!!.findNavController().navigate(LoginDirections.actionLoginToHome())
+        val intent = Intent(this, MainActivity::class.java)
+        finish()
+        startActivity(intent)
     }
 
     private fun createNotificationChannel() {
@@ -101,7 +101,7 @@ class Login : Fragment() {
                 description = descriptionText
             }
             // Register the channel with the system
-            val notificationManager: NotificationManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
