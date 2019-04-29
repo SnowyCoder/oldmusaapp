@@ -16,7 +16,6 @@ import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
 import kotlinx.android.synthetic.main.add_museum.*
-import kotlinx.android.synthetic.main.fragment_home.*
 
 
 class Home : Fragment() {

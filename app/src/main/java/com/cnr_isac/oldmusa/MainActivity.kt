@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.manage_users -> {
-
+                findNavController(R.id.nav_host_fragment).navigate(R.id.manageUsers)
             }
         }
 

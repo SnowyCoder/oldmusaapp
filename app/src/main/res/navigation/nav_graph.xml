@@ -30,4 +30,8 @@
             android:name="sensorId"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/manageUsers"
+        android:name="com.cnr_isac.oldmusa.ManageUsers"
+        android:label="ManageUsers" />
 </navigation>
