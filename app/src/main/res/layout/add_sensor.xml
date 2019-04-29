@@ -9,7 +9,7 @@
                                                    android:orientation="vertical">
 
     <EditText
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:ems="10"
             android:id="@+id/nameSensore"
@@ -21,7 +21,7 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline56"/>
 
     <EditText
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:ems="10"
             android:id="@+id/mappaSensore"
@@ -59,7 +59,7 @@
                                                 android:id="@+id/guideline42"
                                                 android:orientation="horizontal" app:layout_constraintGuide_percent="0.7"/>
     <EditText
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:ems="10"
             android:id="@+id/idcnrSensore"

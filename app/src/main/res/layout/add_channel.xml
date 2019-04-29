@@ -6,20 +6,45 @@
                                                    android:layout_height="match_parent">
 
     <EditText
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:id="@+id/nameChannel"
-        android:hint="name"
-        />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/nameChannel"
+            android:hint="name"
+            app:layout_constraintStart_toStartOf="@+id/guideline83"
+            app:layout_constraintEnd_toStartOf="@+id/guideline84"
+            app:layout_constraintTop_toTopOf="@+id/guideline85"
+            app:layout_constraintBottom_toTopOf="@+id/guideline86"/>
 
     <Button
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:id="@+id/AddButtonC"
-        android:background="#FFB74D"
-        android:text="Aggiungi"
-        android:onClick="addChannel"
-        />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/AddButtonC"
+            android:background="#FFB74D"
+            android:text="Aggiungi"
+            android:onClick="addChannel"
+            app:layout_constraintTop_toTopOf="@+id/guideline87"
+            app:layout_constraintStart_toStartOf="@+id/guideline83"
+            app:layout_constraintEnd_toStartOf="@+id/guideline84"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline83"
+                                                android:orientation="vertical"
+                                                app:layout_constraintGuide_percent="0.20"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline84"
+                                                android:orientation="vertical"
+                                                app:layout_constraintGuide_percent="0.80"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline85"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.10"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline86"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.2"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline87"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.30"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
