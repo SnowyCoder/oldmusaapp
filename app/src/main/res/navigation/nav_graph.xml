@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/login">
+    app:startDestination="@id/home">
 
-    <fragment
-        android:id="@+id/login"
-        android:name="com.cnr_isac.oldmusa.Login"
-        android:label="Login" >
-        <action
-            android:id="@+id/action_login_to_home"
-            app:destination="@id/home" />
-    </fragment>
     <fragment
         android:id="@+id/home"
         android:name="com.cnr_isac.oldmusa.Home"

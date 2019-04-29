@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Looper
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.Account
+import com.cnr_isac.oldmusa.Login
 import com.cnr_isac.oldmusa.api.Api
 import kotlinx.android.synthetic.main.list_item.view.*
 
@@ -108,7 +110,6 @@ object ApiUtil {
     fun handleRestError(ctx: Context, e: RestException) {
         if (e.code == 401 /* Unauthorized */ && e.responseContent != null && e.responseContent.contains("Invalid token")) {
             // Login error, token invalid or outdated
-            // TODO: logout and redirect to login page
             Toast.makeText(ctx, "Login error", Toast.LENGTH_LONG).show()
         } else {
             // TODO: parse json and show only message

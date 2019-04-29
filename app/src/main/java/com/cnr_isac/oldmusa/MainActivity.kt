@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -13,8 +14,10 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private var currentNavController: LiveData<NavController>? = null
@@ -46,10 +49,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.home -> {
-
+                findNavController(R.id.nav_host_fragment).popBackStack(R.id.home, false)
             }
             R.id.logout -> {
+                api.logout()
+                Account.saveToken(this)
 
+                val intent = Intent(this, Login::class.java)
+                finish()
+                startActivity(intent)
             }
             R.id.manage_users -> {
 
