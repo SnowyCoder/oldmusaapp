@@ -17,15 +17,15 @@ import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.TimeUtil.midnightOf
+import com.cnr_isac.oldmusa.util.TimeUtil.copy
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class QuickGraph : Fragment() {
@@ -34,7 +34,7 @@ class QuickGraph : Fragment() {
 
     lateinit var chart: LineChart
     lateinit var data: LineData
-    private lateinit var currentDate: LocalDate
+    private lateinit var currentDate: Calendar
 
     private lateinit var currentSensor: Sensor
 
@@ -44,6 +44,8 @@ class QuickGraph : Fragment() {
         Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.GRAY
     )
 
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
@@ -51,8 +53,8 @@ class QuickGraph : Fragment() {
 
         view.findViewById<Button>(R.id.change_date).setOnClickListener {
             val datePicker = DatePickerDialog(context!!, { _, year, month, dayOfMonth ->
-                onDateChange(LocalDate.of(year, month + 1, dayOfMonth))
-            }, currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+                onDateChange(midnightOf(year, month, dayOfMonth))
+            }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DAY_OF_MONTH))
             datePicker.show()
         }
 
@@ -68,12 +70,12 @@ class QuickGraph : Fragment() {
         xAxis.enableGridDashedLine(10f, 10f, 0f)
         xAxis.valueFormatter = object : ValueFormatter() {
 
-            private val formatter = DateTimeFormatter.ofPattern("dd MMM HH:mm")
+            private val formatter = SimpleDateFormat.getTimeInstance()
 
             override fun getFormattedValue(value: Float): String {
                 // Value saved as milliseconds from the start of the day
                 val millis = value.toLong()
-                return formatter.format(currentDate.atStartOfDay().plus(millis, ChronoUnit.MILLIS))
+                return formatter.format(Date(currentDate.timeInMillis + millis))
             }
         }
 
@@ -124,50 +126,48 @@ class QuickGraph : Fragment() {
 
     fun onSensorLoad() {
         // Setup first date
-        currentDate =  LocalDate.of(2014, 4, 1)// TODO: replace with LocalDate.now(), this is for testing purposes
+        currentDate = midnightOf(2014, Calendar.APRIL, 1)// TODO: replace with LocalDate.now(), this is for testing purposes
         onDateChange(currentDate)
     }
 
 
-
-    fun onDateChange(day: LocalDate) {
+    fun onDateChange(day: Calendar) {
         val sensorId = args.sensorId
-        val from = day.atStartOfDay()
-        val to = from.plusDays(1)
+        val from = day
+        val to = from.copy()
+        to.add(Calendar.DAY_OF_MONTH, 1)
 
 
         query {
             currentSensor = api.getSensor(sensorId)
             currentSensor.channels.map {
-                Pair(it, it.getReadings(from, to))
+                Pair(it, it.getReadings(from.time, to.time))
             }
         }.onResult {
-            Log.d(TAG, "Data: $it")
+            Log.d(TAG, "Data: ${userFriendlyDateFormatter.format(day.time)}")
             onDataReceived(day, it)
         }.withLoading(this)
     }
 
-    fun onDataReceived(day: LocalDate, data: List<Pair<Channel, List<ChannelReading>>>) {
+    fun onDataReceived(day: Calendar, data: List<Pair<Channel, List<ChannelReading>>>) {
         currentDate = day
 
-        view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(day)
+        view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(userFriendlyDateFormatter.format(day.time))
 
-        val start = day.atStartOfDay()
-
-        val datasets = data.mapIndexed { index, (channel, readings) ->  createData(channel, readings, start, index) }
+        val datasets = data.mapIndexed { index, (channel, readings) -> createData(channel, readings, day, index) }
 
         chart.data = LineData(datasets)
         chart.invalidate()// Refresh
         Log.i(TAG, "Data reloaded: $datasets")
     }
 
-    fun createData(channel: Channel, data: List<ChannelReading>, start: LocalDateTime, index: Int): LineDataSet {
+    fun createData(channel: Channel, data: List<ChannelReading>, start: Calendar, index: Int): LineDataSet {
         val color = colors[index % colors.size]
 
-        val vals =  data.map {
+        val vals = data.map {
             // Compress coordinates (from the 1970 to the beginning of the day
             // it should fit nicely in a float (with more precision, I hope)
-            val diff = start.until(it.date, ChronoUnit.MILLIS)
+            val diff = it.date.time - start.timeInMillis
 
             Entry(diff.toFloat(), it.valueMin.toFloat())
         }
@@ -181,5 +181,6 @@ class QuickGraph : Fragment() {
 
     companion object {
         private const val TAG = "QuickGraph"
+        private val userFriendlyDateFormatter = SimpleDateFormat.getDateInstance()
     }
 }

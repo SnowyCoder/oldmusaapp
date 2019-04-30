@@ -1,9 +1,15 @@
 package com.cnr_isac.oldmusa.api
 
+import com.cnr_isac.oldmusa.util.TimeUtil.ISO_0_OFFSET_DATE_TIME
 import kotlinx.serialization.*
+import kotlinx.serialization.Optional
 import kotlinx.serialization.internal.StringDescriptor
+import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 // Those are the data definitions for the JSON client-server connection
 // Note that id and siteId are optional because the client should omit them
@@ -35,7 +41,7 @@ data class ApiSite(
 data class ApiChannel(
     @Optional val id: Long? = null,
     @Optional @SerialName("sensor_id") val sensorId: Long? = null,
-    @Optional @SerialName("id_cnr") val idCnr: Long? = null,
+    @Optional @SerialName("id_cnr") val idCnr: String? = null,
 
     @Optional val name: String? = null,
 
@@ -48,7 +54,7 @@ data class ApiChannel(
 data class ApiSensor(
     @Optional val id: Long? = null,
     @Optional @SerialName("site_id") val siteId: Long? = null,
-    @Optional @SerialName("id_cnr") val idCnr: Long? = null,
+    @Optional @SerialName("id_cnr") val idCnr: String? = null,
     @Optional val name: String? = null,
     @Optional @SerialName("loc_x") val locX: Long? = null,
     @Optional @SerialName("loc_y") val locY: Long? = null,
@@ -58,7 +64,7 @@ data class ApiSensor(
 
 @Serializable
 data class ChannelReading(
-    @Serializable(LocalDateTimeSerializer::class) val date: LocalDateTime,
+    @Serializable(LocalDateTimeSerializer::class) val date: Date,
     @SerialName("value_min") val valueMin: Double,
     @Optional @SerialName("value_avg") val valueAvg: Double? = null,
     @Optional @SerialName("value_max") val valueMax: Double? = null,
@@ -66,16 +72,15 @@ data class ChannelReading(
     @Optional val error: Char? = null
 )
 
-@Serializer(forClass = LocalDateTime::class)
-object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+@Serializer(forClass = Date::class)
+object LocalDateTimeSerializer : KSerializer<Date> {
     override val descriptor: SerialDescriptor = StringDescriptor.withName("DateSerializer")
-    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-    override fun serialize(encoder: Encoder, obj: LocalDateTime) {
-        encoder.encodeString(formatter.format(obj))
+    override fun serialize(encoder: Encoder, obj: Date) {
+        encoder.encodeString(ISO_0_OFFSET_DATE_TIME.format(obj))
     }
 
-    override fun deserialize(decoder: Decoder): LocalDateTime {
-        return LocalDateTime.parse(decoder.decodeString().trimEnd('Z'), formatter)
+    override fun deserialize(decoder: Decoder): Date {
+        return ISO_0_OFFSET_DATE_TIME.parse(decoder.decodeString())
     }
 }

@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa.api.rest
 
 import com.cnr_isac.oldmusa.api.*
+import com.cnr_isac.oldmusa.util.TimeUtil.ISO_0_OFFSET_DATE_TIME
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import java.io.InputStream
@@ -13,6 +14,8 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.time.format.DateTimeFormatterBuilder
 import java.time.format.ResolverStyle
 import java.time.temporal.ChronoField
+import java.util.*
+import kotlin.collections.HashMap
 
 class RestApi(val conn: ApiConnession) : Api {
     private val sites: MutableMap<Long, WeakReference<Site>> = HashMap()
@@ -314,7 +317,7 @@ class RestApi(val conn: ApiConnession) : Api {
         query("DELETE", "channel/$id")
     }
 
-    override fun getChannelReadings(channelId: Long, start: LocalDateTime, end: LocalDateTime, precision: String): List<ChannelReading> {
+    override fun getChannelReadings(channelId: Long, start: Date, end: Date, precision: String): List<ChannelReading> {
         val res = query("GET", "channel/$channelId/readings", parameters = mapOf(
             "start" to ISO_0_OFFSET_DATE_TIME.format(start),
             "end" to ISO_0_OFFSET_DATE_TIME.format(end),
@@ -328,20 +331,6 @@ class RestApi(val conn: ApiConnession) : Api {
 
     companion object {
         private const val TAG = "RestApi"
-
-        val ISO_0_OFFSET_DATE_TIME: DateTimeFormatter = DateTimeFormatterBuilder()
-                .parseCaseInsensitive()
-                .append(ISO_LOCAL_DATE)
-                .appendLiteral('T')
-                .appendValue(ChronoField.HOUR_OF_DAY, 2)
-                .appendLiteral(':')
-                .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-                .optionalStart()
-                .appendLiteral(':')
-                .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
-                .appendFraction(ChronoField.NANO_OF_SECOND, 2, 9, true)
-                .appendLiteral('Z')
-                .toFormatter()
 
         fun httpRest(url: String): RestApi {
             return RestApi(HttpApiConnession(url))
