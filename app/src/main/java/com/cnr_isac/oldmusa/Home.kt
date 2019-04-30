@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,15 +22,42 @@ import kotlinx.android.synthetic.main.add_museum.*
 class Home : Fragment() {
 
     lateinit var sites: List<Site>
+    lateinit var listView: ListView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        listView = view.findViewById(R.id.ListMuseum)
 
-        val listView = view.findViewById<ListView>(R.id.ListMuseum)
+        reload(view)
 
+        view.findViewById<ImageButton>(R.id.addSiti).setOnClickListener{
+            //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
+
+            val mBuilder = AlertDialog.Builder(context!!)
+            mBuilder.setTitle("Aggiungi museo")
+            val dialogView = LayoutInflater.from(context!!).inflate(R.layout.add_museum, null)
+            val dialog = mBuilder.setView(dialogView).create()
+            val lp = WindowManager.LayoutParams()
+            lp.copyFrom(dialog.window!!.attributes)
+            lp.title = "Aggiungi museo"
+            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
+            dialog.show()
+            dialog.window!!.attributes = lp
+
+            dialog.AddButtonM.setOnClickListener { view ->
+                dialog.dismiss()
+                addMuseum(dialog)
+            }
+        }
+
+        return view
+    }
+
+    fun reload(view: View) {
         // permission
         isAdmin {
             if (!it) return@isAdmin
@@ -55,31 +83,9 @@ class Home : Fragment() {
             val action = HomeDirections.actionHomeToSite(sites[position].id)
             view.findNavController().navigate(action)
         }
-
-        view.findViewById<ImageButton>(R.id.addSiti).setOnClickListener{
-            //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
-
-            val mBuilder = AlertDialog.Builder(context!!)
-            mBuilder.setTitle("Aggiungi museo")
-            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_museum, null)).create()
-            val lp = WindowManager.LayoutParams()
-            lp.copyFrom(d.window!!.attributes)
-            lp.title = "Aggiungi museo"
-            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
-            d.show()
-            d.window!!.attributes = lp
-
-            d.AddButtonM.setOnClickListener { view ->
-                d.dismiss()
-                addMuseum(view)
-            }
-        }
-
-        return view
     }
 
-    fun addMuseum (view: View) {
+    fun addMuseum (view: Dialog) {
         Log.e("start", "start add museum")
         val museumName = view.findViewById<EditText>(R.id.nameMuseum)!!
         val idCnr = view.findViewById<EditText>(R.id.idCnr)!!
@@ -90,6 +96,8 @@ class Home : Fragment() {
             newMuseum.idCnr = idCnr.text.toString()
             Log.e("text", newMuseum.idCnr)
             newMuseum.commit()
+        }.onResult {
+            reload(this.view!!)
         }.withLoading(this)
     }
 

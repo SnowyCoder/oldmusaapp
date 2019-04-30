@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +10,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.cnr_isac.oldmusa.api.ApiUser
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -42,18 +42,18 @@ class ManageUsers : Fragment() {
 
             val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi utente")
-            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_user, null)).create()
+            val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_user, null)).create()
             val lp = WindowManager.LayoutParams()
-            lp.copyFrom(d.window!!.attributes)
+            lp.copyFrom(dialog.window!!.attributes)
             lp.title = "Aggiungi utente"
             lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
             lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
-            d.show()
-            d.window!!.attributes = lp
+            dialog.show()
+            dialog.window!!.attributes = lp
 
-            d.AddButtonM.setOnClickListener { view ->
-                d.dismiss()
-                addUser(view)
+            dialog.AddButtonM.setOnClickListener { view ->
+                dialog.dismiss()
+                addUser(dialog)
             }
         }
 
@@ -75,9 +75,9 @@ class ManageUsers : Fragment() {
         }.withLoading(this)
     }
 
-    fun addUser(view: View) {
-        val username = view.findViewById<EditText>(R.id.username)!!.text
-        val password = view.findViewById<EditText>(R.id.password)!!.text
+    fun addUser(dialog: Dialog) {
+        val username = dialog.findViewById<EditText>(R.id.username)!!.text
+        val password = dialog.findViewById<EditText>(R.id.password)!!.text
 
         if (username.isNullOrEmpty() or password.isNullOrEmpty()) return
 

@@ -23,7 +23,6 @@ import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
 import kotlinx.android.synthetic.main.add_sensor.*
-import kotlinx.android.synthetic.main.fragment_museum.*
 
 
 class Site : Fragment() {
@@ -147,31 +146,31 @@ class Site : Fragment() {
 
             val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi sensore")
-            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_sensor, null)).create()
+            val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_sensor, null)).create()
             val lp = WindowManager.LayoutParams()
-            lp.copyFrom(d.window!!.attributes)
+            lp.copyFrom(dialog.window!!.attributes)
             lp.title = "Aggiungi sensore"
             lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
             lp.height = (resources.displayMetrics.heightPixels * 0.60).toInt()
-            d.show()
-            d.window!!.attributes = lp
+            dialog.show()
+            dialog.window!!.attributes = lp
 
-            d.AddButtonS.setOnClickListener {
-                val nameSensor = d.findViewById<EditText>(R.id.nameSensore)
+            dialog.AddButtonS.setOnClickListener {
+                val nameSensor = dialog.findViewById<EditText>(R.id.nameSensore)
                 e("print", nameSensor.toString())
                 //val mappaSensor = view.findViewById<EditText>(R.id.mappaSensore)
-                val idcnrSensor = d.findViewById<EditText>(R.id.idcnrSensore)
+                val idcnrSensor = dialog.findViewById<EditText>(R.id.idcnrSensore)
                 e("print", idcnrSensor.toString())
 
                 query {
                     currentSite.addSensor(
                         ApiSensor(
                             name = nameSensor.text.toString(),
-                            idCnr = idcnrSensor.text.toString().toLong()
+                            idCnr = idcnrSensor.text.toString()
                         )
                     )
                 }.onResult {
-                    d.dismiss()
+                    dialog.dismiss()
                     reloadSite()
                 }
             }
@@ -189,8 +188,8 @@ class Site : Fragment() {
 
         query {
             // Query everything needed in async
-            val site = api.getSite(siteId)
-            Pair(site.sensors, site.getMap())
+            currentSite = api.getSite(siteId)
+            Pair(currentSite.sensors, currentSite.getMap())
         }.onResult { (sensors, mapData) ->
             // Then use it in the sync thread
             val list = sensors.map { SensorData(it) }
