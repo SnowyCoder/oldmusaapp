@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/home">
 
     <fragment
@@ -33,5 +35,18 @@
     <fragment
         android:id="@+id/manageUsers"
         android:name="com.cnr_isac.oldmusa.ManageUsers"
-        android:label="ManageUsers" />
+        android:label="ManageUsers" >
+        <action
+            android:id="@+id/action_manageUsers_to_userDetailsEdit"
+            app:destination="@id/userDetailsEdit" />
+    </fragment>
+    <fragment
+        android:id="@+id/userDetailsEdit"
+        android:name="com.cnr_isac.oldmusa.UserDetailsEdit"
+        android:label="fragment_user_details_edit"
+        tools:layout="@layout/fragment_user_details_edit" >
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
 </navigation>

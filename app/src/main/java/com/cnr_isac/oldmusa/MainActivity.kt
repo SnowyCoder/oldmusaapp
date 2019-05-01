@@ -15,13 +15,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.cnr_isac.oldmusa.util.ApiUtil.api
+import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private var currentNavController: LiveData<NavController>? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,12 +43,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+
+
+        isAdmin {
+            navView.menu.findItem(R.id.manage_users).isVisible = it
+            navView.menu.findItem(R.id.current_user_detail).isVisible = !it
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+
         when (item.itemId) {
             R.id.home -> {
-                findNavController(R.id.nav_host_fragment).popBackStack(R.id.home, false)
+                navController.popBackStack(R.id.home, false)
             }
             R.id.logout -> {
                 api.logout()
@@ -60,7 +67,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.manage_users -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.manageUsers)
+                navController.navigate(R.id.manageUsers)
+            }
+            R.id.current_user_detail -> {
+                navController.navigate(R.id.userDetailsEdit, UserDetailsEditArgs(api.getMe().id).toBundle())
             }
         }
 

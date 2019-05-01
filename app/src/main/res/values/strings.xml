@@ -14,4 +14,13 @@
     <string name="menu_home">Home</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_manage_users">Manage Users</string>
+    <string name="menu_current_user_detail">User</string>
+
+    <string name="username">Username</string>
+    <string name="permission">Permission</string>
+    <string name="change_password">Change Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>

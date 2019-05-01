@@ -7,6 +7,10 @@
         android:icon="@drawable/ic_home"
         android:title="@string/menu_home" />
     <item
+        android:id="@+id/current_user_detail"
+        android:icon="@drawable/ic_person"
+        android:title="@string/menu_current_user_detail" />
+    <item
         android:id="@+id/logout"
         android:icon="@drawable/ic_exit_to_app"
         android:title="@string/menu_logout" />

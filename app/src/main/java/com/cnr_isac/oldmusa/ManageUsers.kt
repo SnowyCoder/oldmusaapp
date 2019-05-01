@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.cnr_isac.oldmusa.api.ApiUser
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -34,7 +35,8 @@ class ManageUsers : Fragment() {
         loadUsers()
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            // TODO: view user details
+            val action = ManageUsersDirections.actionManageUsersToUserDetailsEdit(users[position].id)
+            view.findNavController().navigate(action)
         }
 
         view.findViewById<ImageButton>(R.id.addUser).setOnClickListener {
