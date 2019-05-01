@@ -36,9 +36,6 @@ class RestApi(val conn: ApiConnession) : Api {
     // ---------------- LOGIN ----------------
 
     @Serializable
-    private class LoginData(val username: String, val password: String)
-
-    @Serializable
     private class LoginDataResponse(val token: String)
 
     override fun getCurrentToken(): String? {
@@ -123,7 +120,7 @@ class RestApi(val conn: ApiConnession) : Api {
     }
 
     override fun removeUserAccess(userId: Long, siteId: Long) {
-        query("DELETE", "user/$userId/access", json.stringify(ApiId.serializer(), ApiId(siteId)))
+        query("DELETE", "user/$userId/access/$siteId")
     }
 
     override fun addUserContactFCM(userId: Long, token: String) {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -60,6 +61,7 @@ class UserDetailsEdit : Fragment() {
 
         saveButton = view.findViewById(R.id.saveButton)
         val cancelButton = view.findViewById<Button>(R.id.cancelButton)
+        val editAccessButton = view.findViewById<Button>(R.id.editAccessButton)
 
         reloadSaveOnChange(usernameEditText)
         reloadSaveOnChange(passwordEditText)
@@ -80,12 +82,17 @@ class UserDetailsEdit : Fragment() {
             this.activity!!.onBackPressed()
         }
 
+        editAccessButton.setOnClickListener {
+            findNavController().navigate(UserDetailsEditDirections.actionUserDetailsEditToUserAccessEdit(args.userId))
+        }
+
         isAdmin {
             this.isAdmin = it
             if (!it) {
                 usernameEditText.isEnabled = false
                 permissionSpinner.selectedView.isEnabled = false
                 permissionSpinner.isEnabled = false
+                editAccessButton.visibility = View.GONE
             }
         }
 

@@ -48,5 +48,17 @@
         <argument
             android:name="userId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_userDetailsEdit_to_userAccessEdit"
+            app:destination="@id/userAccessEdit" />
+    </fragment>
+    <fragment
+        android:id="@+id/userAccessEdit"
+        android:name="com.cnr_isac.oldmusa.UserAccessEdit"
+        android:label="fragment_user_access_edit"
+        tools:layout="@layout/fragment_user_access_edit" >
+        <argument
+            android:name="userId"
+            app:argType="long" />
     </fragment>
 </navigation>

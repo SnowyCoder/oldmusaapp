@@ -17,7 +17,6 @@
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
             android:hint="@string/username" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,6 +65,12 @@
             android:hint="@string/confirm_password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/editAccessButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/change_site_access" />
 
     <LinearLayout
         android:layout_width="match_parent"

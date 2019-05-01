@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa.util
 
 import android.util.Base64
+import android.util.SparseBooleanArray
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.math.BigInteger
@@ -43,5 +44,12 @@ object StreamUtil {
 
     fun ByteArray.getMd5(): String {
         return Base64.encodeToString(BigInteger(1, MessageDigest.getInstance("MD5").digest(this)).toByteArray(), 16).trim()
+    }
+
+    inline fun SparseBooleanArray.forEachTrue(f: (index: Int) -> Unit) {
+        for (i in (0..size())) {
+            if (!valueAt(i)) continue
+            f(keyAt(i))
+        }
     }
 }
