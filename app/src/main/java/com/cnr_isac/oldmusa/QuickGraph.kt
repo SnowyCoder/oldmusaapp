@@ -16,7 +16,7 @@ import com.cnr_isac.oldmusa.api.ChannelReading
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import com.cnr_isac.oldmusa.util.TimeUtil.midnightOf
 import com.cnr_isac.oldmusa.util.TimeUtil.copy
 import com.github.mikephil.charting.charts.LineChart
@@ -146,7 +146,7 @@ class QuickGraph : Fragment() {
         }.onResult {
             Log.d(TAG, "Data: ${userFriendlyDateFormatter.format(day.time)}")
             onDataReceived(day, it)
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     fun onDataReceived(day: Calendar, data: List<Pair<Channel, List<ChannelReading>>>) {

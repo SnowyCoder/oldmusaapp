@@ -1,26 +1,20 @@
 package com.cnr_isac.oldmusa.util
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
 import android.os.AsyncTask
 import android.os.Looper
-import androidx.constraintlayout.widget.ConstraintLayout
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import com.cnr_isac.oldmusa.api.RestException
 import android.widget.RelativeLayout
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.Account
-import com.cnr_isac.oldmusa.Login
 import com.cnr_isac.oldmusa.api.Api
-import kotlinx.android.synthetic.main.list_item.view.*
 
 
 object ApiUtil {
@@ -118,7 +112,11 @@ object ApiUtil {
         Log.e("Rest", "A Rest exception occured", e)
     }
 
-    fun <P> RawQuery<P>.withLoading(context: Activity): RawQuery<P> {
+    /**
+     * Displays a loading bar while the query is running.
+     * This also disables user interaction
+     */
+    fun <P> RawQuery<P>.useLoadingBar(context: Activity): RawQuery<P> {
         val layout = RelativeLayout(context)
 
         val progressBar = ProgressBar(context, null, android.R.attr.progressBarStyleLarge)
@@ -128,17 +126,19 @@ object ApiUtil {
         layout.addView(progressBar, params)
         context.addContentView(layout, RelativeLayout.LayoutParams(-1, -1))
         progressBar.visibility = View.VISIBLE  // Show ProgressBar
+        context.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
 
         this.onDone {
             progressBar.visibility = View.GONE // Hide ProgressBar
             (layout.parent as ViewGroup).removeView(layout)
+            context.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
         return this
     }
 
-    fun <P> RawQuery<P>.withLoading(context: Fragment): RawQuery<P> {
-        return withLoading(context.activity!!)
+    fun <P> RawQuery<P>.useLoadingBar(context: Fragment): RawQuery<P> {
+        return useLoadingBar(context.activity!!)
     }
 
     val Context.api: Api

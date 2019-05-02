@@ -1,7 +1,6 @@
 package com.cnr_isac.oldmusa
 
 import android.os.Bundle
-import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import com.cnr_isac.oldmusa.util.StreamUtil.forEachTrue
 
 
@@ -105,7 +104,7 @@ class UserAccessEdit : Fragment(), AdapterView.OnItemClickListener {
             siteChanges.clear()
             changeCount = 0
             reloadSaveButtonVisibility()
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     fun canSave(): Boolean = changeCount > 0
@@ -125,6 +124,6 @@ class UserAccessEdit : Fragment(), AdapterView.OnItemClickListener {
             }
         }.onDone {
             resetAccesses()
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 }

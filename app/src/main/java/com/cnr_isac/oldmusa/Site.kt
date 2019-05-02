@@ -21,7 +21,7 @@ import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_sensor.*
 
 
@@ -206,7 +206,7 @@ class Site : Fragment() {
 
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
             listView.adapter = adapter
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

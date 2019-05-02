@@ -15,7 +15,7 @@ import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
 
 
@@ -77,7 +77,7 @@ class Home : Fragment() {
 
             val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
             listView.adapter = adapter
-        }.withLoading(this)
+        }.useLoadingBar(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val action = HomeDirections.actionHomeToSite(sites[position].id)
@@ -98,7 +98,7 @@ class Home : Fragment() {
             newMuseum.commit()
         }.onResult {
             reload(this.view!!)
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     companion object {

@@ -14,7 +14,7 @@ import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 
 
 class UserDetailsEdit : Fragment() {
@@ -132,7 +132,7 @@ class UserDetailsEdit : Fragment() {
             passwordEditText.setText("")
             passwordConfirmEditText.setText("")
             permissionSpinner.setSelection(PermissionType.fromChar(user.permission).ordinal)
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     fun canSave(): Boolean {
@@ -181,6 +181,6 @@ class UserDetailsEdit : Fragment() {
             }
         }.onDone {
             resetDetails()
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 }

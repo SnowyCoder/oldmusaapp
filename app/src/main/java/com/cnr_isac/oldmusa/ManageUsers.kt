@@ -15,7 +15,7 @@ import com.cnr_isac.oldmusa.api.ApiUser
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
 
 
@@ -74,7 +74,7 @@ class ManageUsers : Fragment() {
 
             val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
             listView.adapter = adapter
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     fun addUser(dialog: Dialog) {
@@ -91,7 +91,7 @@ class ManageUsers : Fragment() {
         }.onResult {
             // TODO: view user details(?)
             loadUsers()
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     companion object {

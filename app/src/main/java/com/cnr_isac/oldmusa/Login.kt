@@ -16,8 +16,7 @@ import com.cnr_isac.oldmusa.firebase.FirebaseUtil
 import com.cnr_isac.oldmusa.util.ApiUtil
 import com.cnr_isac.oldmusa.util.ApiUtil.handleRestError
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.withLoading
-import kotlinx.android.synthetic.main.activity_login.view.*
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 
 
 class Login : AppCompatActivity() {
@@ -81,7 +80,7 @@ class Login : AppCompatActivity() {
             FirebaseUtil.publishFCMToken(api) // Publish the current FCM token to the server (used to send notifications)
 
             goToHome()
-        }.withLoading(this)
+        }.useLoadingBar(this)
     }
 
     fun goToHome() {
