@@ -8,6 +8,12 @@
     android:orientation="vertical"
     android:gravity="bottom">
 
+    <ImageView
+            android:src="@drawable/ic_account_circle_black_24dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:id="@+id/photo"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
