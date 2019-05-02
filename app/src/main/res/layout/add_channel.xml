@@ -45,6 +45,49 @@
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline87"
                                                 android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.30"/>
+                                                app:layout_constraintGuide_percent="0.55"/>
+    <EditText
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="numberDecimal"
+            android:background="#D5D5D5"
+            android:ems="10"
+            android:id="@+id/minRange"
+            app:layout_constraintStart_toStartOf="@+id/guideline83"
+            app:layout_constraintTop_toTopOf="@+id/guideline99" android:hint="ValueMin"/>
+    <EditText
+            android:layout_width="100dp"
+            android:background="#D5D5D5"
+            android:layout_height="40dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:id="@+id/maxRange"
+            app:layout_constraintEnd_toStartOf="@+id/guideline84" app:layout_constraintTop_toTopOf="@+id/guideline99"
+            android:hint="ValueMax"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline99"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.35"/>
+    <TextView
+            android:textSize="25dp"
+            android:text="-"
+            android:textStyle="bold|italic"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/minRange"
+            app:layout_constraintEnd_toStartOf="@+id/maxRange"
+            app:layout_constraintTop_toTopOf="@+id/guideline100"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline100"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.36"/>
+    <TextView
+            android:text="Range"
+            android:textSize="19dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2" app:layout_constraintStart_toStartOf="@+id/guideline83"
+            android:layout_marginBottom="10dp" app:layout_constraintBottom_toTopOf="@+id/guideline99"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
