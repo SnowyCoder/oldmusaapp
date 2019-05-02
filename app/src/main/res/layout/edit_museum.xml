@@ -50,5 +50,5 @@
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline95"
                                                 android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.70"/>
+                                                app:layout_constraintGuide_percent="0.80"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

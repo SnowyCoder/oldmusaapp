@@ -45,7 +45,7 @@ class Site : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
 
         val view = inflater.inflate(fragment_museum, container, false)
 
