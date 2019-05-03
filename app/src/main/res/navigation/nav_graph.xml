@@ -19,10 +19,21 @@
         android:label="Site">
         <action
             android:id="@+id/action_site_to_quickGraph"
-            app:destination="@id/quickGraph" />
+            app:destination="@id/canali" />
         <argument
             android:name="siteId"
             app:argType="long" />
+    </fragment>
+    <fragment
+            android:id="@+id/canali"
+            android:name="com.cnr_isac.oldmusa.Channels"
+            android:label="Channels">
+        <action
+                android:id="@+id/action_site_to_channels"
+                app:destination="@id/quickGraph" />
+        <argument
+                android:name="siteId"
+                app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/quickGraph"
