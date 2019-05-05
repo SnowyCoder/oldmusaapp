@@ -23,14 +23,9 @@ import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_sensor.*
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MenuInflater
 
 
-
-
-class Site : Fragment() {
+class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
     private lateinit var listView: ListView
 
     val args: SiteArgs by navArgs()
@@ -182,7 +177,13 @@ class Site : Fragment() {
             }
         }
 
+        (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).sensorSelectListener = this
+
         return view
+    }
+
+    override fun onSensorSelect(sensorId: Long) {
+        view!!.findNavController().navigate(SiteDirections.actionSiteToQuickGraph(sensorId))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -228,19 +229,30 @@ class Site : Fragment() {
         query {
             // Query everything needed in async
             currentSite = api.getSite(siteId)
-            Pair(currentSite.sensors, currentSite.getMap())
+
+            val sensors = currentSite.sensors
+
+            val mapData = currentSite.getMap()
+                ?.readBytes()
+                ?.let {
+                BitmapFactory.decodeByteArray(it, 0, it.size)
+            }
+
+            Pair(sensors, mapData)
         }.onResult { (sensors, mapData) ->
             // Then use it in the sync thread
             val list = sensors.map { SensorData(it) }
 
+            val mapContainer = view!!.findViewById<FrameLayout>(R.id.mapContainer)
             val map = view!!.findViewById<ImageView>(R.id.mapMuseum)
 
-            val data = mapData?.readBytes()
-
-            data?.let {
+            mapData?.let {
                 view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
                 view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
-                map.setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.size))
+                //(fragmentManager!!.findFragmentById(R.id.site_map) as SiteMapFragment).onRefresh(it, sensors)
+                //view!!.findViewById<SiteMapFragment>(R.id.site_map)
+                //
+                (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).onRefresh(it, sensors)
             }
 
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
@@ -260,8 +272,7 @@ class Site : Fragment() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode){
             PERMISSION_CODE -> {
-                if (grantResults.size >0 && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED){
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     //permission from popup granted
                     pickImageFromGallery()
                 }

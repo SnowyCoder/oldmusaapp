@@ -2,20 +2,21 @@ package com.cnr_isac.oldmusa.api.rest
 
 import com.cnr_isac.oldmusa.api.*
 import com.cnr_isac.oldmusa.util.TimeUtil.ISO_0_OFFSET_DATE_TIME
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.list
+import kotlinx.serialization.serializer
 import java.io.InputStream
 import java.lang.ref.WeakReference
-import java.time.LocalDateTime
-import java.time.chrono.IsoChronology
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
-import java.time.format.DateTimeFormatterBuilder
-import java.time.format.ResolverStyle
-import java.time.temporal.ChronoField
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableMap
+import kotlin.collections.get
+import kotlin.collections.map
+import kotlin.collections.mapOf
+import kotlin.collections.set
 
 class RestApi(val conn: ApiConnession) : Api {
     private val sites: MutableMap<Long, WeakReference<Site>> = HashMap()
@@ -252,7 +253,7 @@ class RestApi(val conn: ApiConnession) : Api {
         val sensor = Sensor(
             this, data.id!!, data.siteId!!, data.idCnr, data.name,
             data.locX, data.locY,
-            data.enabled, data.status
+            data.enabled, data.status!!
         )
         sensors[sensor.id] = WeakReference(sensor)
         return sensor
@@ -265,7 +266,7 @@ class RestApi(val conn: ApiConnession) : Api {
                 query(
                     "PUT",
                     "sensor/$id",
-                    json.stringify(ApiSensor.serializer(), data.copy(id = null, siteId = null))
+                    json.stringify(ApiSensor.serializer(), data.copy(id = null, siteId = null, status = null))
                 )
             )
         )

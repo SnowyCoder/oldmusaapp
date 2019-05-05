@@ -59,7 +59,7 @@ data class ApiSensor(
     @Optional @SerialName("loc_x") val locX: Long? = null,
     @Optional @SerialName("loc_y") val locY: Long? = null,
     @Optional val enabled: Boolean = false,
-    @Optional val status: String = "ok"
+    @Optional val status: String? = null
 )
 
 @Serializable

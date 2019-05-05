@@ -21,7 +21,7 @@ class Sensor(
         this.locX = data.locX
         this.locY = data.locY
         this.enabled = data.enabled
-        this.status = data.status
+        this.status = data.status!!
     }
 
     fun serialize(): ApiSensor {

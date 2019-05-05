@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/mapMuseum"
+    <fragment
+        android:name="com.cnr_isac.oldmusa.SiteMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline15"
-        app:layout_constraintEnd_toStartOf="@+id/guideline20"
-        app:layout_constraintStart_toStartOf="@+id/guideline19"
-        app:layout_constraintTop_toTopOf="@+id/guideline14" />
+        android:id="@+id/site_map"
+        app:layout_constraintBottom_toTopOf="@id/guideline15"
+        app:layout_constraintEnd_toStartOf="@id/guideline20"
+        app:layout_constraintStart_toStartOf="@id/guideline19"
+        app:layout_constraintTop_toTopOf="@id/guideline14"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline14"
