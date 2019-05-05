@@ -45,29 +45,31 @@
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline87"
                                                 android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.55"/>
+                                                app:layout_constraintGuide_percent="0.7"/>
     <EditText
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:layout_height="40dp"
             android:inputType="numberDecimal"
             android:background="#D5D5D5"
             android:ems="10"
             android:id="@+id/minRange"
             app:layout_constraintStart_toStartOf="@+id/guideline83"
-            app:layout_constraintTop_toTopOf="@+id/guideline99" android:hint="ValueMin"/>
+            app:layout_constraintTop_toTopOf="@+id/guideline99" android:hint="ValueMin" android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline89"/>
     <EditText
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:background="#D5D5D5"
             android:layout_height="40dp"
             android:ems="10"
             android:inputType="numberDecimal"
             android:id="@+id/maxRange"
             app:layout_constraintEnd_toStartOf="@+id/guideline84" app:layout_constraintTop_toTopOf="@+id/guideline99"
-            android:hint="ValueMax"/>
+            android:hint="ValueMax" android:layout_marginStart="5dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline93"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline99"
                                                 android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.35"/>
+                                                app:layout_constraintGuide_percent="0.39"/>
     <TextView
             android:textSize="25dp"
             android:text="-"
@@ -75,13 +77,13 @@
             android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/minRange"
-            app:layout_constraintEnd_toStartOf="@+id/maxRange"
-            app:layout_constraintTop_toTopOf="@+id/guideline100"/>
+            app:layout_constraintEnd_toStartOf="@+id/guideline93"
+            app:layout_constraintTop_toTopOf="@+id/guideline100" android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline89" android:layout_marginEnd="8dp"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline100"
                                                 android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.36"/>
+                                                app:layout_constraintGuide_percent="0.4"/>
     <TextView
             android:text="Range"
             android:textSize="19dp"
@@ -89,5 +91,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/textView2" app:layout_constraintStart_toStartOf="@+id/guideline83"
             android:layout_marginBottom="10dp" app:layout_constraintBottom_toTopOf="@+id/guideline99"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline89"
+                                                android:orientation="vertical"
+                                                app:layout_constraintGuide_percent="0.45"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline93"
+                                                android:orientation="vertical"
+                                                app:layout_constraintGuide_percent="0.55"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

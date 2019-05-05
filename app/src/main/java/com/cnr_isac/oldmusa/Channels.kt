@@ -27,7 +27,21 @@ class Channels : Fragment(){
 
         //listView = view.findViewById(R.id.channelList)
 
+        view.findViewById<ImageButton>(R.id.addChannelButton).setOnClickListener{
+            //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
 
+            val mBuilder = AlertDialog.Builder(context!!)
+            mBuilder.setTitle("Aggiungi museo")
+            val dialogView = LayoutInflater.from(context!!).inflate(R.layout.add_channel, null)
+            val dialog = mBuilder.setView(dialogView).create()
+            val lp = WindowManager.LayoutParams()
+            lp.copyFrom(dialog.window!!.attributes)
+            lp.title = "Aggiungi canale"
+            lp.width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.70).toInt()
+            dialog.show()
+            dialog.window!!.attributes = lp
+        }
 
         return view
     }
