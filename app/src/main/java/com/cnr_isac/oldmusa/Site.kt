@@ -68,7 +68,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             val sensor = listView.adapter.getItem(index) as SensorData
 
 
-            view.findNavController().navigate(SiteDirections.actionSiteToQuickGraph(sensor.handle.id))
+            view.findNavController().navigate(SiteDirections.actionSiteToChannel(sensor.handle.id))
 
             /*val mBuilder = AlertDialog.Builder(this)
             mBuilder.setTitle("Crea grafico")
@@ -183,7 +183,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
     }
 
     override fun onSensorSelect(sensorId: Long) {
-        view!!.findNavController().navigate(SiteDirections.actionSiteToQuickGraph(sensorId))
+        view!!.findNavController().navigate(SiteDirections.actionSiteToChannel(sensorId))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -16,16 +16,16 @@ class Channels : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val view = inflater.inflate(R.layout.edit_sensore, container, false)
+        val view = inflater.inflate(R.layout.fragment_sensor, container, false)
 
-        isAdmin {
+        /*isAdmin {
             if (!it) return@isAdmin
 
             val buttonVisible1 = view.findViewById<ImageButton>(R.id.addChannbutton)
             buttonVisible1.visibility=View.VISIBLE
-        }
+        }*/
 
-        listView = view.findViewById(R.id.channelList)
+        //listView = view.findViewById(R.id.channelList)
 
 
 
