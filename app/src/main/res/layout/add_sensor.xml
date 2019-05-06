@@ -44,20 +44,24 @@
 
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline38"
-                                                android:orientation="vertical" app:layout_constraintGuide_percent="0.1"/>
+                                                android:orientation="vertical"
+                                                app:layout_constraintGuide_percent="0.1"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline39"
-                                                android:orientation="vertical" app:layout_constraintGuide_percent="0.90"/>
+                                                android:orientation="vertical"
+                                                app:layout_constraintGuide_percent="0.90"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline40"
                                                 android:orientation="horizontal"
                                                 app:layout_constraintGuide_percent="0.15"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline41"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.3"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.3"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline42"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.7"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.76"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -69,25 +73,37 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline57" android:inputType="text"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline43"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.45"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.45"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline57"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.5"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.5"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline58"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.35"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.35"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline56"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.20"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.20"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline72"
-                                                android:orientation="horizontal" app:layout_constraintGuide_percent="0.75"/>
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.81"/>
 
 
-    <!--<CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/enabled"
-        android:text="enabled" tools:layout_editor_absoluteY="167dp" tools:layout_editor_absoluteX="57dp"/>-->
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/enabled"
+            android:text="enabled"
+            app:layout_constraintStart_toStartOf="@+id/guideline38"
+            app:layout_constraintEnd_toStartOf="@+id/guideline39"
+            app:layout_constraintTop_toTopOf="@+id/guideline102"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline102"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.58"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
