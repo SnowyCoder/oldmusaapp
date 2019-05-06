@@ -83,4 +83,11 @@
                                                 android:id="@+id/guideline72"
                                                 android:orientation="horizontal" app:layout_constraintGuide_percent="0.75"/>
 
+
+    <!--<CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/enabled"
+        android:text="enabled" tools:layout_editor_absoluteY="167dp" tools:layout_editor_absoluteX="57dp"/>-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
