@@ -243,9 +243,6 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             // Then use it in the sync thread
             val list = sensors.map { SensorData(it) }
 
-            val mapContainer = view!!.findViewById<FrameLayout>(R.id.mapContainer)
-            val map = view!!.findViewById<ImageView>(R.id.mapMuseum)
-
             mapData?.let {
                 view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
                 view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE

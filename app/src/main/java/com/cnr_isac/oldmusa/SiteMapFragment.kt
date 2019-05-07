@@ -1,18 +1,15 @@
 package com.cnr_isac.oldmusa
 
 import android.graphics.Bitmap
+import android.icu.util.MeasureUnit
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.api.Sensor
 import kotlin.math.roundToInt
-import android.content.DialogInterface
 import android.util.TypedValue
-import android.widget.Button
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 
@@ -31,12 +28,16 @@ class SiteMapFragment : Fragment() {
     var moveXDelta: Int = 0
     var moveYDelta: Int = 0
 
+    var imageSizePixels: Int = -1
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.site_map, container, false)
 
         mapContainer = view.findViewById(R.id.mapContainer)
         mapImageView = view.findViewById(R.id.mapMuseum)
+
+        imageSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics).toInt()
 
         return view
     }
@@ -62,38 +63,7 @@ class SiteMapFragment : Fragment() {
 
         if (locX == null || locY == null) return
 
-        // TODO: draw sensor name
-        // TODO: draw real images (those are placeholders)
-        val image = when(sensor.status) {
-            "ok" -> R.drawable.ic_circle_button
-            else -> R.drawable.ic_sad
-        }
-
-        val view = ImageView(context!!)
-        view.setImageResource(image)
-        resetSensorViewPosition(view, sensor)
-
-
-        val sensorListener = SensorListener(sensor, index)
-        view.setOnClickListener(sensorListener)
-        view.setOnCreateContextMenuListener(sensorListener)
-        view.setOnTouchListener(sensorListener)
-
-        parent.addView(view)
-    }
-
-    fun resetSensorViewPosition(view: View, sensor: Sensor) {
-        val locX = sensor.locX!!.toInt()
-        val locY = sensor.locY!!.toInt()
-
-        val padLeft = ((locX.toDouble() / mapWidth) * mapContainer.width).roundToInt()
-        val padBottom = ((locY.toDouble() / mapHeight) * mapContainer.height).roundToInt()
-        val padTop = mapContainer.height - padBottom
-
-        val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics).toInt()
-        view.layoutParams = FrameLayout.LayoutParams(size, size).also {
-            it.setMargins(padLeft, padTop, 0, 0)
-        }
+        val sensorListener = SensorListener(index, mapContainer)
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -111,8 +81,44 @@ class SiteMapFragment : Fragment() {
     }
 
 
-    inner class SensorListener(val sensor: Sensor, val index: Int) : View.OnClickListener, View.OnCreateContextMenuListener,
-        View.OnTouchListener {
+    inner class SensorListener(val index: Int, parent: ViewGroup) : View.OnClickListener,
+        View.OnCreateContextMenuListener, View.OnTouchListener {
+
+        val sensor = sensors[index]
+
+        val image: ImageView
+        val name: TextView
+
+        init {
+            // TODO: draw real images (those are placeholders)
+            image = ImageView(context!!)
+            name = TextView(context!!)
+
+            initViews(parent)
+        }
+
+        private fun initViews(parent: ViewGroup) {
+            image.tag = index
+            name.tag = index
+
+            image.setImageResource(when {
+                !sensor.enabled         -> R.drawable.ic_led_disabled
+                sensor.status == "ok"   -> R.drawable.ic_led_ok
+                else                    -> R.drawable.ic_led_error
+            })
+
+            name.text = sensor.name
+
+            resetViewPosition()
+
+            image.setOnClickListener(this)
+            image.setOnCreateContextMenuListener(this)
+            image.setOnTouchListener(this)
+
+            parent.addView(image)
+            parent.addView(name)
+        }
+
         override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
             //if (currentMovingSensor != null) return
 
@@ -131,10 +137,12 @@ class SiteMapFragment : Fragment() {
                         moveYDelta = params.topMargin - rawY
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        val params = v.layoutParams as ViewGroup.MarginLayoutParams
-                        params.leftMargin = rawX + moveXDelta
-                        params.topMargin = rawY + moveYDelta
-                        v.layoutParams = params
+                        // Get values on the top-left of the image layout
+                        // (we get those because the users move the sensor image and not his name)
+                        // the deltas are initialized when the users begins moving the sensor, they represent how off the
+                        // user touch is off from the top-left of the layout, if the user moves the sensor clicking on
+                        // it's centre the deltas will then be te same as half of the image width and height.
+                        changeViewPosition(rawX + moveXDelta, rawY + moveYDelta)
                     }
                     MotionEvent.ACTION_UP -> {
                         AlertDialog.Builder(context!!)
@@ -142,11 +150,11 @@ class SiteMapFragment : Fragment() {
                             .setMessage("Do you want to save this position?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes) { dialog, whichButton ->
-                                saveSensorPosition(currentMovingSensor!!, v)
+                                savePosition()
                                 currentMovingSensor = null
                             }
                             .setNegativeButton(android.R.string.no) { dialog, whichButton ->
-                                resetSensorViewPosition(v, currentMovingSensor!!)
+                                resetViewPosition()
                                 currentMovingSensor = null
                                 Toast.makeText(context!!, "Moving cancelled", Toast.LENGTH_SHORT).show()
                             }
@@ -164,23 +172,56 @@ class SiteMapFragment : Fragment() {
         override fun onClick(v: View) {
             sensorSelectListener?.onSensorSelect(sensor.id)
         }
-    }
 
-    fun saveSensorPosition(sensor: Sensor, sensorView: View) {
-        val params = sensorView.layoutParams as ViewGroup.MarginLayoutParams
-        val padLeft = params.leftMargin
-        val padTop = params.topMargin
-        val padBottom = mapContainer.height - padTop
+        fun savePosition() {
+            val params = image.layoutParams as ViewGroup.MarginLayoutParams
+            val padLeft = params.leftMargin
+            val padTop = params.topMargin
+            val padBottom = mapContainer.height - padTop
 
-        val locX = ((padLeft.toDouble() / mapContainer.width) * mapWidth).toLong()
-        val locY = ((padBottom.toDouble() / mapContainer.height) * mapHeight).toLong()
+            val locX = ((padLeft.toDouble() / mapContainer.width) * mapWidth).toLong()
+            val locY = ((padBottom.toDouble() / mapContainer.height) * mapHeight).toLong()
 
-        query {
-            sensor.locX = locX
-            sensor.locY = locY
-            sensor.commit()
-        }.onResult {
-            Toast.makeText(context!!, "Position saved", Toast.LENGTH_SHORT).show()
+            query {
+                sensor.locX = locX
+                sensor.locY = locY
+                sensor.commit()
+            }.onResult {
+                Toast.makeText(context!!, "Position saved", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        fun changeViewPosition(layoutX: Int, layoutY: Int) {
+            // Compute the layout center
+            if (name.measuredHeight == 0) {
+                name.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            }
+            val imageXCenter = layoutX + imageSizePixels / 2
+
+            val imageParams = image.layoutParams as ViewGroup.MarginLayoutParams
+            imageParams.setMargins(layoutX, layoutY, 0, 0)
+            image.layoutParams = imageParams
+
+            // Center the text on top of the image
+
+            val nameParams = name.layoutParams as ViewGroup.MarginLayoutParams
+            nameParams.setMargins(imageXCenter - name.measuredWidth / 2, layoutY - name.measuredHeight, 0, 0)
+            name.layoutParams = nameParams
+        }
+
+        fun resetViewPosition() {
+            val locX = sensor.locX!!.toInt()
+            val locY = sensor.locY!!.toInt()
+
+            val padLeft = ((locX.toDouble() / mapWidth) * mapContainer.width).roundToInt()
+            val padBottom = ((locY.toDouble() / mapHeight) * mapContainer.height).roundToInt()
+            val padTop = mapContainer.height - padBottom
+
+
+            image.layoutParams = FrameLayout.LayoutParams(imageSizePixels, imageSizePixels)
+            name.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+
+            changeViewPosition(padLeft, padTop)
         }
     }
 
