@@ -29,10 +29,10 @@
             android:name="com.cnr_isac.oldmusa.Channels"
             android:label="Channels">
         <action
-                android:id="@+id/action_site_to_quickGraph"
+                android:id="@+id/action_channel_to_quickGraph"
                 app:destination="@id/quickGraph" />
         <argument
-                android:name="sensorId"
+                android:name="channelId"
                 app:argType="long" />
     </fragment>
     <fragment

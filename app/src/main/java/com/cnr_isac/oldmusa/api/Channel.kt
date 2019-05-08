@@ -19,6 +19,8 @@ class Channel(
         return api.getChannelReadings(id, start, end)
     }
 
+    fun addChannel(data: ApiChannel? = null) = api.addSensorChannel(id, data)
+
     fun onUpdate(data: ApiChannel) {
         assert(id == data.id)
         assert(sensorId == data.sensorId)

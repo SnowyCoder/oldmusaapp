@@ -191,8 +191,12 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.overflow_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+        isAdmin {
+            if (!it) return@isAdmin
+
+            inflater.inflate(R.menu.overflow_menu, menu)
+            super.onCreateOptionsMenu(menu, inflater)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
