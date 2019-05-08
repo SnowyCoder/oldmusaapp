@@ -15,7 +15,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.query
 
 
 class SiteMapFragment : Fragment() {
-    lateinit var mapContainer: FrameLayout
+    lateinit var mapContainer: ViewGroup
     lateinit var mapImageView: ImageView
 
     lateinit var sensors: List<Sensor>
@@ -218,8 +218,8 @@ class SiteMapFragment : Fragment() {
             val padTop = mapContainer.height - padBottom
 
 
-            image.layoutParams = FrameLayout.LayoutParams(imageSizePixels, imageSizePixels)
-            name.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+            image.layoutParams = ViewGroup.MarginLayoutParams(imageSizePixels, imageSizePixels)
+            name.layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
             changeViewPosition(padLeft, padTop)
         }
