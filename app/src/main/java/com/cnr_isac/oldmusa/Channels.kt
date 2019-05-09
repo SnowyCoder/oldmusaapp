@@ -155,7 +155,7 @@ class Channels : Fragment(){
 
                 dialog.AggiornaS.setOnClickListener {
                     query {
-                        //currentSensor.onUpdate()
+                        //currentSensor.resetLocalData()
                     }.onResult {
                         dialog.dismiss()
                         //reloadSite()

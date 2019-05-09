@@ -14,7 +14,7 @@ class Sensor(
     val channels: List<Channel>
         get() = api.getSensorChannels(id).map { api.getChannel(it) }
 
-    fun onUpdate(data: ApiSensor) {
+    fun resetLocalData(data: ApiSensor) {
         assert(id == data.id)
         assert(siteId == data.siteId)
         this.name = data.name

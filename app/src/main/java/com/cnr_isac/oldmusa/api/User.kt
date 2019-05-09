@@ -35,7 +35,7 @@ class User(api: Api, id: Long, var username: String, password: String?, var perm
     }
 
 
-    fun onUpdate(data: ApiUser) {
+    fun resetLocalData(data: ApiUser) {
         assert(id == data.id)
         this.username = data.username!!
         this.permission = data.permission!!

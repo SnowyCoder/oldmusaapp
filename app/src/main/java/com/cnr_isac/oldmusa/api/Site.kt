@@ -22,7 +22,7 @@ class Site(api: Api, id: Long, var idCnr: String?, var name: String?) : ApiEntit
         api.deleteSiteMap(id)
     }
 
-    fun onUpdate(data: ApiSite) {
+    fun resetLocalData(data: ApiSite) {
         assert(id == data.id)
         this.name = data.name
         this.idCnr = data.idCnr

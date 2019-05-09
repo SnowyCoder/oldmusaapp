@@ -1,17 +1,18 @@
 package com.cnr_isac.oldmusa
 
 import android.graphics.Bitmap
-import android.icu.util.MeasureUnit
 import android.os.Bundle
-import android.util.Log
+import android.util.TypedValue
 import android.view.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.api.Sensor
-import kotlin.math.roundToInt
-import android.util.TypedValue
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import com.cnr_isac.oldmusa.util.ApiUtil.query
+import kotlin.math.roundToInt
 
 
 class SiteMapFragment : Fragment() {

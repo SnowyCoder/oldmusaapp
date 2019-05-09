@@ -86,7 +86,7 @@ class RestApi(val conn: ApiConnession) : Api {
 
     private fun getCacheOrCreateUser(data: ApiUser): User {
         users[data.id]?.get()?.let {
-            it.onUpdate(data)
+            it.resetLocalData(data)
             return it
         }
 
@@ -164,7 +164,7 @@ class RestApi(val conn: ApiConnession) : Api {
 
     private fun getCacheOrCreateSite(data: ApiSite): Site {
         sites[data.id]?.get()?.let {
-            it.onUpdate(data)
+            it.resetLocalData(data)
             return it
         }
 
@@ -246,7 +246,7 @@ class RestApi(val conn: ApiConnession) : Api {
 
     private fun getCacheOrCreateSensor(data: ApiSensor): Sensor {
         sensors[data.id]?.get()?.let {
-            it.onUpdate(data)
+            it.resetLocalData(data)
             return it
         }
 
@@ -289,7 +289,7 @@ class RestApi(val conn: ApiConnession) : Api {
 
     private fun getCacheOrCreateChannel(data: ApiChannel): Channel {
         channels[data.id]?.get()?.let {
-            it.onUpdate(data)
+            it.resetLocalData(data)
             return it
         }
 

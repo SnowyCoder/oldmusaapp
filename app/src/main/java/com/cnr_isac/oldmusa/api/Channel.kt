@@ -21,7 +21,7 @@ class Channel(
 
     fun addChannel(data: ApiChannel? = null) = api.addSensorChannel(id, data)
 
-    fun onUpdate(data: ApiChannel) {
+    fun resetLocalData(data: ApiChannel) {
         assert(id == data.id)
         assert(sensorId == data.sensorId)
         assert(idCnr == data.idCnr)
