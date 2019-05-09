@@ -20,6 +20,7 @@
     <Button
             android:layout_width="50dp" android:layout_height="50dp"
             android:text="Si"
+            android:id="@+id/ButtonYesSensor"
             app:layout_constraintBottom_toTopOf="@+id/guideline44"
             app:layout_constraintStart_toStartOf="@+id/guideline34"
             app:layout_constraintTop_toTopOf="@+id/guideline88"/>
@@ -28,6 +29,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:text="No"
+            android:id="@+id/ButtonNoSensor"
             app:layout_constraintBottom_toTopOf="@+id/guideline44" app:layout_constraintEnd_toStartOf="@+id/guideline36"
             app:layout_constraintTop_toTopOf="@+id/guideline88"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"

@@ -17,6 +17,8 @@ import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import kotlinx.android.synthetic.main.add_channel.*
+import kotlinx.android.synthetic.main.edit_sensor.*
+import kotlinx.android.synthetic.main.remove_sensor.*
 
 class Channels : Fragment(){
 
@@ -126,6 +128,18 @@ class Channels : Fragment(){
                 lp.height = (resources.displayMetrics.heightPixels * 0.30).toInt()
                 dialog.show()
                 dialog.window!!.attributes = lp
+
+                dialog.ButtonYesSensor.setOnClickListener {
+                    query {
+                        currentSensor.delete()
+                    }.onResult {
+                        dialog.dismiss()
+                        //reloadSite()
+                    }
+                }
+                dialog.ButtonNoSensor.setOnClickListener {
+                    dialog.dismiss()
+                }
             }
             R.id.edit -> {
                 val mBuilder = AlertDialog.Builder(context!!)
@@ -138,6 +152,15 @@ class Channels : Fragment(){
                 lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
                 dialog.show()
                 dialog.window!!.attributes = lp
+
+                dialog.AggiornaS.setOnClickListener {
+                    query {
+                        //currentSensor.onUpdate()
+                    }.onResult {
+                        dialog.dismiss()
+                        //reloadSite()
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item)

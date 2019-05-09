@@ -16,6 +16,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
+import com.cnr_isac.oldmusa.api.ApiSite
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -23,6 +24,8 @@ import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_sensor.*
+import kotlinx.android.synthetic.main.edit_museum.*
+import kotlinx.android.synthetic.main.remove_museum.*
 
 
 class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
@@ -210,6 +213,19 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                 lp.height = (resources.displayMetrics.heightPixels * 0.30).toInt()
                 dialog.show()
                 dialog.window!!.attributes = lp
+
+                dialog.ButtonYes.setOnClickListener {
+                    query {
+                        currentSite.delete()
+                    }.onResult {
+                        dialog.dismiss()
+                        //reloadSite()
+                    }
+                }
+                dialog.ButtonNo.setOnClickListener {
+                    dialog.dismiss()
+                }
+
             }
             R.id.edit -> {
                 val mBuilder = AlertDialog.Builder(context!!)
@@ -222,6 +238,24 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                 lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
                 dialog.show()
                 dialog.window!!.attributes = lp
+
+                dialog.Aggiorna.setOnClickListener {
+
+                    val nameSite = dialog.findViewById<EditText>(R.id.nameSite)
+                    val idcnrSite = dialog.findViewById<EditText>(R.id.IdCnrSite)
+                    query {
+                        currentSite.onUpdate(
+                            ApiSite(
+                                name = nameSite.text.toString(),
+                                idCnr = idcnrSite.text.toString()
+                            )
+                        )
+                    }.onResult {
+                        dialog.dismiss()
+                        reloadSite()
+                    }
+                }
+
             }
         }
         return super.onOptionsItemSelected(item)

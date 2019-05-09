@@ -11,7 +11,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/nameMuseum"
+            android:id="@+id/nameSite"
             android:hint="name" app:layout_constraintEnd_toStartOf="@+id/guideline91"
             app:layout_constraintStart_toStartOf="@+id/guideline90"
             app:layout_constraintTop_toTopOf="@+id/guideline92"/>
@@ -20,14 +20,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/IdCnrMuseum"
+            android:id="@+id/IdCnrSite"
             android:hint="idCNR" app:layout_constraintEnd_toStartOf="@+id/guideline91"
             app:layout_constraintStart_toStartOf="@+id/guideline90" app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintTop_toTopOf="@+id/guideline94"/>
     <Button
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="aggiorna"
-            android:id="@+id/aggiorna"
+            android:id="@+id/Aggiorna"
             app:layout_constraintEnd_toStartOf="@+id/guideline91"
             app:layout_constraintTop_toTopOf="@+id/guideline95" app:layout_constraintStart_toStartOf="@+id/guideline90"
     />
