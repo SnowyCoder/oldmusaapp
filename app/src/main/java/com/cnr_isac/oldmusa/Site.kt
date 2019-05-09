@@ -239,17 +239,17 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                 dialog.show()
                 dialog.window!!.attributes = lp
 
-                dialog.Aggiorna.setOnClickListener {
+                val nameSite = dialog.findViewById<EditText>(R.id.nameSite)
+                val idcnrSite = dialog.findViewById<EditText>(R.id.IdCnrSite)
 
-                    val nameSite = dialog.findViewById<EditText>(R.id.nameSite)
-                    val idcnrSite = dialog.findViewById<EditText>(R.id.IdCnrSite)
+                nameSite.setText(currentSite.name ?: "")
+                idcnrSite.setText(currentSite.idCnr ?: "")
+
+                dialog.Aggiorna.setOnClickListener {
                     query {
-                        currentSite.onUpdate(
-                            ApiSite(
-                                name = nameSite.text.toString(),
-                                idCnr = idcnrSite.text.toString()
-                            )
-                        )
+                        currentSite.name = nameSite.text.toString()
+                        currentSite.idCnr = idcnrSite.text.toString()
+                        currentSite.commit()
                     }.onResult {
                         dialog.dismiss()
                         reloadSite()
