@@ -15,6 +15,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
+import kotlinx.android.synthetic.main.fragment_user_details_edit.*
 
 
 class UserDetailsEdit : Fragment() {
@@ -27,6 +28,7 @@ class UserDetailsEdit : Fragment() {
     lateinit var passwordConfirmEditText: EditText
 
     lateinit var saveButton: Button
+    lateinit var deleteButton: Button
 
     lateinit var user: User
     var isCurrent: Boolean = false
@@ -63,6 +65,8 @@ class UserDetailsEdit : Fragment() {
         val cancelButton = view.findViewById<Button>(R.id.cancelButton)
         val editAccessButton = view.findViewById<Button>(R.id.editAccessButton)
 
+        deleteButton = view.findViewById(R.id.deleteButton)
+
         reloadSaveOnChange(usernameEditText)
         reloadSaveOnChange(passwordEditText)
         reloadSaveOnChange(passwordConfirmEditText)
@@ -84,6 +88,14 @@ class UserDetailsEdit : Fragment() {
 
         editAccessButton.setOnClickListener {
             findNavController().navigate(UserDetailsEditDirections.actionUserDetailsEditToUserAccessEdit(args.userId))
+        }
+
+        deleteButton.setOnClickListener {
+            query {
+                user.delete()
+            }.onResult {
+                this.activity!!.onBackPressed()
+            }
         }
 
         isAdmin {
