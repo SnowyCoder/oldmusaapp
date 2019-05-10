@@ -98,13 +98,6 @@ class Channels : Fragment(){
             }
         }
 
-        // add event listener to array items
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
-            val channel = listView.adapter.getItem(index) as ChannelData
-
-            view.findNavController().navigate(ChannelsDirections.actionChannelToQuickGraph(channel.handle.id))
-        }
-
         return view
     }
 
@@ -181,10 +174,11 @@ class Channels : Fragment(){
             val buttonVisible = view.findViewById<ImageButton>(R.id.addSiti)
             buttonVisible.visibility = View.VISIBLE
         }*/
-        currentSensor = api.getSensor(sensorId)
+
 
         query {
-            api.getSensorChannels(sensorId)
+            currentSensor = api.getSensor(sensorId)
+            currentSensor.channels
         }.onResult { listChannels ->
             this.listChannels = listChannels
 
@@ -197,8 +191,8 @@ class Channels : Fragment(){
         }.useLoadingBar(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            //val action = SiteDirections.actionSiteToChannel(listChannels[position].id)
-            //view.findNavController().navigate(action)
+            val action = ChannelsDirections.actionChannelToQuickGraph(listChannels[position].id)
+            view.findNavController().navigate(action)
         }
     }
 
