@@ -219,6 +219,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                         currentSite.delete()
                     }.onResult {
                         dialog.dismiss()
+                        this.activity!!.onBackPressed()
                         //reloadSite()
                     }
                 }

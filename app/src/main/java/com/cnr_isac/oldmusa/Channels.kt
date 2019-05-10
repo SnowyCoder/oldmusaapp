@@ -81,11 +81,10 @@ class Channels : Fragment(){
                 Log.e("print", maxRangeChannel.toString())
 
                 query {
-                   /*currentChannel.addChannel(
+                   /*currentSensor.addChannel(
                         ApiChannel(
                             name = nameChannel.text.toString(),
-                            idCnr = idCnrChannel.text.toString(),
-                            sensorId = currentSensor.id,
+                            //idCnr = idCnrChannel.text.toString(),
                             measureUnit = unitàMisura.text.toString(),
                             rangeMin = minRangeChannel.text.toString().toDouble(),
                             rangeMax = maxRangeChannel.text.toString().toDouble()
@@ -150,12 +149,18 @@ class Channels : Fragment(){
                 dialog.show()
                 dialog.window!!.attributes = lp
 
+                val nameSen = dialog.findViewById<EditText>(R.id.nameSensor)
+                val idcnrSen = dialog.findViewById<EditText>(R.id.IdCnrSensor)
+
+                //Log.e(nameSen.toString(),idcnrSen.toString())
                 dialog.AggiornaS.setOnClickListener {
                     query {
-                        //currentSensor.resetLocalData()
+                        currentSensor.name = nameSen.text.toString()
+                        currentSensor.idCnr = idcnrSen.text.toString()
+                        currentSensor.commit()
                     }.onResult {
                         dialog.dismiss()
-                        //reloadSite()
+                        //reload(View)
                     }
                 }
             }

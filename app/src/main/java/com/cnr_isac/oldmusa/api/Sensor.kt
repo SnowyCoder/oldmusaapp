@@ -35,4 +35,6 @@ class Sensor(
     fun delete() {
         api.deleteSensor(id)
     }
+
+    fun addChannel(data: ApiChannel? = null) = api.addSensorChannel(id, data)
 }
