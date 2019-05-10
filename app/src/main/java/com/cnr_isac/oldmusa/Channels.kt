@@ -4,25 +4,26 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ListView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.api.ApiChannel
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.Sensor
+import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
+import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
 class Channels : Fragment(){
-
+    lateinit var listChannels: List<Channel>
     private lateinit var listView: ListView
+
+    val args: ChannelsArgs by navArgs()
 
     lateinit var currentChannel: Channel
     lateinit var currentSensor: Sensor
@@ -39,6 +40,9 @@ class Channels : Fragment(){
 
         val view = inflater.inflate(R.layout.fragment_sensor, container, false)
 
+        listView = view.findViewById(R.id.channelsList)
+
+        reload(view)
         isAdmin {
             if (!it) return@isAdmin
 
@@ -46,7 +50,7 @@ class Channels : Fragment(){
             buttonVisible1.visibility=View.VISIBLE
         }
 
-        listView = view.findViewById(R.id.channelsList)
+
 
         // open add channel modal
         view.findViewById<ImageButton>(R.id.addChannelButton).setOnClickListener{
@@ -164,6 +168,38 @@ class Channels : Fragment(){
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun reload(view: View) {
+
+        //channelId è invece l'id del sensore
+        val sensorId = args.channelId
+        // permission
+        /*isAdmin {
+            if (!it) return@isAdmin
+
+            val buttonVisible = view.findViewById<ImageButton>(R.id.addSiti)
+            buttonVisible.visibility = View.VISIBLE
+        }*/
+        currentSensor = api.getSensor(sensorId)
+
+        query {
+            api.getSensorChannels(sensorId)
+        }.onResult { listChannels ->
+            this.listChannels = listChannels
+
+            val nameList = listChannels.map { it.name ?: "null" }
+
+            Log.e(Home.TAG, nameList.toString())
+
+            val adapter = ArrayAdapter<String>(context!!, R.layout.list_channel_item, nameList)
+            listView.adapter = adapter
+        }.useLoadingBar(this)
+
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            //val action = SiteDirections.actionSiteToChannel(listChannels[position].id)
+            //view.findNavController().navigate(action)
+        }
     }
 
 }
