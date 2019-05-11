@@ -1,11 +1,10 @@
 package com.cnr_isac.oldmusa.api.rest
 
 import com.cnr_isac.oldmusa.api.RestException
-import java.io.InputStream
 import okhttp3.*
 import okhttp3.internal.Util
 import okhttp3.internal.http.HttpMethod.requiresRequestBody
-import java.lang.RuntimeException
+import java.io.InputStream
 
 
 /**

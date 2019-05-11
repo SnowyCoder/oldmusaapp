@@ -10,12 +10,6 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableMap
-import kotlin.collections.get
-import kotlin.collections.map
-import kotlin.collections.mapOf
 import kotlin.collections.set
 
 class RestApi(val conn: ApiConnession) : Api {
@@ -212,8 +206,18 @@ class RestApi(val conn: ApiConnession) : Api {
         }
     }
 
-    override fun setSiteMap(id: Long, data: InputStream) {
-        conn.connect("PUT", "site/$id/map", content = data, contentType = "image/png", headers = headers)
+    override fun setSiteMap(id: Long, data: InputStream, resize: MapResizeData?) {
+        val params = resize?.let {
+            mapOf(
+                "resize_from_w" to it.fromW.toString(),
+                "resize_from_h" to it.fromH.toString(),
+                "resize_to_w" to it.toW.toString(),
+                "resize_to_h" to it.toH.toString()
+            )
+        }
+
+        conn.connect("PUT", "site/$id/map", content = data, contentType = "image/png", headers = headers,
+            parameters = params)
     }
 
     override fun deleteSiteMap(id: Long) {

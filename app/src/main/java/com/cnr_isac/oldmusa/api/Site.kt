@@ -13,8 +13,8 @@ class Site(api: Api, id: Long, var idCnr: String?, var name: String?) : ApiEntit
         return api.getSiteMap(id)
     }
 
-    fun setMap(os: InputStream) {
-        api.setSiteMap(id, os)
+    fun setMap(os: InputStream, resize: MapResizeData? = null) {
+        api.setSiteMap(id, os, resize)
     }
 
     fun deleteMap() {

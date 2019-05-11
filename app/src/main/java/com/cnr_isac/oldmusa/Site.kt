@@ -16,7 +16,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
-import com.cnr_isac.oldmusa.api.ApiSite
+import com.cnr_isac.oldmusa.api.MapResizeData
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -34,6 +34,9 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
     val args: SiteArgs by navArgs()
 
     lateinit var currentSite: Site
+
+    var currentImageW: Int = -1
+    var currentImageH: Int = -1
 
     data class SensorData(val handle: Sensor) {
         override fun toString(): String {
@@ -72,35 +75,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
             val sensor = listView.adapter.getItem(index) as SensorData
 
-
             view.findNavController().navigate(SiteDirections.actionSiteToChannel(sensor.handle.id))
-
-            /*val mBuilder = AlertDialog.Builder(this)
-            mBuilder.setTitle("Crea grafico")
-            val d = mBuilder.setView(LayoutInflater.from(this).inflate(create_graph, null)).create()
-            val lp = WindowManager.LayoutParams()
-            lp.copyFrom(d.window!!.attributes)
-            lp.title = "Crea grafico"
-            lp.width = (resources.displayMetrics.widthPixels * 0.90).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.80).toInt()
-            d.show()
-            d.window!!.attributes = lp
-
-            // set up calendar
-            val nextYear = Calendar.getInstance()
-            nextYear.add(Calendar.YEAR, 1)
-
-            calendar = d.findViewById<CalendarPickerView>(R.id.calendar_view)
-            val today = Date()
-            calendar.init(today, nextYear.time)
-                .withSelectedDate(today)
-                .inMode(CalendarPickerView.SelectionMode.RANGE)
-            calendar.highlightDates(getHolidays())
-
-            // submit graph button listener
-            d.create.setOnClickListener { view -> // create = bottone invio
-                d.dismiss()
-            }*/
         }
 
         // open map options modal
@@ -290,6 +265,8 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                 //(fragmentManager!!.findFragmentById(R.id.site_map) as SiteMapFragment).onRefresh(it, sensors)
                 //view!!.findViewById<SiteMapFragment>(R.id.site_map)
                 //
+                currentImageW = it.width
+                currentImageH = it.height
                 (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).onRefresh(it, sensors)
             }
 
@@ -330,7 +307,14 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
             val bytes = context!!.contentResolver.openInputStream(data.data!!)!!.readBytes()
 
-            currentSite.setMap(context!!.contentResolver.openInputStream(data.data!!)!!)
+            var resize: MapResizeData? = null
+
+            if (currentImageW != -1) {
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                resize = MapResizeData(currentImageW, currentImageH, bitmap.width, bitmap.height)
+            }
+
+            currentSite.setMap(context!!.contentResolver.openInputStream(data.data!!)!!, resize)
 
             reloadSite()
         }

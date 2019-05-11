@@ -72,6 +72,13 @@ data class ChannelReading(
     @Optional val error: Char? = null
 )
 
+data class MapResizeData(
+    val fromW: Int,
+    val fromH: Int,
+    val toW: Int,
+    val toH: Int
+)
+
 @Serializer(forClass = Date::class)
 object LocalDateTimeSerializer : KSerializer<Date> {
     override val descriptor: SerialDescriptor = StringDescriptor.withName("DateSerializer")

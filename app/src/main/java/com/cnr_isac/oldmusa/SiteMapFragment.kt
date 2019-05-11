@@ -2,6 +2,7 @@ package com.cnr_isac.oldmusa
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.FrameLayout
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.math.MathUtils.clamp
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.query
@@ -44,6 +46,11 @@ class SiteMapFragment : Fragment() {
     }
 
     fun onRefresh(map: Bitmap, sensors: List<Sensor>) {
+        // Cleanup
+        for (i in (1 until mapContainer.childCount).reversed()) {
+            this.mapContainer.removeViewAt(i)
+        }
+
         this.sensors = sensors
 
         mapImageView.setImageBitmap(map)
@@ -211,12 +218,15 @@ class SiteMapFragment : Fragment() {
         }
 
         fun resetViewPosition() {
-            val locX = sensor.locX!!.toInt()
-            val locY = sensor.locY!!.toInt()
+            val locX = clamp(sensor.locX!!.toInt(), 0, mapWidth)
+            val locY = clamp(sensor.locY!!.toInt(), 0, mapHeight)
 
-            val padLeft = ((locX.toDouble() / mapWidth) * mapContainer.width).roundToInt()
+            var padLeft = ((locX.toDouble() / mapWidth) * mapContainer.width).roundToInt()
             val padBottom = ((locY.toDouble() / mapHeight) * mapContainer.height).roundToInt()
-            val padTop = mapContainer.height - padBottom
+            var padTop = mapContainer.height - padBottom
+
+            padLeft = clamp(padLeft, 0, mapContainer.width - imageSizePixels)
+            padTop = clamp(padTop, 0, mapContainer.height - imageSizePixels)
 
 
             image.layoutParams = ViewGroup.MarginLayoutParams(imageSizePixels, imageSizePixels)

@@ -17,6 +17,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
+import kotlinx.android.synthetic.main.fragment_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
 class Channels : Fragment(){
@@ -28,11 +29,6 @@ class Channels : Fragment(){
     lateinit var currentChannel: Channel
     lateinit var currentSensor: Sensor
 
-    data class ChannelData(val handle: Channel) {
-        override fun toString(): String {
-            return handle.name ?: handle.id.toString()
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)

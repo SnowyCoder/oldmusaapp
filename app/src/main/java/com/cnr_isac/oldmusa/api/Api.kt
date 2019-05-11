@@ -67,7 +67,7 @@ interface Api {
 
     fun getSiteMap(id: Long): InputStream?
 
-    fun setSiteMap(id: Long, data: InputStream)
+    fun setSiteMap(id: Long, data: InputStream, resize: MapResizeData?)
 
     fun deleteSiteMap(id: Long)
 
