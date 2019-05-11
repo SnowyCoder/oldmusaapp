@@ -7,7 +7,6 @@ class Site(api: Api, id: Long, var idCnr: String?, var name: String?) : ApiEntit
     val sensors: List<Sensor>
         get() = api.getSiteSensors(id).map { api.getSensor(it) }
 
-
     fun addSensor(data: ApiSensor? = null) = api.addSiteSensor(id, data)
 
     fun getMap(): InputStream? {

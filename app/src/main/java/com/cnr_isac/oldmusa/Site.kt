@@ -44,6 +44,8 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
+        //getActivity()?.setTitle(currentSite.name ?: "")
+        getActivity()?.setTitle("Sito")
 
         val view = inflater.inflate(fragment_museum, container, false)
 

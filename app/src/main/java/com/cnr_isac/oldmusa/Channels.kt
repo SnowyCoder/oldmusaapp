@@ -37,6 +37,7 @@ class Channels : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
+        getActivity()?.setTitle("Sensore")
 
         val view = inflater.inflate(R.layout.fragment_sensor, container, false)
 
@@ -57,7 +58,7 @@ class Channels : Fragment(){
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
 
             val mBuilder = AlertDialog.Builder(context!!)
-            mBuilder.setTitle("Aggiungi museo")
+            mBuilder.setTitle("Aggiungi canale")
             val dialogView = LayoutInflater.from(context!!).inflate(R.layout.add_channel, null)
             val dialog = mBuilder.setView(dialogView).create()
             val lp = WindowManager.LayoutParams()
@@ -153,6 +154,10 @@ class Channels : Fragment(){
                 val idcnrSen = dialog.findViewById<EditText>(R.id.IdCnrSensor)
 
                 //Log.e(nameSen.toString(),idcnrSen.toString())
+
+                nameSen.setText(currentSensor.name ?: "")
+                idcnrSen.setText(currentSensor.idCnr ?: "")
+
                 dialog.AggiornaS.setOnClickListener {
                     query {
                         currentSensor.name = nameSen.text.toString()
