@@ -8,6 +8,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import com.cnr_isac.oldmusa.api.ApiChannel
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -24,7 +25,6 @@ class Sensor : Fragment(){
 
     val args: SensorArgs by navArgs()
 
-    lateinit var currentChannel: Channel
     lateinit var currentSensor: Sensor
 
 
@@ -36,15 +36,14 @@ class Sensor : Fragment(){
 
         listView = view.findViewById(R.id.channelsList)
 
-        reload(view)
+        activity?.title = "Sensore"
+
         isAdmin {
             if (!it) return@isAdmin
 
             val buttonVisible1 = view.findViewById<ImageButton>(R.id.addChannelButton)
-            buttonVisible1.visibility=View.VISIBLE
-            getActivity()?.title = currentSensor.name ?: ""
+            buttonVisible1.visibility = View.VISIBLE
         }
-
 
 
         // open add channel modal
@@ -65,26 +64,29 @@ class Sensor : Fragment(){
 
             dialog.AddButtonC.setOnClickListener {
                 val nameChannel = dialog.findViewById<EditText>(R.id.nameChannel)
-                Log.e("print", nameChannel.toString())
                 val idCnrChannel = dialog.findViewById<EditText>(R.id.idCnr)
-                Log.e("print", idCnrChannel.toString())
-                val unitàMisura = dialog.findViewById<EditText>(R.id.unitàMisura)
-                Log.e("print", unitàMisura.toString())
-                val minRangeChannel = dialog.findViewById<EditText>(R.id.minRange)
-                Log.e("print", minRangeChannel.toString())
-                val maxRangeChannel = dialog.findViewById<EditText>(R.id.maxRange)
-                Log.e("print", maxRangeChannel.toString())
+                val measureUnit = dialog.findViewById<EditText>(R.id.measureUnit)
+                val minRangeChannel = dialog.findViewById<EditText>(R.id.rangeMin)
+                val maxRangeChannel = dialog.findViewById<EditText>(R.id.rangeMax)
+
+                val rawRangeMin = minRangeChannel.text.toString()
+                val rawRangeMax = maxRangeChannel.text.toString()
+
+                val rangeMin = rawRangeMin.toDoubleOrNull()
+                val rangeMax = rawRangeMax.toDoubleOrNull()
+
 
                 query {
-                   /*currentSensor.addChannel(
+
+                   currentSensor.addChannel(
                         ApiChannel(
                             name = nameChannel.text.toString(),
-                            //idCnr = idCnrChannel.text.toString(),
-                            measureUnit = unitàMisura.text.toString(),
-                            rangeMin = minRangeChannel.text.toString().toDouble(),
-                            rangeMax = maxRangeChannel.text.toString().toDouble()
+                            idCnr = idCnrChannel.text.toString(),
+                            measureUnit = measureUnit.text.toString(),
+                            rangeMin = rangeMin,
+                            rangeMax = rangeMax
                         )
-                    )*/
+                    )
                 }.onResult {
                     dialog.dismiss()
                     reload(view)
@@ -126,7 +128,7 @@ class Sensor : Fragment(){
                         currentSensor.delete()
                     }.onResult {
                         dialog.dismiss()
-                        //reloadSite()
+                        activity!!.onBackPressed()
                     }
                 }
                 dialog.ButtonNoSensor.setOnClickListener {
@@ -146,7 +148,7 @@ class Sensor : Fragment(){
                 dialog.window!!.attributes = lp
 
                 val nameSen = dialog.findViewById<EditText>(R.id.nameSensor)
-                val idcnrSen = dialog.findViewById<EditText>(R.id.IdCnrSensor)
+                val idcnrSen = dialog.findViewById<EditText>(R.id.IdCnr)
 
                 //Log.e(nameSen.toString(),idcnrSen.toString())
 
@@ -185,13 +187,14 @@ class Sensor : Fragment(){
             currentSensor = api.getSensor(sensorId)
             currentSensor.channels
         }.onResult { listChannels ->
+            activity?.title = currentSensor.name ?: "Sensore"
             this.listChannels = listChannels
 
             val nameList = listChannels.map { it.name ?: "null" }
 
             Log.e(Home.TAG, nameList.toString())
 
-            val adapter = ArrayAdapter<String>(context!!, R.layout.list_channel_item, nameList)
+            val adapter = ArrayAdapter<String>(view.context, R.layout.list_channel_item, nameList)
             listView.adapter = adapter
         }.useLoadingBar(this)
 

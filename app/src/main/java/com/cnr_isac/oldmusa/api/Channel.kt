@@ -1,13 +1,12 @@
 package com.cnr_isac.oldmusa.api
 
-import java.time.LocalDateTime
 import java.util.*
 
 class Channel(
     api: Api,
     id: Long,
     val sensorId: Long,
-    val idCnr: String?,
+    var idCnr: String?,
     var name: String?,
     var measureUnit: String?,
     var rangeMin: Double?,
@@ -16,7 +15,7 @@ class Channel(
 
 
     fun getReadings(start: Date, end: Date, precision: String = "atomic"): List<ChannelReading> {
-        return api.getChannelReadings(id, start, end)
+        return api.getChannelReadings(id, start, end, precision)
     }
 
     fun addChannel(data: ApiChannel? = null) = api.addSensorChannel(id, data)
@@ -24,7 +23,7 @@ class Channel(
     fun resetLocalData(data: ApiChannel) {
         assert(id == data.id)
         assert(sensorId == data.sensorId)
-        assert(idCnr == data.idCnr)
+        this.idCnr = data.idCnr
         this.name = data.name
         this.measureUnit = data.measureUnit
         this.rangeMin = data.rangeMin

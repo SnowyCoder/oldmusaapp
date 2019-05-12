@@ -51,10 +51,11 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:ems="10"
-            android:id="@+id/idcnrSensore"
+            android:id="@+id/idCnr"
+            android:hint="id CNR stazione"
             app:layout_constraintStart_toStartOf="@+id/guideline38"
             app:layout_constraintEnd_toStartOf="@+id/guideline39"
-            app:layout_constraintTop_toTopOf="@+id/guideline43" android:hint="id cnr"
+            app:layout_constraintTop_toTopOf="@+id/guideline43"
             app:layout_constraintBottom_toTopOf="@+id/guideline57" android:inputType="text"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline43"

@@ -47,8 +47,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
-        //getActivity()?.setTitle(currentSite.name ?: "")
-        getActivity()?.setTitle("Sito")
+        activity?.title = "Sito"
 
         val view = inflater.inflate(fragment_museum, container, false)
 
@@ -140,7 +139,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                 val nameSensor = dialog.findViewById<EditText>(R.id.nameSensore)
                 e("print", nameSensor.toString())
                 //val mappaSensor = view.findViewById<EditText>(R.id.mappaSensore)
-                val idcnrSensor = dialog.findViewById<EditText>(R.id.idcnrSensore)
+                val idcnrSensor = dialog.findViewById<EditText>(R.id.idCnr)
                 e("print", idcnrSensor.toString())
 
                 query {
@@ -197,7 +196,6 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                     }.onResult {
                         dialog.dismiss()
                         this.activity!!.onBackPressed()
-                        //reloadSite()
                     }
                 }
                 dialog.ButtonNo.setOnClickListener {
@@ -272,7 +270,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
 
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
             listView.adapter = adapter
-            getActivity()?.setTitle(currentSite.name ?: "")
+            activity?.title = currentSite.name ?: ""
         }.useLoadingBar(this)
     }
 

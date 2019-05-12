@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.ChannelReading
-import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
@@ -46,8 +45,7 @@ class QuickGraph : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
-        //getActivity()?.setTitle(currentChannel.name ?: "")
-        getActivity()?.setTitle("Canale")
+        activity?.title = "Canale"
 
         val view = inflater.inflate(R.layout.fragment_quickgraph, container, false)
 
@@ -87,7 +85,7 @@ class QuickGraph : Fragment() {
         yAxis.enableGridDashedLine(10f, 10f, 0f)
 
 
-        onSensorLoad()
+        onChannelLoad()
 
         return view
     }
@@ -95,10 +93,10 @@ class QuickGraph : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        onSensorLoad()
+        onChannelLoad()
     }
 
-    fun onSensorLoad() {
+    fun onChannelLoad() {
         // Setup first date
         currentDate = midnightOf(2014, Calendar.APRIL, 1)// TODO: replace with LocalDate.now(), this is for testing purposes
         onDateChange(currentDate)
@@ -130,7 +128,7 @@ class QuickGraph : Fragment() {
                         currentChannel.delete()
                     }.onResult {
                         dialog.dismiss()
-                        //reloadSite()
+                        activity!!.onBackPressed()
                     }
                 }
                 dialog.ButtonNoCha.setOnClickListener {
@@ -149,27 +147,30 @@ class QuickGraph : Fragment() {
                 dialog.show()
                 dialog.window!!.attributes = lp
 
-                val nameCha = dialog.findViewById<EditText>(R.id.nameChannel)
-                val unitCha = dialog.findViewById<EditText>(R.id.unitàMisura)
-                val idcnrCha = dialog.findViewById<EditText>(R.id.IdCnrChannel)
-                val minCha = dialog.findViewById<EditText>(R.id.minRange)
-                val maxCha = dialog.findViewById<EditText>(R.id.maxRange)
+                val nameCha = dialog.findViewById<EditText>(R.id.name)
+                val unitCha = dialog.findViewById<EditText>(R.id.measureUnit)
+                val idcnrCha = dialog.findViewById<EditText>(R.id.idCnr)
+                val minCha = dialog.findViewById<EditText>(R.id.rangeMin)
+                val maxCha = dialog.findViewById<EditText>(R.id.rangeMax)
 
-                //nameCha.setText(currentChannel.name ?: "")
-                //idcnrCha.setText(currentChannel.idCnr ?: "")
-                //unitCha.setText(currentChannel.measureUnit ?: "")
-                //minCha.setText(currentChannel.rangeMin?.toInt() ?: "")
-                //maxCha.setText(currentChannel.rangeMax?.toDouble())
+                nameCha.setText(currentChannel.name ?: "")
+                idcnrCha.setText(currentChannel.idCnr ?: "")
+                unitCha.setText(currentChannel.measureUnit ?: "")
+                minCha.setText(currentChannel.rangeMin?.toString() ?: "")
+                maxCha.setText(currentChannel.rangeMax?.toString() ?: "")
 
                 dialog.aggiornaC.setOnClickListener {
-                    /*query {
+                    query {
                         currentChannel.name = nameCha.text.toString()
-                        //currentChannel.idCnr = idcnrCha.text.toString()
+                        currentChannel.idCnr = idcnrCha.text.toString()
+                        currentChannel.measureUnit = unitCha.text.toString()
+                        currentChannel.rangeMin = minCha.text.toString().toDoubleOrNull()
+                        currentChannel.rangeMax = maxCha.text.toString().toDoubleOrNull()
                         currentChannel.commit()
                     }.onResult {
                         dialog.dismiss()
-                        //reload(View)
-                    }*/
+                        onChannelLoad()
+                    }
                 }
             }
         }
@@ -205,6 +206,7 @@ class QuickGraph : Fragment() {
 
     fun onDataReceived(day: Calendar, data: List<ChannelReading>) {
         currentDate = day
+        activity?.title = currentChannel.name ?: "Canale"
 
         view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(userFriendlyDateFormatter.format(day.time))
 
