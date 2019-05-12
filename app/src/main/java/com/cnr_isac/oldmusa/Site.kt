@@ -272,6 +272,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
 
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
             listView.adapter = adapter
+            getActivity()?.setTitle(currentSite.name ?: "")
         }.useLoadingBar(this)
     }
 

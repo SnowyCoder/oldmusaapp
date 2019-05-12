@@ -55,6 +55,7 @@ class QuickGraph : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
+        //getActivity()?.setTitle(currentChannel.name ?: "")
         getActivity()?.setTitle("Canale")
 
         val view = inflater.inflate(R.layout.fragment_quickgraph, container, false)
@@ -154,6 +155,7 @@ class QuickGraph : Fragment() {
                     dialog.window!!.attributes = lp
                 }
             }*/
+
         return view
     }
 

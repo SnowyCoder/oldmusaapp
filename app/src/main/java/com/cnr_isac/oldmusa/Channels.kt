@@ -33,7 +33,6 @@ class Channels : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
-        getActivity()?.setTitle("Sensore")
 
         val view = inflater.inflate(R.layout.fragment_sensor, container, false)
 
@@ -45,6 +44,7 @@ class Channels : Fragment(){
 
             val buttonVisible1 = view.findViewById<ImageButton>(R.id.addChannelButton)
             buttonVisible1.visibility=View.VISIBLE
+            getActivity()?.title = currentSensor.name ?: ""
         }
 
 
@@ -89,10 +89,11 @@ class Channels : Fragment(){
                     )*/
                 }.onResult {
                     dialog.dismiss()
-                    //reloadSite()
+                    reload(view)
                 }
             }
         }
+        reload(view)
 
         return view
     }
@@ -200,6 +201,7 @@ class Channels : Fragment(){
             val action = ChannelsDirections.actionChannelToQuickGraph(listChannels[position].id)
             view.findNavController().navigate(action)
         }
+
     }
 
 }
