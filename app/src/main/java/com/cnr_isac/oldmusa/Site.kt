@@ -35,8 +35,8 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
 
     lateinit var currentSite: Site
 
-    var currentImageW: Int = -1
-    var currentImageH: Int = -1
+    var currentImageW: Int = 0
+    var currentImageH: Int = 0
 
     data class SensorData(val handle: Sensor) {
         override fun toString(): String {
@@ -309,7 +309,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
 
             var resize: MapResizeData? = null
 
-            if (currentImageW != -1) {
+            if (currentImageW != 0) {
                 val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 resize = MapResizeData(currentImageW, currentImageH, bitmap.width, bitmap.height)
             }

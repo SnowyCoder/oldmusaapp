@@ -1,6 +1,7 @@
 package com.cnr_isac.oldmusa
 
 import android.app.AlertDialog
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -16,6 +17,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_channel.*
+import kotlinx.android.synthetic.main.edit_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
@@ -106,7 +108,7 @@ class Sensor : Fragment(){
         isAdmin {
             if (!it) return@isAdmin
 
-            inflater.inflate(R.menu.overflow_menu, menu)
+            inflater.inflate(R.menu.sensor_overflow_menu, menu)
             super.onCreateOptionsMenu(menu, inflater)
         }
     }
@@ -169,6 +171,20 @@ class Sensor : Fragment(){
                         //reload(View)
                     }
                 }
+            }
+            R.id.resetPosition -> {
+                // This will be slow as hell
+                query {
+                    val mapData = api.getSiteMap(currentSensor.siteId)?.readBytes()
+                    val map = mapData?.let { BitmapFactory.decodeByteArray(mapData, 0, mapData.size) }
+
+                    val x = map?.width ?: 0
+                    val y = map?.height ?: 0
+
+                    currentSensor.locX = x.toLong() / 2
+                    currentSensor.locY = y.toLong() / 2
+                    currentSensor.commit()
+                }.useLoadingBar(this)
             }
         }
         return super.onOptionsItemSelected(item)

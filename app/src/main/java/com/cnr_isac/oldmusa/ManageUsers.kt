@@ -95,6 +95,6 @@ class ManageUsers : Fragment() {
     }
 
     companion object {
-        const val TAG = "Home"
+        const val TAG = "ManageUsers"
     }
 }
