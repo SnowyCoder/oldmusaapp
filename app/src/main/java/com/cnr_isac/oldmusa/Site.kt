@@ -136,17 +136,18 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             dialog.window!!.attributes = lp
 
             dialog.AddButtonS.setOnClickListener {
-                val nameSensor = dialog.findViewById<EditText>(R.id.nameSensore)
-                e("print", nameSensor.toString())
-                //val mappaSensor = view.findViewById<EditText>(R.id.mappaSensore)
-                val idcnrSensor = dialog.findViewById<EditText>(R.id.idCnr)
-                e("print", idcnrSensor.toString())
+                val name = dialog.findViewById<EditText>(R.id.name)
+                val idCnr = dialog.findViewById<EditText>(R.id.idCnr)
+                val enabled = dialog.findViewById<CheckBox>(R.id.enabled)
 
                 query {
                     currentSite.addSensor(
                         ApiSensor(
-                            name = nameSensor.text.toString(),
-                            idCnr = idcnrSensor.text.toString()
+                            name = name.text.toString(),
+                            idCnr = idCnr.text.toString(),
+                            locX = currentImageW.toLong() / 2,
+                            locY = currentImageH.toLong() / 2,
+                            enabled = enabled.isChecked
                         )
                     )
                 }.onResult {

@@ -147,18 +147,22 @@ class Sensor : Fragment(){
                 dialog.show()
                 dialog.window!!.attributes = lp
 
-                val nameSen = dialog.findViewById<EditText>(R.id.nameSensor)
-                val idcnrSen = dialog.findViewById<EditText>(R.id.IdCnr)
+
+                val name = dialog.findViewById<EditText>(R.id.name)
+                val idCnr = dialog.findViewById<EditText>(R.id.idCnr)
+                val enabled = dialog.findViewById<CheckBox>(R.id.enabled)
 
                 //Log.e(nameSen.toString(),idcnrSen.toString())
 
-                nameSen.setText(currentSensor.name ?: "")
-                idcnrSen.setText(currentSensor.idCnr ?: "")
+                name.setText(currentSensor.name ?: "")
+                idCnr.setText(currentSensor.idCnr ?: "")
+                enabled.isChecked = currentSensor.enabled
 
-                dialog.AggiornaS.setOnClickListener {
+                dialog.aggiorna.setOnClickListener {
                     query {
-                        currentSensor.name = nameSen.text.toString()
-                        currentSensor.idCnr = idcnrSen.text.toString()
+                        currentSensor.name = name.text.toString()
+                        currentSensor.idCnr = idCnr.text.toString()
+                        currentSensor.enabled = enabled.isChecked
                         currentSensor.commit()
                     }.onResult {
                         dialog.dismiss()
