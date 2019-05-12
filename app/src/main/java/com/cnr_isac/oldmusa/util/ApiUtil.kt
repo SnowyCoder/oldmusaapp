@@ -13,6 +13,9 @@ import com.cnr_isac.oldmusa.api.RestException
 import android.widget.RelativeLayout
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.cnr_isac.oldmusa.Account
 import com.cnr_isac.oldmusa.api.Api
 
@@ -34,6 +37,10 @@ object ApiUtil {
         override fun onPostExecute(r: Void?) {
             query.completeTask(result, error)
         }
+
+        override fun onCancelled() {
+            query.completeTask(null, null)
+        }
     }
 
     class RawQuery<R>(autoexec: Boolean = true, val f: () -> R) {
@@ -43,6 +50,7 @@ object ApiUtil {
         private var task: QueryAsyncTask<R> = QueryAsyncTask(this)
 
         private var done = false
+        private var cancelled = false
         private var result: R? = null
         private var error: RestException? = null
 
@@ -85,6 +93,12 @@ object ApiUtil {
             doneCallbacks.forEach { it() }
         }
 
+        fun cancel(mayInterruptIfRunning: Boolean) {
+            if (done) return
+            this.cancelled = true
+            this.task.cancel(mayInterruptIfRunning)
+        }
+
         /**
          * Runs the task, only necessary if autoexec parameter was set to false
          */
@@ -93,12 +107,29 @@ object ApiUtil {
         }
     }
 
+    class QueryLifecycleObserver<T>(val query: RawQuery<T>, val mayInterruptIfRunning: Boolean) : LifecycleObserver {
+        @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        fun cancelQuery() {
+            query.cancel(mayInterruptIfRunning)
+        }
+    }
+
     fun <R> Context.query(f: () -> R): RawQuery<R> {
         return RawQuery(true, f).onRestError { handleRestError(this.applicationContext, it) }
     }
 
-    fun <R> Fragment.query(f: () -> R): RawQuery<R> {
-        return RawQuery(true, f).onRestError { handleRestError(this.context!!.applicationContext, it) }
+    fun <R> Fragment.query(mayInterruptIfRunning: Boolean = false, f: () -> R): RawQuery<R> {
+        val query = RawQuery(true, f)
+
+        // Check if the fragment is paused, then cancel it to mitigate exceptions
+        val observer = QueryLifecycleObserver(query, mayInterruptIfRunning)
+        this.lifecycle.addObserver(observer)
+        query.onDone {
+            lifecycle.removeObserver(observer)
+        }
+
+        query.onRestError { handleRestError(this.context!!.applicationContext, it) }
+        return query
     }
 
     fun handleRestError(ctx: Context, e: RestException) {
