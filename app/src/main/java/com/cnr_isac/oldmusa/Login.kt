@@ -11,12 +11,14 @@ import android.os.StrictMode
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.firebase.FirebaseUtil
 import com.cnr_isac.oldmusa.util.ApiUtil
 import com.cnr_isac.oldmusa.util.ApiUtil.handleRestError
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 class Login : AppCompatActivity() {
@@ -24,17 +26,20 @@ class Login : AppCompatActivity() {
         val TAG = "Login"
     }
 
-    private fun isLoginNeeded(): Boolean {
-        // TODO: we need a better solution to this
-        if (api.getCurrentToken().isNullOrBlank()) return true
-        try {
+    /**
+     * Checks if the login works by querying the current user
+     * if the query fails it does not crash (instead it logs out)
+     */
+    private fun checkGetMe(): User? {
+        // Try to get the current user
+        if (api.getCurrentToken().isNullOrBlank()) return null
+        return try {
             api.getMe()
         } catch (e: RuntimeException) {
             api.logout()
             Account.saveToken(this)
-            return true
+            null
         }
-        return false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +54,8 @@ class Login : AppCompatActivity() {
         createNotificationChannel()
 
         // If the api is already logged in, skip
-        query { isLoginNeeded() }.onResult {
-            if (!it) goToHome()
+        query { checkGetMe() }.onResult {
+            if (it != null) goToHome(it.username)
         }
     }
 
@@ -79,12 +84,13 @@ class Login : AppCompatActivity() {
             Account.saveToken(this) // Save the current account to file
             FirebaseUtil.publishFCMToken(api) // Publish the current FCM token to the server (used to send notifications)
 
-            goToHome()
+            goToHome(name.toString())
         }.useLoadingBar(this)
     }
 
-    fun goToHome() {
+    fun goToHome(username: String) {
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("username", username)
         finish()
         startActivity(intent)
     }
