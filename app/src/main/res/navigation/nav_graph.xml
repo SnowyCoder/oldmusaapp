@@ -19,17 +19,17 @@
         android:label="Site">
         <action
             android:id="@+id/action_site_to_channel"
-            app:destination="@id/canali" />
+            app:destination="@id/sensor" />
         <argument
             android:name="siteId"
             app:argType="long" />
     </fragment>
     <fragment
-            android:id="@+id/canali"
-            android:name="com.cnr_isac.oldmusa.Channels"
-            android:label="Channels">
+            android:id="@+id/sensor"
+            android:name="com.cnr_isac.oldmusa.Sensor"
+            android:label="Sensor">
         <action
-                android:id="@+id/action_channel_to_quickGraph"
+                android:id="@+id/action_sensor_to_quickGraph"
                 app:destination="@id/quickGraph" />
         <argument
                 android:name="channelId"
@@ -40,7 +40,7 @@
         android:name="com.cnr_isac.oldmusa.QuickGraph"
         android:label="QuickGraph" >
         <argument
-            android:name="sensorId"
+            android:name="channelId"
             app:argType="long" />
     </fragment>
     <fragment

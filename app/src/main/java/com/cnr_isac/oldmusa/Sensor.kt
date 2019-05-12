@@ -8,7 +8,6 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.cnr_isac.oldmusa.api.ApiChannel
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -17,14 +16,13 @@ import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
-import kotlinx.android.synthetic.main.fragment_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
-class Channels : Fragment(){
+class Sensor : Fragment(){
     lateinit var listChannels: List<Channel>
     private lateinit var listView: ListView
 
-    val args: ChannelsArgs by navArgs()
+    val args: SensorArgs by navArgs()
 
     lateinit var currentChannel: Channel
     lateinit var currentSensor: Sensor
@@ -99,7 +97,7 @@ class Channels : Fragment(){
     }
 
     fun onChannelSelect(channelId: Long) {
-        view!!.findNavController().navigate(ChannelsDirections.actionChannelToQuickGraph(channelId))
+        view!!.findNavController().navigate(SensorDirections.actionSensorToQuickGraph(channelId))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -198,7 +196,7 @@ class Channels : Fragment(){
         }.useLoadingBar(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val action = ChannelsDirections.actionChannelToQuickGraph(listChannels[position].id)
+            val action = SensorDirections.actionSensorToQuickGraph(listChannels[position].id)
             view.findNavController().navigate(action)
         }
 

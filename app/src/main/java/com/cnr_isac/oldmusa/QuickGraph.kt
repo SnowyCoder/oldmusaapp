@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
@@ -26,9 +27,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.android.synthetic.main.edit_channel.*
-import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.remove_channel.*
-import kotlinx.android.synthetic.main.remove_sensor.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,15 +40,7 @@ class QuickGraph : Fragment() {
     lateinit var data: LineData
     private lateinit var currentDate: Calendar
 
-    private lateinit var currentSensor: Sensor
     private lateinit var currentChannel: Channel
-
-
-    // TODO: please pick better colors (Material ones for example)
-    val colors = listOf(
-        Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.GRAY
-    )
-
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -97,64 +88,6 @@ class QuickGraph : Fragment() {
 
 
         onSensorLoad()
-
-        /*var x = 0.0f
-        val numDataPoints : Int = 1000
-
-        val sinVals = ArrayList<Entry>()
-        val cosVals = ArrayList<Entry>()
-
-
-        for (i in 0 until numDataPoints) {
-            val sinFunction = Math.sin(x.toDouble()).toFloat()
-            val cosFunction = Math.cos(x.toDouble()).toFloat()
-            x += 0.1f
-            sinVals.add(Entry(x, sinFunction))
-            cosVals.add(Entry(x, cosFunction))
-            //xAXES.add(i, x.toString())
-        }
-
-        val sinDataSet = LineDataSet(sinVals, "DataSet 1")
-        sinDataSet.color = Color.RED
-        sinDataSet.setCircleColor(Color.RED)
-
-        val cosDataSet = LineDataSet(cosVals, "DataSet 2")
-        cosDataSet.color = Color.BLUE
-        cosDataSet.setCircleColor(Color.BLUE)
-
-        chart.data = LineData(sinDataSet, cosDataSet)
-        */
-
-        /*override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-            inflater.inflate(R.menu.overflow_menu, menu)
-            super.onCreateOptionsMenu(menu, inflater)
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            when (item.itemId) {
-                R.id.remove -> {
-                    val mBuilder = AlertDialog.Builder(context!!)
-                    val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.remove_channel, null)).create()
-                    val lp = WindowManager.LayoutParams()
-                    lp.copyFrom(dialog.window!!.attributes)
-                    lp.width = (resources.displayMetrics.widthPixels * 0.75).toInt()
-                    lp.height = (resources.displayMetrics.heightPixels * 0.30).toInt()
-                    dialog.show()
-                    dialog.window!!.attributes = lp
-                }
-                R.id.edit -> {
-                    val mBuilder = AlertDialog.Builder(context!!)
-                    mBuilder.setTitle("Modifica il sensore")
-                    val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.edit_channel, null)).create()
-                    val lp = WindowManager.LayoutParams()
-                    lp.copyFrom(dialog.window!!.attributes)
-                    lp.title = "modifica il sensore"
-                    lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-                    lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
-                    dialog.show()
-                    dialog.window!!.attributes = lp
-                }
-            }*/
 
         return view
     }
@@ -244,37 +177,45 @@ class QuickGraph : Fragment() {
     }
 
     fun onDateChange(day: Calendar) {
-        val sensorId = args.sensorId
+        val channelId = args.channelId
         val from = day
         val to = from.copy()
         to.add(Calendar.DAY_OF_MONTH, 1)
 
 
         query {
-            currentSensor = api.getSensor(sensorId)
-            currentSensor.channels.map {
-                Pair(it, it.getReadings(from.time, to.time))
-            }
+            currentChannel = api.getChannel(channelId)
+            currentChannel.getReadings(from.time, to.time)
         }.onResult {
             Log.d(TAG, "Data: ${userFriendlyDateFormatter.format(day.time)}")
             onDataReceived(day, it)
         }.useLoadingBar(this)
     }
 
-    fun onDataReceived(day: Calendar, data: List<Pair<Channel, List<ChannelReading>>>) {
+    fun getPrimaryColor(): Int {
+        val typedValue = TypedValue()
+
+        val typedArray = context!!.obtainStyledAttributes(typedValue.data, intArrayOf(R.attr.colorPrimary))
+        val color = typedArray.getColor(0, Color.RED)
+
+        typedArray.recycle()
+
+        return color
+    }
+
+    fun onDataReceived(day: Calendar, data: List<ChannelReading>) {
         currentDate = day
 
         view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(userFriendlyDateFormatter.format(day.time))
 
-        val datasets = data.mapIndexed { index, (channel, readings) -> createData(channel, readings, day, index) }
+        val datasets = createData(currentChannel, data, day, getPrimaryColor())
 
         chart.data = LineData(datasets)
         chart.invalidate()// Refresh
         Log.i(TAG, "Data reloaded: $datasets")
     }
 
-    fun createData(channel: Channel, data: List<ChannelReading>, start: Calendar, index: Int): LineDataSet {
-        val color = colors[index % colors.size]
+    fun createData(channel: Channel, data: List<ChannelReading>, start: Calendar, color: Int): LineDataSet {
 
         val vals = data.map {
             // Compress coordinates (from the 1970 to the beginning of the day
