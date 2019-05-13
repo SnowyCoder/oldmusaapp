@@ -18,5 +18,8 @@
         android:id="@+id/manage_users"
         android:icon="@drawable/ic_person"
         android:title="@string/menu_manage_users" />
+    <item
+            android:id="@+id/about"
+            android:title="@string/about" />
 
 </menu>

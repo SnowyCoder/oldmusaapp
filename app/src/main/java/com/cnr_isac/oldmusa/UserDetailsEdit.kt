@@ -104,6 +104,7 @@ class UserDetailsEdit : Fragment() {
                 usernameEditText.isEnabled = false
                 permissionSpinner.selectedView.isEnabled = false
                 permissionSpinner.isEnabled = false
+                deleteButton.visibility = View.GONE
                 editAccessButton.visibility = View.GONE
             }
         }
