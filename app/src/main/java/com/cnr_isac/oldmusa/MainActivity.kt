@@ -74,6 +74,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.current_user_detail -> {
                 navController.navigate(R.id.userDetailsEdit, UserDetailsEditArgs(api.getMe().id).toBundle())
             }
+            R.id.about -> {
+                navController.navigate(R.id.about)
+            }
         }
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)

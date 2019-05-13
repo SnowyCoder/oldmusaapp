@@ -72,4 +72,5 @@
             android:name="userId"
             app:argType="long" />
     </fragment>
+    <fragment android:id="@+id/about" android:label="About" android:name="com.cnr_isac.oldmusa.About"/>
 </navigation>
