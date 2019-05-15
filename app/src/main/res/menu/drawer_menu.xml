@@ -20,6 +20,7 @@
         android:title="@string/menu_manage_users" />
     <item
             android:id="@+id/about"
+            android:icon="@drawable/ic_about"
             android:title="@string/about" />
 
 </menu>

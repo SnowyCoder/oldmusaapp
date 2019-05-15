@@ -83,33 +83,7 @@
                                                 android:id="@+id/guideline8"
                                                 android:orientation="horizontal"
                                                 app:layout_constraintGuide_percent="0.68"/>
-    <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/logo_isac"
-            android:id="@+id/logo2"
-            app:layout_constraintTop_toTopOf="@+id/guideline10"
-            app:layout_constraintBottom_toTopOf="@+id/guideline9"
-            app:layout_constraintStart_toStartOf="@+id/guideline11"
-            app:layout_constraintEnd_toStartOf="@+id/guideline50"/>
-    <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/logo3"
-            android:src="@drawable/operapro"
-            app:layout_constraintTop_toTopOf="@+id/guideline10"
-            app:layout_constraintBottom_toTopOf="@+id/guideline9"
-            app:layout_constraintEnd_toStartOf="@+id/guideline12"
-            app:layout_constraintStart_toStartOf="@+id/guideline51"/>
 
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline9"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.97"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline10"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.85"/>
     <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
                                                 android:id="@+id/guideline11" app:layout_constraintGuide_begin="20dp"
                                                 android:orientation="vertical"/>
@@ -161,13 +135,4 @@
                                                 android:id="@+id/guideline64"
                                                 android:orientation="horizontal"
                                                 app:layout_constraintGuide_percent="0.32"/>
-    <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp" app:srcCompat="@drawable/logo_fermi"
-            android:id="@+id/imageView"
-
-            app:layout_constraintStart_toStartOf="@+id/guideline50"
-            app:layout_constraintEnd_toStartOf="@+id/guideline51"
-            app:layout_constraintTop_toTopOf="@+id/guideline10"
-            app:layout_constraintBottom_toTopOf="@+id/guideline9"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

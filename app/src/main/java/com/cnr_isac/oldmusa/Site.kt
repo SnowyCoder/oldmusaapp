@@ -131,7 +131,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             lp.copyFrom(dialog.window!!.attributes)
             lp.title = "Aggiungi sensore"
             lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.60).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.55).toInt()
             dialog.show()
             dialog.window!!.attributes = lp
 
