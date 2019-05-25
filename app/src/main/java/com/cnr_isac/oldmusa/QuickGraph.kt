@@ -20,6 +20,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import com.cnr_isac.oldmusa.util.TimeUtil.midnightOf
 import com.cnr_isac.oldmusa.util.TimeUtil.copy
+import com.cnr_isac.oldmusa.util.TimeUtil.setMidnight
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -50,9 +51,11 @@ class QuickGraph : Fragment() {
         val view = inflater.inflate(R.layout.fragment_quickgraph, container, false)
 
         view.findViewById<Button>(R.id.change_date).setOnClickListener {
-            val datePicker = DatePickerDialog(context!!, { _, year, month, dayOfMonth ->
+            val theme = R.style.AlertDialogCustom
+            val datePicker = DatePickerDialog(context!!, theme, { _, year, month, dayOfMonth ->
                 onDateChange(midnightOf(year, month, dayOfMonth))
             }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DAY_OF_MONTH))
+            datePicker.datePicker.layoutMode = 1// Add <21 compatibility
             datePicker.show()
         }
 
@@ -98,7 +101,7 @@ class QuickGraph : Fragment() {
 
     fun onChannelLoad() {
         // Setup first date
-        currentDate = midnightOf(2014, Calendar.APRIL, 1)// TODO: replace with LocalDate.now(), this is for testing purposes
+        currentDate = Calendar.getInstance().setMidnight()
         onDateChange(currentDate)
     }
 
