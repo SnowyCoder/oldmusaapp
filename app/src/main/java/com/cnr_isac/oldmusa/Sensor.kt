@@ -91,11 +91,11 @@ class Sensor : Fragment(){
                     )
                 }.onResult {
                     dialog.dismiss()
-                    reload(view)
+                    reload()
                 }
             }
         }
-        reload(view)
+        reload()
 
         return view
     }
@@ -168,7 +168,7 @@ class Sensor : Fragment(){
                         currentSensor.commit()
                     }.onResult {
                         dialog.dismiss()
-                        //reload(View)
+                        reload()
                     }
                 }
             }
@@ -190,7 +190,7 @@ class Sensor : Fragment(){
         return super.onOptionsItemSelected(item)
     }
 
-    fun reload(view: View) {
+    fun reload() {
 
         //channelId è invece l'id del sensore
         val sensorId = args.channelId
@@ -214,13 +214,13 @@ class Sensor : Fragment(){
 
             Log.e(Home.TAG, nameList.toString())
 
-            val adapter = ArrayAdapter<String>(view.context, R.layout.list_channel_item, nameList)
+            val adapter = ArrayAdapter<String>(view!!.context, R.layout.list_channel_item, nameList)
             listView.adapter = adapter
         }.useLoadingBar(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val action = SensorDirections.actionSensorToQuickGraph(listChannels[position].id)
-            view.findNavController().navigate(action)
+            view!!.findNavController().navigate(action)
         }
 
     }
