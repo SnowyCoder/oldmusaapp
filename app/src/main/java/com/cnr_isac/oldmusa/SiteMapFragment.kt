@@ -84,14 +84,6 @@ class SiteMapFragment : Fragment() {
             }
             return true
         }
-        /*isAdmin {
-            if (!it) return@isAdmin
-
-
-
-            /*val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
-            buttonVisible3.visibility=View.VISIBLE*/
-        }*/
         return false
     }
 
@@ -136,9 +128,11 @@ class SiteMapFragment : Fragment() {
 
         override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
             //if (currentMovingSensor != null) return
-
+            isAdmin {
+                if (!it) return@isAdmin
+                menu.add(index, R.id.move, 1, "Move")
+            }
             menu.add(index, R.id.open, 0, "Open")
-            menu.add(index, R.id.move, 1, "Move")
         }
 
         override fun onTouch(v: View, event: MotionEvent): Boolean {
