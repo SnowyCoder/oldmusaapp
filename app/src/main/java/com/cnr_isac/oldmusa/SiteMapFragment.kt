@@ -116,6 +116,9 @@ class SiteMapFragment : Fragment() {
 
             name.text = sensor.name
 
+            image.layoutParams = ViewGroup.MarginLayoutParams(imageSizePixels, imageSizePixels)
+            name.layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
             resetViewPosition()
 
             image.setOnClickListener(this)
@@ -163,17 +166,7 @@ class SiteMapFragment : Fragment() {
                                 currentMovingSensor = null
                             }
                             .setNegativeButton(android.R.string.no) { dialog, whichButton ->
-                                //reset position
-                                val locX = clamp(sensor.locX!!.toInt(), 0, mapWidth)
-                                val locY = clamp(sensor.locY!!.toInt(), 0, mapHeight)
-
-                                var padLeft = ((locX.toDouble() / mapWidth) * mapContainer.width).roundToInt()
-                                val padBottom = ((locY.toDouble() / mapHeight) * mapContainer.height).roundToInt()
-                                var padTop = mapContainer.height - padBottom
-
-                                padLeft = clamp(padLeft, 0, mapContainer.width - imageSizePixels)
-                                padTop = clamp(padTop, 0, mapContainer.height - imageSizePixels)
-                                changeViewPosition(padLeft, padTop)
+                                resetViewPosition()
 
                                 currentMovingSensor = null
                                 Toast.makeText(context!!, "Moving cancelled", Toast.LENGTH_SHORT).show()
@@ -239,10 +232,6 @@ class SiteMapFragment : Fragment() {
 
             padLeft = clamp(padLeft, 0, mapContainer.width - imageSizePixels)
             padTop = clamp(padTop, 0, mapContainer.height - imageSizePixels)
-
-
-            image.layoutParams = ViewGroup.MarginLayoutParams(imageSizePixels, imageSizePixels)
-            name.layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
             changeViewPosition(padLeft, padTop)
         }
