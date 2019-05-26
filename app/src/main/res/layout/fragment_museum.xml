@@ -152,6 +152,7 @@
         android:layout_marginTop="8dp"
         android:text="Nessuna mappa"
         android:textSize="16dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toStartOf="@+id/guideline74"
         app:layout_constraintStart_toStartOf="@+id/guideline73"
         app:layout_constraintTop_toTopOf="@+id/guideline77" />
@@ -160,6 +161,7 @@
         android:id="@+id/noMapImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/guideline77"
         app:layout_constraintEnd_toStartOf="@+id/guideline74"
         app:layout_constraintStart_toStartOf="@+id/guideline73"

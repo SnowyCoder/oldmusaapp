@@ -257,16 +257,20 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
         }.onResult { (sensors, mapData) ->
             // Then use it in the sync thread
             val list = sensors.map { SensorData(it) }
-
-            mapData?.let {
-                view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
-                view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
-                //(fragmentManager!!.findFragmentById(R.id.site_map) as SiteMapFragment).onRefresh(it, sensors)
-                //view!!.findViewById<SiteMapFragment>(R.id.site_map)
-                //
-                currentImageW = it.width
-                currentImageH = it.height
-                (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).onRefresh(it, sensors)
+            //view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
+            //view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
+            if (mapData != null) {
+                mapData.let {
+                    //(fragmentManager!!.findFragmentById(R.id.site_map) as SiteMapFragment).onRefresh(it, sensors)
+                    //view!!.findViewById<SiteMapFragment>(R.id.site_map)
+                    //
+                    currentImageW = it.width
+                    currentImageH = it.height
+                    (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).onRefresh(it, sensors)
+                }
+            } else {
+                view!!.findViewById<TextView>(R.id.noMapText).visibility = View.VISIBLE
+                view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.VISIBLE
             }
 
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)

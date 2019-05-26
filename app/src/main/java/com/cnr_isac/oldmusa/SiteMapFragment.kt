@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.math.MathUtils.clamp
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.api.Sensor
+import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import kotlin.math.roundToInt
 
@@ -83,6 +84,14 @@ class SiteMapFragment : Fragment() {
             }
             return true
         }
+        /*isAdmin {
+            if (!it) return@isAdmin
+
+
+
+            /*val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
+            buttonVisible3.visibility=View.VISIBLE*/
+        }*/
         return false
     }
 
@@ -160,7 +169,18 @@ class SiteMapFragment : Fragment() {
                                 currentMovingSensor = null
                             }
                             .setNegativeButton(android.R.string.no) { dialog, whichButton ->
-                                resetViewPosition()
+                                //reset position
+                                val locX = clamp(sensor.locX!!.toInt(), 0, mapWidth)
+                                val locY = clamp(sensor.locY!!.toInt(), 0, mapHeight)
+
+                                var padLeft = ((locX.toDouble() / mapWidth) * mapContainer.width).roundToInt()
+                                val padBottom = ((locY.toDouble() / mapHeight) * mapContainer.height).roundToInt()
+                                var padTop = mapContainer.height - padBottom
+
+                                padLeft = clamp(padLeft, 0, mapContainer.width - imageSizePixels)
+                                padTop = clamp(padTop, 0, mapContainer.height - imageSizePixels)
+                                changeViewPosition(padLeft, padTop)
+
                                 currentMovingSensor = null
                                 Toast.makeText(context!!, "Moving cancelled", Toast.LENGTH_SHORT).show()
                             }
