@@ -16,7 +16,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline114"
             app:layout_constraintStart_toStartOf="@+id/guideline112"/>
     <TextView
-            android:text="Nome Cognome"
+            android:text="Alessandro Pilleri"
             android:layout_width="0dp"
             android:textSize="20sp"
             android:layout_height="wrap_content" android:id="@+id/nome1"
@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="@+id/guideline115"
     />
     <TextView
-            android:text="Nome Cognome"
+            android:text="Lorenzo Rossi"
             android:layout_width="0dp"
             android:textSize="20sp"
             android:layout_height="wrap_content" android:id="@+id/nome2"
@@ -33,7 +33,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline114"
             app:layout_constraintStart_toStartOf="@+id/guideline115"/>
     <TextView
-            android:text="Nome Cognome"
+            android:text="Giorgia Bertacchini"
             android:layout_width="0dp"
             android:textSize="20sp"
             android:layout_height="wrap_content" android:id="@+id/nome3"
@@ -42,7 +42,7 @@
             app:layout_constraintStart_toStartOf="@+id/guideline115"
     />
     <TextView
-            android:text="Nome Cognome"
+            android:text="Michele Silvestri"
             android:layout_width="0dp"
             android:textSize="20sp"
             android:layout_height="wrap_content" android:id="@+id/nome4"
