@@ -115,6 +115,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                     //system OS is < Marshmallow
                     pickImageFromGallery()
 
+
                 }
 
             }
@@ -267,6 +268,8 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
                     currentImageW = it.width
                     currentImageH = it.height
                     (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).onRefresh(it, sensors)
+                    view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
+                    view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
                 }
             } else {
                 view!!.findViewById<TextView>(R.id.noMapText).visibility = View.VISIBLE
