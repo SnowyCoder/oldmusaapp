@@ -79,6 +79,12 @@ data class MapResizeData(
     val toH: Int
 )
 
+@Serializable
+data class AuthData(
+    val username: String,
+    val password: String
+)
+
 @Serializer(forClass = Date::class)
 object LocalDateTimeSerializer : KSerializer<Date> {
     override val descriptor: SerialDescriptor = StringDescriptor.withName("DateSerializer")

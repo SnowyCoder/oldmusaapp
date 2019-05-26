@@ -43,7 +43,8 @@ class RestApi(val conn: ApiConnession) : Api {
     }
 
     override fun login(username: String, password: String) {
-        val raw = conn.connectRest("GET", "token", parameters = mapOf("username" to username, "password" to password))
+        val content = json.stringify(AuthData.serializer(), AuthData(username, password))
+        val raw = conn.connectRest("POST", "token", content = content)
         val data = json.parse(LoginDataResponse.serializer(), raw)
 
         useToken(data.token)

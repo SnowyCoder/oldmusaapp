@@ -85,7 +85,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(d.window!!.attributes)
             lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.40).toInt()
+            lp.height = (resources.displayMetrics.heightPixels * 0.35).toInt()
             d.show()
             d.window!!.attributes = lp
 
