@@ -95,18 +95,18 @@ class UserDetailsEdit : Fragment() {
             }
         }
 
-        if (!isAdmin) {
-            usernameEditText.isEnabled = false
-            permissionSpinner.selectedView.isEnabled = false
-            permissionSpinner.isEnabled = false
-            deleteButton.visibility = View.GONE
-            editAccessButton.visibility = View.GONE
-        }
-
         val permission = view.findViewById<Spinner>(R.id.permission)
         permission.adapter = ArrayAdapter<PermissionType>(context!!, android.R.layout.simple_spinner_dropdown_item, PermissionType.values())
 
         resetDetails()
+
+        if (!isAdmin) {
+            usernameEditText.isEnabled = false
+            permissionSpinner.selectedView?.isEnabled = false
+            permissionSpinner.isEnabled = false
+            deleteButton.visibility = View.GONE
+            editAccessButton.visibility = View.GONE
+        }
 
         return view
     }
