@@ -1,8 +1,6 @@
 package com.cnr_isac.oldmusa
 
 import android.content.Context
-import android.content.ContextWrapper
-import android.util.Log
 import com.cnr_isac.oldmusa.api.Api
 import com.cnr_isac.oldmusa.api.rest.RestApi
 import com.cnr_isac.oldmusa.util.ApiUtil
@@ -14,8 +12,15 @@ object Account {
     const val DEFAULT_URL = "http://localhost/api/"// Server URL
     private const val TAG = "Account"
 
-    private var cacheToken: String? = null
-    private var isAdmin: Boolean? = null
+    private var _isAdmin: Boolean = false
+
+    val isAdmin: Boolean
+        get() = _isAdmin
+
+
+    fun resetAdminCache(isAdmin: Boolean) {
+        this._isAdmin = isAdmin
+    }
 
 
     private fun loadToken(context: Context): String {
@@ -71,25 +76,5 @@ object Account {
         ApiUtil.RawQuery {
             getApi(context)
         }.onResult(f)
-    }
-
-    @Synchronized
-    fun cacheCheckSame(api: Api) {
-        val token = api.getCurrentToken()
-        if (token != this.cacheToken) {
-            this.isAdmin = null
-        }
-    }
-
-    fun isAdmin(api: Api, callback: (bool: Boolean) -> Unit) {
-        cacheCheckSame(api)
-        isAdmin?.let{
-            callback(it)
-            return
-        }
-        ApiUtil.RawQuery {
-            isAdmin = api.getMe().isAdmin
-            return@RawQuery isAdmin!!
-        }.onResult(callback).onRestError { Log.e(TAG, "Error querying user rights", it) }
     }
 }

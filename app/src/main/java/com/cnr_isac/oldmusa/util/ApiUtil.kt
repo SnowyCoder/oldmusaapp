@@ -178,13 +178,5 @@ object ApiUtil {
     val Fragment.api: Api
         inline get() = Account.getApi(this.context!!.applicationContext)
 
-    fun Context.isAdmin(f: (Boolean) -> Unit) {
-        Account.getApi(this) { Account.isAdmin(it, f) }
-    }
-
-    fun Fragment.isAdmin(f: (Boolean) -> Unit) {
-        Account.getApi(context!!) { Account.isAdmin(it, f) }
-    }
-
     fun isMainThread(): Boolean = Looper.myLooper() == Looper.getMainLooper()
 }

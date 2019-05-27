@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.math.MathUtils.clamp
 import androidx.fragment.app.Fragment
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.api.Sensor
-import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import kotlin.math.roundToInt
 
@@ -130,12 +130,8 @@ class SiteMapFragment : Fragment() {
         }
 
         override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-            //if (currentMovingSensor != null) return
-            isAdmin {
-                if (!it) return@isAdmin
-                menu.add(index, R.id.move, 1, "Move")
-            }
             menu.add(index, R.id.open, 0, "Open")
+            if (isAdmin) menu.add(index, R.id.move, 1, "Move")
         }
 
         override fun onTouch(v: View, event: MotionEvent): Boolean {

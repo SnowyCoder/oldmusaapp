@@ -13,8 +13,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.api
-import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -47,10 +47,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val username: TextView = navView.getHeaderView(0).findViewById(R.id.username)
         username.text = intent.getStringExtra("username") ?: "Username"
 
-        isAdmin {
-            navView.menu.findItem(R.id.manage_users).isVisible = it
-            navView.menu.findItem(R.id.current_user_detail).isVisible = !it
-        }
+        Account.resetAdminCache(intent.getCharExtra("permission", '?') == 'A')
+
+
+        navView.menu.findItem(R.id.manage_users).isVisible = isAdmin
+        navView.menu.findItem(R.id.current_user_detail).isVisible = !isAdmin
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

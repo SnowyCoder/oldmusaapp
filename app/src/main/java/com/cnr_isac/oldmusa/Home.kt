@@ -12,9 +12,9 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
-import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
@@ -83,9 +83,7 @@ class Home : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     fun reload(view: View) {
         // permission
-        isAdmin {
-            if (!it) return@isAdmin
-
+        if (isAdmin) {
             val buttonVisible = view.findViewById<ImageButton>(R.id.addSiti)
             buttonVisible.visibility = View.VISIBLE
         }

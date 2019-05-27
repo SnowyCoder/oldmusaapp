@@ -10,12 +10,11 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
-import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
-import kotlinx.android.synthetic.main.fragment_user_details_edit.*
 
 
 class UserDetailsEdit : Fragment() {
@@ -32,8 +31,6 @@ class UserDetailsEdit : Fragment() {
 
     lateinit var user: User
     var isCurrent: Boolean = false
-
-    private var isAdmin = true
 
     enum class PermissionType(val char: Char, val friendlyName: String) {
         USER('U', "User"), ADMIN('A', "Admin");
@@ -98,15 +95,12 @@ class UserDetailsEdit : Fragment() {
             }
         }
 
-        isAdmin {
-            this.isAdmin = it
-            if (!it) {
-                usernameEditText.isEnabled = false
-                permissionSpinner.selectedView.isEnabled = false
-                permissionSpinner.isEnabled = false
-                deleteButton.visibility = View.GONE
-                editAccessButton.visibility = View.GONE
-            }
+        if (!isAdmin) {
+            usernameEditText.isEnabled = false
+            permissionSpinner.selectedView.isEnabled = false
+            permissionSpinner.isEnabled = false
+            deleteButton.visibility = View.GONE
+            editAccessButton.visibility = View.GONE
         }
 
         val permission = view.findViewById<Spinner>(R.id.permission)

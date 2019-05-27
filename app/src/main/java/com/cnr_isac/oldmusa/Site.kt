@@ -14,15 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.MapResizeData
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
-import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_sensor.*
 import kotlinx.android.synthetic.main.edit_museum.*
 import kotlinx.android.synthetic.main.remove_museum.*
@@ -55,9 +54,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener, SwipeRefreshLay
         val view = inflater.inflate(fragment_museum, container, false)
 
         // permission
-        isAdmin {
-            if (!it) return@isAdmin
-
+        if (isAdmin) {
             val buttonVisible1 = view.findViewById<ImageButton>(R.id.addMapbutton)
             buttonVisible1.visibility=View.VISIBLE
 
@@ -185,9 +182,7 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener, SwipeRefreshLay
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        isAdmin {
-            if (!it) return@isAdmin
-
+        if (isAdmin) {
             inflater.inflate(R.menu.overflow_menu, menu)
             super.onCreateOptionsMenu(menu, inflater)
         }

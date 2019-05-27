@@ -55,7 +55,7 @@ class Login : AppCompatActivity() {
 
         // If the api is already logged in, skip
         query { checkGetMe() }.onResult {
-            if (it != null) goToHome(it.username)
+            if (it != null) goToHome(it.username, it.permission)
         }
     }
 
@@ -69,6 +69,7 @@ class Login : AppCompatActivity() {
 
         ApiUtil.RawQuery {
             api.login(name.toString(), pass.toString())
+            api.getMe()
         }.onRestError {
             if (it.code == 401) {
                 val dialogBuilder = AlertDialog.Builder(this)
@@ -84,13 +85,14 @@ class Login : AppCompatActivity() {
             Account.saveToken(this) // Save the current account to file
             FirebaseUtil.publishFCMToken(api) // Publish the current FCM token to the server (used to send notifications)
 
-            goToHome(name.toString())
+            goToHome(it.username, it.permission)
         }.useLoadingBar(this)
     }
 
-    fun goToHome(username: String) {
+    fun goToHome(username: String, permission: Char) {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("username", username)
+        intent.putExtra("permission", permission)
         finish()
         startActivity(intent)
     }

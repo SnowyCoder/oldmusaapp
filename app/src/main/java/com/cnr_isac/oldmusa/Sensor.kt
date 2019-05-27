@@ -10,15 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.cnr_isac.oldmusa.Account.isAdmin
 import com.cnr_isac.oldmusa.api.ApiChannel
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.api
-import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_channel.*
-import kotlinx.android.synthetic.main.edit_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
@@ -43,9 +42,7 @@ class Sensor : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
         activity?.title = "Sensore"
 
-        isAdmin {
-            if (!it) return@isAdmin
-
+        if (isAdmin) {
             val buttonVisible1 = view.findViewById<ImageButton>(R.id.addChannelButton)
             buttonVisible1.visibility = View.VISIBLE
         }
@@ -120,9 +117,7 @@ class Sensor : Fragment(), SwipeRefreshLayout.OnRefreshListener{
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        isAdmin {
-            if (!it) return@isAdmin
-
+        if (isAdmin) {
             inflater.inflate(R.menu.sensor_overflow_menu, menu)
             super.onCreateOptionsMenu(menu, inflater)
         }
