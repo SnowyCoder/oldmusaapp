@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.api.ApiChannel
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.Sensor
@@ -21,13 +22,15 @@ import kotlinx.android.synthetic.main.edit_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
-class Sensor : Fragment(){
+class Sensor : Fragment(), SwipeRefreshLayout.OnRefreshListener{
+
     lateinit var listChannels: List<Channel>
     private lateinit var listView: ListView
 
     val args: SensorArgs by navArgs()
 
     lateinit var currentSensor: Sensor
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -95,9 +98,21 @@ class Sensor : Fragment(){
                 }
             }
         }
-        reload()
+
+        // SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(this)
+
+        swipeRefreshLayout.post {
+            swipeRefreshLayout.isRefreshing = true
+            reload()
+        }
 
         return view
+    }
+
+    override fun onRefresh() {
+        reload()
     }
 
     fun onChannelSelect(channelId: Long) {
@@ -216,7 +231,9 @@ class Sensor : Fragment(){
 
             val adapter = ArrayAdapter<String>(view!!.context, R.layout.list_channel_item, nameList)
             listView.adapter = adapter
-        }.useLoadingBar(this)
+
+            swipeRefreshLayout.isRefreshing = false
+        }
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val action = SensorDirections.actionSensorToQuickGraph(listChannels[position].id)

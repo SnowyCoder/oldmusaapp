@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.isAdmin
@@ -19,10 +20,12 @@ import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
 
 
-class Home : Fragment() {
+class Home : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+
 
     lateinit var sites: List<Site>
     lateinit var listView: ListView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -55,8 +58,28 @@ class Home : Fragment() {
             }
         }
 
+        // SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(this)
+
+        swipeRefreshLayout.post {
+            swipeRefreshLayout.isRefreshing = true
+            reload(view)
+
+        }
+
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val action = HomeDirections.actionHomeToSite(sites[position].id)
+            view.findNavController().navigate(action)
+        }
+
         return view
     }
+
+    override fun onRefresh() {
+        reload(view!!)
+    }
+
 
     fun reload(view: View) {
         // permission
@@ -78,11 +101,9 @@ class Home : Fragment() {
 
             val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
             listView.adapter = adapter
-        }.useLoadingBar(this)
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val action = HomeDirections.actionHomeToSite(sites[position].id)
-            view.findNavController().navigate(action)
+
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 

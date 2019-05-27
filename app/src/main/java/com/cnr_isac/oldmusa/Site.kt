@@ -8,12 +8,12 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log.e
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.R.layout.*
 import com.cnr_isac.oldmusa.api.ApiSensor
 import com.cnr_isac.oldmusa.api.MapResizeData
@@ -28,8 +28,11 @@ import kotlinx.android.synthetic.main.edit_museum.*
 import kotlinx.android.synthetic.main.remove_museum.*
 
 
-class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
+class Site : Fragment(), SiteMapFragment.OnSensorSelectListener, SwipeRefreshLayout.OnRefreshListener {
+
+
     private lateinit var listView: ListView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     val args: SiteArgs by navArgs()
 
@@ -158,17 +161,27 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             }
         }
 
+        // SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(this)
+
+        swipeRefreshLayout.post {
+            swipeRefreshLayout.isRefreshing = true
+
+            reloadSite()
+        }
+
         (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).sensorSelectListener = this
 
         return view
     }
 
-    override fun onSensorSelect(sensorId: Long) {
-        view!!.findNavController().navigate(SiteDirections.actionSiteToChannel(sensorId))
+    override fun onRefresh() {
+        reloadSite()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        reloadSite()
+    override fun onSensorSelect(sensorId: Long) {
+        view!!.findNavController().navigate(SiteDirections.actionSiteToChannel(sensorId))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -279,7 +292,10 @@ class Site : Fragment(), SiteMapFragment.OnSensorSelectListener {
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
             listView.adapter = adapter
             activity?.title = currentSite.name ?: ""
-        }.useLoadingBar(this)
+
+
+            swipeRefreshLayout.isRefreshing = false
+        }
     }
 
 

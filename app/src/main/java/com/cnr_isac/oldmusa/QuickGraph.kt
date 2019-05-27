@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.ChannelReading
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -32,13 +33,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class QuickGraph : Fragment() {
+class QuickGraph : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+
 
     val args: QuickGraphArgs by navArgs()
 
     lateinit var chart: LineChart
     lateinit var data: LineData
     private lateinit var currentDate: Calendar
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private lateinit var currentChannel: Channel
 
@@ -88,15 +91,21 @@ class QuickGraph : Fragment() {
         yAxis.enableGridDashedLine(10f, 10f, 0f)
 
 
-        onChannelLoad()
+        // SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener(this)
+
+        swipeRefreshLayout.post {
+            swipeRefreshLayout.isRefreshing = true
+
+            onChannelLoad()
+        }
 
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        onChannelLoad()
+    override fun onRefresh() {
+        onDateChange(currentDate)
     }
 
     fun onChannelLoad() {
@@ -187,13 +196,15 @@ class QuickGraph : Fragment() {
         to.add(Calendar.DAY_OF_MONTH, 1)
 
 
+        swipeRefreshLayout.isRefreshing = true
+
         query {
             currentChannel = api.getChannel(channelId)
             currentChannel.getReadings(from.time, to.time)
         }.onResult {
             Log.d(TAG, "Data: ${userFriendlyDateFormatter.format(day.time)}")
             onDataReceived(day, it)
-        }.useLoadingBar(this)
+        }
     }
 
     fun getPrimaryColor(): Int {
@@ -217,6 +228,8 @@ class QuickGraph : Fragment() {
 
         chart.data = LineData(datasets)
         chart.invalidate()// Refresh
+
+        swipeRefreshLayout.isRefreshing = false
         Log.i(TAG, "Data reloaded: $datasets")
     }
 
