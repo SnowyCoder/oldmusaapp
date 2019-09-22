@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.app.AlertDialog
 import android.graphics.BitmapFactory
@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.Account.isAdmin
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.ApiChannel
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.Sensor
@@ -21,12 +22,12 @@ import kotlinx.android.synthetic.main.add_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
-class Sensor : Fragment(), SwipeRefreshLayout.OnRefreshListener{
+class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
     lateinit var listChannels: List<Channel>
     private lateinit var listView: ListView
 
-    val args: SensorArgs by navArgs()
+    val args: SensorFragmentArgs by navArgs()
 
     lateinit var currentSensor: Sensor
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -113,7 +114,11 @@ class Sensor : Fragment(), SwipeRefreshLayout.OnRefreshListener{
     }
 
     fun onChannelSelect(channelId: Long) {
-        view!!.findNavController().navigate(SensorDirections.actionSensorToQuickGraph(channelId))
+        view!!.findNavController().navigate(
+            SensorFragmentDirections.actionSensorToQuickGraph(
+                channelId
+            )
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -222,16 +227,19 @@ class Sensor : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
             val nameList = listChannels.map { it.name ?: "null" }
 
-            Log.e(Home.TAG, nameList.toString())
+            Log.e(HomeFragment.TAG, nameList.toString())
 
-            val adapter = ArrayAdapter<String>(view!!.context, R.layout.list_channel_item, nameList)
+            val adapter = ArrayAdapter<String>(view!!.context,
+                R.layout.list_channel_item, nameList)
             listView.adapter = adapter
 
             swipeRefreshLayout.isRefreshing = false
         }
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val action = SensorDirections.actionSensorToQuickGraph(listChannels[position].id)
+            val action = SensorFragmentDirections.actionSensorToQuickGraph(
+                listChannels[position].id
+            )
             view!!.findNavController().navigate(action)
         }
 

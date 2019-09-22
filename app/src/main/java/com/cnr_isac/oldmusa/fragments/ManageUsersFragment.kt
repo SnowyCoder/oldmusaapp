@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.ApiUser
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -19,7 +20,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
 
 
-class ManageUsers : Fragment() {
+class ManageUsersFragment : Fragment() {
 
     lateinit var users: List<User>
     lateinit var listView: ListView
@@ -35,7 +36,10 @@ class ManageUsers : Fragment() {
         loadUsers()
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val action = ManageUsersDirections.actionManageUsersToUserDetailsEdit(users[position].id)
+            val action =
+                ManageUsersFragmentDirections.actionManageUsersToUserDetailsEdit(
+                    users[position].id
+                )
             view.findNavController().navigate(action)
         }
 
@@ -72,7 +76,8 @@ class ManageUsers : Fragment() {
 
             Log.e(TAG, nameList.toString())
 
-            val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
+            val adapter = ArrayAdapter<String>(context!!,
+                R.layout.list_museum_item, nameList)
             listView.adapter = adapter
         }.useLoadingBar(this)
     }

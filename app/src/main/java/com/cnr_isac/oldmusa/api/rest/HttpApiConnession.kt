@@ -12,7 +12,8 @@ import java.io.InputStream
  */
 class HttpApiConnession(apiUrl: String) : ApiConnession {
     val client = OkHttpClient()
-    private val httpApiUrl = HttpUrl.parse(apiUrl)!!
+    private val httpApiUrl = HttpUrl.parse(apiUrl) ?: throw RuntimeException("Invalid URL $apiUrl")
+
 
     private fun rawRequest(
             method: String,

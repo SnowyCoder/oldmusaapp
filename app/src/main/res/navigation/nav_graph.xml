@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/home">
+    app:startDestination="@id/login">
 
     <fragment
         android:id="@+id/home"
-        android:name="com.cnr_isac.oldmusa.Home"
+        android:name="com.cnr_isac.oldmusa.fragments.HomeFragment"
         android:label="Home" >
         <action
             android:id="@+id/action_home_to_site"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/site"
-        android:name="com.cnr_isac.oldmusa.Site"
+        android:name="com.cnr_isac.oldmusa.fragments.SiteFragment"
         android:label="Site">
         <action
             android:id="@+id/action_site_to_channel"
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
             android:id="@+id/sensor"
-            android:name="com.cnr_isac.oldmusa.Sensor"
+            android:name="com.cnr_isac.oldmusa.fragments.SensorFragment"
             android:label="Sensor">
         <action
                 android:id="@+id/action_sensor_to_quickGraph"
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/quickGraph"
-        android:name="com.cnr_isac.oldmusa.QuickGraph"
+        android:name="com.cnr_isac.oldmusa.fragments.QuickGraphFragment"
         android:label="QuickGraph" >
         <argument
             android:name="channelId"
@@ -45,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/manageUsers"
-        android:name="com.cnr_isac.oldmusa.ManageUsers"
+        android:name="com.cnr_isac.oldmusa.fragments.ManageUsersFragment"
         android:label="ManageUsers" >
         <action
             android:id="@+id/action_manageUsers_to_userDetailsEdit"
@@ -53,7 +53,7 @@
     </fragment>
     <fragment
         android:id="@+id/userDetailsEdit"
-        android:name="com.cnr_isac.oldmusa.UserDetailsEdit"
+        android:name="com.cnr_isac.oldmusa.fragments.UserDetailsEditFragment"
         android:label="fragment_user_details_edit"
         tools:layout="@layout/fragment_user_details_edit" >
         <argument
@@ -65,12 +65,20 @@
     </fragment>
     <fragment
         android:id="@+id/userAccessEdit"
-        android:name="com.cnr_isac.oldmusa.UserAccessEdit"
+        android:name="com.cnr_isac.oldmusa.fragments.UserAccessEditFragment"
         android:label="fragment_user_access_edit"
         tools:layout="@layout/fragment_user_access_edit" >
         <argument
             android:name="userId"
             app:argType="long" />
     </fragment>
-    <fragment android:id="@+id/about" android:label="About" android:name="com.cnr_isac.oldmusa.About"/>
+    <fragment android:id="@+id/about" android:label="About" android:name="com.cnr_isac.oldmusa.fragments.AboutFragment"/>
+    <fragment
+        android:id="@+id/login"
+        android:name="com.cnr_isac.oldmusa.fragments.LoginFragment"
+        android:label="Login" />
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.cnr_isac.oldmusa.fragments.SettingsFragment"
+        android:label="Settings" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.os.Bundle
 import android.util.SparseBooleanArray
@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -19,9 +20,9 @@ import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import com.cnr_isac.oldmusa.util.StreamUtil.forEachTrue
 
 
-class UserAccessEdit : Fragment(), AdapterView.OnItemClickListener {
+class UserAccessEditFragment : Fragment(), AdapterView.OnItemClickListener {
 
-    val args: UserAccessEditArgs by navArgs()
+    val args: UserAccessEditFragmentArgs by navArgs()
 
     lateinit var listView: ListView
     lateinit var saveButton: Button

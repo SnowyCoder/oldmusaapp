@@ -1,7 +1,7 @@
 package com.cnr_isac.oldmusa.firebase
 
 import android.util.Log
-import com.cnr_isac.oldmusa.Login
+import com.cnr_isac.oldmusa.fragments.LoginFragment
 import com.cnr_isac.oldmusa.api.Api
 import com.cnr_isac.oldmusa.util.ApiUtil.RawQuery
 import com.google.android.gms.tasks.OnCompleteListener
@@ -12,7 +12,7 @@ object FirebaseUtil {
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Log.e(Login.TAG, "getInstanceId failed", task.exception)
+                    Log.e(LoginFragment.TAG, "getInstanceId failed", task.exception)
                     return@OnCompleteListener
                 }
 
@@ -20,7 +20,7 @@ object FirebaseUtil {
                 val token = task.result!!.token
 
                 // Log and push
-                Log.d(Login.TAG, "Publishing FCM id: $token")
+                Log.d(LoginFragment.TAG, "Publishing FCM id: $token")
 
                 RawQuery {
                     api.getMe().addContactFCM(token)

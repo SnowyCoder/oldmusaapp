@@ -4,6 +4,7 @@ import com.cnr_isac.oldmusa.api.*
 import com.cnr_isac.oldmusa.util.TimeUtil.ISO_0_OFFSET_DATE_TIME
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.list
 import kotlinx.serialization.serializer
 import java.io.InputStream
@@ -17,7 +18,7 @@ class RestApi(val conn: ApiConnession) : Api {
     private val sensors: MutableMap<Long, WeakReference<Sensor>> = HashMap()
     private val channels: MutableMap<Long, WeakReference<Channel>> = HashMap()
     private val users: MutableMap<Long, WeakReference<User>> = HashMap()
-    private val json = Json(encodeDefaults = false)
+    private val json = Json(JsonConfiguration.Stable.copy(encodeDefaults = false))
 
     val headers = HashMap<String, String>()
 

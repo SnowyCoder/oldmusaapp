@@ -18,17 +18,18 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.cnr_isac.oldmusa.Account
 import com.cnr_isac.oldmusa.api.Api
+import java.lang.Exception
 
 
 object ApiUtil {
     class QueryAsyncTask<R>(val query: RawQuery<R>) : AsyncTask<Void, Void, Void>() {
         var result: R? = null
-        var error: RestException? = null
+        var error: Exception? = null
 
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 result = query.f()
-            } catch (e: RestException) {
+            } catch (e: Exception) {
                 error = e
             }
             return null
@@ -45,14 +46,14 @@ object ApiUtil {
 
     class RawQuery<R>(autoexec: Boolean = true, val f: () -> R) {
         private var resultCallbacks: MutableList<(R) -> Unit> = ArrayList()
-        private var errorCallbacks: MutableList<(RestException) -> Unit> = ArrayList()
+        private var errorCallbacks: MutableList<(Exception) -> Unit> = ArrayList()
         private var doneCallbacks: MutableList<() -> Unit> = ArrayList()
         private var task: QueryAsyncTask<R> = QueryAsyncTask(this)
 
         private var done = false
         private var cancelled = false
         private var result: R? = null
-        private var error: RestException? = null
+        private var error: Exception? = null
 
         init {
             if (autoexec) task.execute()
@@ -67,6 +68,14 @@ object ApiUtil {
         }
 
         fun onRestError(callback: (RestException) -> Unit): RawQuery<R> {
+            return onError {
+                if (it is RestException) {
+                    callback(it)
+                }
+            }
+        }
+
+        fun onError(callback: (Exception) -> Unit): RawQuery<R> {
             when (done) {
                 false -> errorCallbacks.add(callback)
                 true -> error?.let(callback)
@@ -82,7 +91,7 @@ object ApiUtil {
             return this
         }
 
-        fun completeTask(result: R?, error: RestException?) {
+        fun completeTask(result: R?, error: Exception?) {
             assert(!done) { "Task already completed" }
             this.result = result
             this.error = error
@@ -115,7 +124,7 @@ object ApiUtil {
     }
 
     fun <R> Context.query(f: () -> R): RawQuery<R> {
-        return RawQuery(true, f).onRestError { handleRestError(this.applicationContext, it) }
+        return RawQuery(true, f).onError { handleError(this.applicationContext, it) }
     }
 
     fun <R> Fragment.query(mayInterruptIfRunning: Boolean = false, f: () -> R): RawQuery<R> {
@@ -128,19 +137,27 @@ object ApiUtil {
             lifecycle.removeObserver(observer)
         }
 
-        query.onRestError { handleRestError(this.context!!.applicationContext, it) }
+        query.onError { handleError(this.context!!.applicationContext, it) }
         return query
     }
 
-    fun handleRestError(ctx: Context, e: RestException) {
-        if (e.code == 401 /* Unauthorized */ && e.responseContent != null && e.responseContent.contains("Invalid token")) {
-            // Login error, token invalid or outdated
-            Toast.makeText(ctx, "Login error", Toast.LENGTH_LONG).show()
-        } else {
-            // TODO: parse json and show only message
-            Toast.makeText(ctx, "${e.code} ${e.responseContent}", Toast.LENGTH_LONG).show()
+    fun handleError(ctx: Context, e: Exception) {
+        when {
+            e is RestException && e.code == 401 /* Unauthorized */ &&
+                    e.responseContent != null &&
+                    e.responseContent.contains("Invalid token") -> {
+                // LoginFragment error, token invalid or outdated
+                Toast.makeText(ctx, "LoginFragment error", Toast.LENGTH_LONG).show()
+            }
+            e is RestException -> {
+                // TODO: parse json and show only message
+                Toast.makeText(ctx, "${e.code} ${e.responseContent}", Toast.LENGTH_LONG).show()
+            }
+            else -> {
+                Toast.makeText(ctx, "${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
-        Log.e("Rest", "A Rest exception occured", e)
+        Log.e("Rest", "An exception occured", e)
     }
 
     /**

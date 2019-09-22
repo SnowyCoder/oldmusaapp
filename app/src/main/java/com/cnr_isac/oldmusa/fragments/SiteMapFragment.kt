@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.math.MathUtils.clamp
 import androidx.fragment.app.Fragment
 import com.cnr_isac.oldmusa.Account.isAdmin
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import kotlin.math.roundToInt

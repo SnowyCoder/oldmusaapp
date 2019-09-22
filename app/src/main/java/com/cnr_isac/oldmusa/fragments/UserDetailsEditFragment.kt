@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.os.Bundle
 import android.text.Editable
@@ -10,16 +10,18 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.cnr_isac.oldmusa.Account
 import com.cnr_isac.oldmusa.Account.isAdmin
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.User
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 
 
-class UserDetailsEdit : Fragment() {
+class UserDetailsEditFragment : Fragment() {
 
-    val args: UserDetailsEditArgs by navArgs()
+    val args: UserDetailsEditFragmentArgs by navArgs()
 
     lateinit var usernameEditText: EditText
     lateinit var permissionSpinner: Spinner
@@ -84,7 +86,11 @@ class UserDetailsEdit : Fragment() {
         }
 
         editAccessButton.setOnClickListener {
-            findNavController().navigate(UserDetailsEditDirections.actionUserDetailsEditToUserAccessEdit(args.userId))
+            findNavController().navigate(
+                UserDetailsEditFragmentDirections.actionUserDetailsEditToUserAccessEdit(
+                    args.userId
+                )
+            )
         }
 
         deleteButton.setOnClickListener {
@@ -138,7 +144,10 @@ class UserDetailsEdit : Fragment() {
             usernameEditText.setText(user.username)
             passwordEditText.setText("")
             passwordConfirmEditText.setText("")
-            permissionSpinner.setSelection(PermissionType.fromChar(user.permission).ordinal)
+            permissionSpinner.setSelection(
+                PermissionType.fromChar(
+                    user.permission
+                ).ordinal)
         }.useLoadingBar(this)
     }
 

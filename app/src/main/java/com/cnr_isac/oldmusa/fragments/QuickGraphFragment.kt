@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.Account.isAdmin
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.ChannelReading
 import com.cnr_isac.oldmusa.util.ApiUtil.api
@@ -32,10 +33,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class QuickGraph : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
 
-    val args: QuickGraphArgs by navArgs()
+    val args: QuickGraphFragmentArgs by navArgs()
 
     lateinit var chart: LineChart
     lateinit var data: LineData
@@ -219,7 +220,8 @@ class QuickGraph : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         currentDate = day
         activity?.title = currentChannel.name ?: "Canale"
 
-        view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(userFriendlyDateFormatter.format(day.time))
+        view!!.findViewById<TextView>(R.id.date_text).text = getString(R.string.current_date).format(
+            userFriendlyDateFormatter.format(day.time))
 
         val datasets = createData(currentChannel, data, day, getPrimaryColor())
 

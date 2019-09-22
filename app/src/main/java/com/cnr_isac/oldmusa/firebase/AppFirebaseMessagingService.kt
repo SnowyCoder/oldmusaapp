@@ -10,7 +10,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import android.util.Log
-import com.cnr_isac.oldmusa.Login
+import com.cnr_isac.oldmusa.fragments.LoginFragment
 import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -28,7 +28,7 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
     // [START receive_message]
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // [START_EXCLUDE]
         // There are two types of messages data messages and notification messages. Data messages are handled
         // here in onMessageReceived whether the app is in the foreground or background. Data messages are the type
@@ -40,10 +40,10 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         // [END_EXCLUDE]
 
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.i(TAG, "FCM Message from ${remoteMessage?.from}")
+        Log.i(TAG, "FCM Message from ${remoteMessage.from}")
 
         // Check if message contains a data payload.
-        remoteMessage?.data?.let { data ->
+        remoteMessage.data.let { data ->
             Log.d(TAG, "Message data payload: $data")
 
             when (data["type"]) {
@@ -56,8 +56,8 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
                     sendAlarm(
                         "Sensor alarm",
                         "$siteName $sensorName $channelName reported $value",
-                        NotificationManager.IMPORTANCE_MAX,
-                        Intent(this, Login::class.java)// TODO: link to sensor graph
+                        NotificationManager.IMPORTANCE_HIGH,
+                        Intent(this, LoginFragment::class.java)// TODO: link to sensor graph
                     )
                 }
                 else -> {
@@ -67,11 +67,11 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         // Check if message contains a notification payload.
-        remoteMessage?.notification?.let {
+        remoteMessage.notification?.let {
             Log.i(TAG, "Message Notification Body: ${it.body}")
             sendAlarm(
                 it.title!!, it.body!!, NotificationManager.IMPORTANCE_HIGH,
-                Intent(this, Login::class.java)
+                Intent(this, LoginFragment::class.java)
             )
         }
 
@@ -86,13 +86,16 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
      * the previous token had been compromised. Note that this is called when the InstanceID token
      * is initially generated so this is where you would retrieve the token.
      */
-    override fun onNewToken(token: String?) {
+    override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
         sendRegistrationToServer(token)
+
+        /*val newToken = FirebaseInstanceId.getInstance().instanceId
+        Log.d("TOKEN", newToken)*/
     }
     // [END on_new_token]
 

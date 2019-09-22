@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <fragment
-            android:name="com.cnr_isac.oldmusa.SiteMapFragment"
+            android:name="com.cnr_isac.oldmusa.fragments.SiteMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/site_map"

@@ -43,7 +43,7 @@ object Account {
 
         if (!file.exists()) return DEFAULT_URL
 
-        return file.readBytes().toString().ifBlank { DEFAULT_URL }
+        return file.readBytes().toString(Charsets.UTF_8).ifBlank { DEFAULT_URL }
     }
 
     fun setUrl(context: Context, string: String) {

@@ -1,4 +1,4 @@
-package com.cnr_isac.oldmusa
+package com.cnr_isac.oldmusa.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cnr_isac.oldmusa.Account.isAdmin
+import com.cnr_isac.oldmusa.R
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
@@ -20,7 +21,7 @@ import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
 
 
-class Home : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
 
     lateinit var sites: List<Site>
@@ -34,8 +35,6 @@ class Home : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         listView = view.findViewById(R.id.ListMuseum)
-
-        reload(view)
 
         view.findViewById<ImageButton>(R.id.addSiti).setOnClickListener{
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
@@ -65,11 +64,11 @@ class Home : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         swipeRefreshLayout.post {
             swipeRefreshLayout.isRefreshing = true
             reload(view)
-
         }
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val action = HomeDirections.actionHomeToSite(sites[position].id)
+            val action =
+                HomeFragmentDirections.actionHomeToSite(sites[position].id)
             view.findNavController().navigate(action)
         }
 
@@ -97,7 +96,8 @@ class Home : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
             Log.e(TAG, nameList.toString())
 
-            val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
+            val adapter = ArrayAdapter<String>(context!!,
+                R.layout.list_museum_item, nameList)
             listView.adapter = adapter
 
 
