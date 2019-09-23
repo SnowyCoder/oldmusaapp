@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.EditText
@@ -47,7 +46,11 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         setHasOptionsMenu(true)
         activity?.title = "Canale"
 
-        val view = inflater.inflate(R.layout.fragment_quickgraph, container, false)
+        return inflater.inflate(R.layout.fragment_quickgraph, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         changeDate.setOnClickListener {
             val theme = R.style.AlertDialogCustom
@@ -95,8 +98,6 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
             onChannelLoad()
         }
-
-        return view
     }
 
     override fun onRefresh() {
@@ -195,7 +196,6 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             currentChannel = api.getChannel(channelId)
             currentChannel.getReadings(from.time, to.time)
         }.onResult {
-            Log.d(TAG, "Data: ${userFriendlyDateFormatter.format(day.time)}")
             onDataReceived(day, it)
         }
     }
@@ -224,7 +224,6 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         chart.invalidate()// Refresh
 
         swipeContainer.isRefreshing = false
-        Log.i(TAG, "Data reloaded: $datasets")
     }
 
     fun createData(channel: Channel, data: List<ChannelReading>, start: Calendar, color: Int): LineDataSet {
