@@ -9,7 +9,9 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -23,17 +25,17 @@ import com.cnr_isac.oldmusa.api.Sensor
 import com.cnr_isac.oldmusa.api.Site
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
+import kotlinx.android.synthetic.main.add_map.*
 import kotlinx.android.synthetic.main.add_sensor.*
 import kotlinx.android.synthetic.main.edit_museum.*
+import kotlinx.android.synthetic.main.fragment_home.swipeContainer
+import kotlinx.android.synthetic.main.fragment_site.*
 import kotlinx.android.synthetic.main.remove_museum.*
 
 
 class SiteFragment : Fragment(),
     SiteMapFragment.OnSensorSelectListener, SwipeRefreshLayout.OnRefreshListener {
 
-
-    private lateinit var listView: ListView
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     val args: SiteFragmentArgs by navArgs()
 
@@ -53,28 +55,27 @@ class SiteFragment : Fragment(),
         setHasOptionsMenu(true)
         activity?.title = "Sito"
 
-        val view = inflater.inflate(fragment_museum, container, false)
+        val view = inflater.inflate(fragment_site, container, false)
+
+
+        (childFragmentManager.findFragmentById(R.id.siteMap)!! as SiteMapFragment).sensorSelectListener = this
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // permission
         if (isAdmin) {
-            val buttonVisible1 = view.findViewById<ImageButton>(R.id.addMapbutton)
-            buttonVisible1.visibility=View.VISIBLE
+            addMapbutton.visibility = View.VISIBLE
 
-            val buttonVisible2 = view.findViewById<ImageButton>(R.id.addSensorbutton)
-            buttonVisible2.visibility=View.VISIBLE
-
-            /*val buttonVisible3 = findViewById<ImageButton>(R.id.addChannelButton)
-            buttonVisible3.visibility=View.VISIBLE*/
+            addSensorbutton.visibility = View.VISIBLE
         }
 
-        listView = view.findViewById(R.id.SensorList)
-
-        
-        //view.bringToFront();
-
         // add event listener to array items
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
-            val sensor = listView.adapter.getItem(index) as SensorData
+        sensorList.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
+            val sensor = sensorList.adapter.getItem(index) as SensorData
 
             view.findNavController().navigate(
                 SiteFragmentDirections.actionSiteToChannel(
@@ -84,7 +85,7 @@ class SiteFragment : Fragment(),
         }
 
         // open map options modal
-        view.findViewById<ImageButton>(R.id.addMapbutton).setOnClickListener {
+        addMapbutton.setOnClickListener {
             val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi mappa")
             val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_map, null)).create()
@@ -95,42 +96,34 @@ class SiteFragment : Fragment(),
             d.show()
             d.window!!.attributes = lp
 
-            /*d.AddButtonM.setOnClickListener { view ->
-                d.dismiss()
-            }*/
 
-            val img_pick_btn = d.findViewById<Button>(R.id.img_pick_btn)
-
-
-            img_pick_btn.setOnClickListener {
-                //check runtime permission
+            d.imgPickButton.setOnClickListener {
+                // check runtime permission
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (context!!.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_DENIED){
-                        //permission denied
+                        // permission denied
                         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        //show popup to request runtime permission
+                        // show popup to request runtime permission
                         requestPermissions(permissions,
                             PERMISSION_CODE
                         )
                     }
                     else{
-                        //permission already granted
+                        // permission already granted
                         pickImageFromGallery()
                     }
                 }
                 else{
-                    //system OS is < Marshmallow
+                    // system OS is < Marshmallow
                     pickImageFromGallery()
-
-
                 }
 
             }
         }
 
         // open add sensor modal
-        view.findViewById<ImageButton>(R.id.addSensorbutton).setOnClickListener{
+        addSensorbutton.setOnClickListener {
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
 
             val mBuilder = AlertDialog.Builder(context!!)
@@ -145,9 +138,9 @@ class SiteFragment : Fragment(),
             dialog.window!!.attributes = lp
 
             dialog.AddButtonS.setOnClickListener {
-                val name = dialog.findViewById<EditText>(R.id.name)
-                val idCnr = dialog.findViewById<EditText>(R.id.idCnr)
-                val enabled = dialog.findViewById<CheckBox>(R.id.enabled)
+                val name = dialog.name
+                val idCnr = dialog.idCnr
+                val enabled = dialog.enabled
 
                 query {
                     currentSite.addSensor(
@@ -167,18 +160,13 @@ class SiteFragment : Fragment(),
         }
 
         // SwipeRefreshLayout
-        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
-        swipeRefreshLayout.setOnRefreshListener(this)
+        swipeContainer.setOnRefreshListener(this)
 
-        swipeRefreshLayout.post {
-            swipeRefreshLayout.isRefreshing = true
+        swipeContainer.post {
+            swipeContainer.isRefreshing = true
 
             reloadSite()
         }
-
-        (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).sensorSelectListener = this
-
-        return view
     }
 
     override fun onRefresh() {
@@ -237,16 +225,16 @@ class SiteFragment : Fragment(),
                 dialog.show()
                 dialog.window!!.attributes = lp
 
-                val nameSite = dialog.findViewById<EditText>(R.id.nameSite)
-                val idcnrSite = dialog.findViewById<EditText>(R.id.IdCnrSite)
+                val nameSite = dialog.nameSite
+                val idCnrSite = dialog.idCnrSite
 
                 nameSite.setText(currentSite.name ?: "")
-                idcnrSite.setText(currentSite.idCnr ?: "")
+                idCnrSite.setText(currentSite.idCnr ?: "")
 
                 dialog.Aggiorna.setOnClickListener {
                     query {
                         currentSite.name = nameSite.text.toString()
-                        currentSite.idCnr = idcnrSite.text.toString()
+                        currentSite.idCnr = idCnrSite.text.toString()
                         currentSite.commit()
                     }.onResult {
                         dialog.dismiss()
@@ -282,26 +270,24 @@ class SiteFragment : Fragment(),
             //view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
             if (mapData != null) {
                 mapData.let {
-                    //(fragmentManager!!.findFragmentById(R.id.site_map) as SiteMapFragment).onRefresh(it, sensors)
-                    //view!!.findViewById<SiteMapFragment>(R.id.site_map)
-                    //
                     currentImageW = it.width
                     currentImageH = it.height
-                    (childFragmentManager.findFragmentById(R.id.site_map)!! as SiteMapFragment).onRefresh(it, sensors)
-                    view!!.findViewById<TextView>(R.id.noMapText).visibility = View.INVISIBLE
-                    view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.INVISIBLE
+                    (childFragmentManager.findFragmentById(R.id.siteMap)!! as SiteMapFragment).onRefresh(it, sensors)
+                    noMapText.visibility = View.INVISIBLE
+                    noMapImage.visibility = View.INVISIBLE
                 }
             } else {
-                view!!.findViewById<TextView>(R.id.noMapText).visibility = View.VISIBLE
-                view!!.findViewById<ImageView>(R.id.noMapImage).visibility = View.VISIBLE
+                noMapText.visibility = View.VISIBLE
+                noMapImage.visibility = View.VISIBLE
             }
 
             val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
-            listView.adapter = adapter
+            sensorList.adapter = adapter
+            noSensorText.visibility = if (sensors.isEmpty()) View.VISIBLE else View.GONE
             activity?.title = currentSite.name ?: ""
 
 
-            swipeRefreshLayout.isRefreshing = false
+            swipeContainer.isRefreshing = false
         }
     }
 

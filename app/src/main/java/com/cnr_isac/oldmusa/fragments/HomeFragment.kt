@@ -19,13 +19,13 @@ import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_museum.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
 
     lateinit var sites: List<Site>
-    lateinit var listView: ListView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,8 +33,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         activity?.title = "OldMusa"
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-
-        listView = view.findViewById(R.id.ListMuseum)
 
         view.findViewById<ImageButton>(R.id.addSiti).setOnClickListener{
             //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
@@ -58,7 +56,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
 
         // SwipeRefreshLayout
-        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        swipeRefreshLayout = view.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
         swipeRefreshLayout.setOnRefreshListener(this)
 
         swipeRefreshLayout.post {
@@ -66,13 +64,16 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             reload(view)
         }
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val action =
-                HomeFragmentDirections.actionHomeToSite(sites[position].id)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        museumList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val action = HomeFragmentDirections.actionHomeToSite(sites[position].id)
             view.findNavController().navigate(action)
         }
-
-        return view
     }
 
     override fun onRefresh() {
@@ -98,7 +99,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
             val adapter = ArrayAdapter<String>(context!!,
                 R.layout.list_museum_item, nameList)
-            listView.adapter = adapter
+            museumList.adapter = adapter
+
+            emptyText.visibility = if (sites.isEmpty()) View.VISIBLE else View.GONE
 
 
             swipeRefreshLayout.isRefreshing = false

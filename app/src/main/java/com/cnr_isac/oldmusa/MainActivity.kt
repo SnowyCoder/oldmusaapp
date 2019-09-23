@@ -30,6 +30,8 @@ import kotlinx.android.synthetic.main.nav_header.view.*
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     LoginFragment.LoginCompleteListener {
 
+    private var loggedIn = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -53,7 +55,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Setup navigation view
         navView.setNavigationItemSelectedListener(this)
-        setLoggedInButtonsVisibility(false)
+        loggedIn = savedInstanceState?.getBoolean("loggedIn", false) ?: false
+        setLoggedInButtonsVisibility(loggedIn)
 
         // TODO: Remove, we can keep a strong policy if we use the query API
         // Change Thread policy
@@ -112,10 +115,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("loggedIn", loggedIn)
+    }
+
     override fun onLoginComplete(username: String, permission: Char) {
         // Set navigation username
         val navView: NavigationView = findViewById(R.id.nav_view)
         setLoggedInButtonsVisibility(true)
+        loggedIn = loggedIn
 
         val usernameField: TextView = navView.getHeaderView(0).findViewById(R.id.username)
         usernameField.text = username

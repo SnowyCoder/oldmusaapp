@@ -20,43 +20,39 @@ import com.cnr_isac.oldmusa.util.ApiUtil.query
 import com.cnr_isac.oldmusa.util.ApiUtil.useLoadingBar
 import kotlinx.android.synthetic.main.add_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
+import kotlinx.android.synthetic.main.fragment_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
 class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
-    lateinit var listChannels: List<Channel>
-    private lateinit var listView: ListView
+    lateinit var channels: List<Channel>
 
     val args: SensorFragmentArgs by navArgs()
 
     lateinit var currentSensor: Sensor
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
-
-        val view = inflater.inflate(R.layout.fragment_sensor, container, false)
-
-        listView = view.findViewById(R.id.channelsList)
-
         activity?.title = "Sensore"
 
+        return inflater.inflate(R.layout.fragment_sensor, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         if (isAdmin) {
-            val buttonVisible1 = view.findViewById<ImageButton>(R.id.addChannelButton)
-            buttonVisible1.visibility = View.VISIBLE
+            addChannelButton.visibility = View.VISIBLE
         }
 
-
         // open add channel modal
-        view.findViewById<ImageButton>(R.id.addChannelButton).setOnClickListener{
-            //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
-
-            val mBuilder = AlertDialog.Builder(context!!)
-            mBuilder.setTitle("Aggiungi canale")
+        addChannelButton.setOnClickListener {
+            val builder = AlertDialog.Builder(context!!)
+            builder.setTitle("Aggiungi canale")
             val dialogView = LayoutInflater.from(context!!).inflate(R.layout.add_channel, null)
-            val dialog = mBuilder.setView(dialogView).create()
+            val dialog = builder.setView(dialogView).create()
             val lp = WindowManager.LayoutParams()
             lp.copyFrom(dialog.window!!.attributes)
             lp.title = "Aggiungi canale"
@@ -65,12 +61,12 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
             dialog.show()
             dialog.window!!.attributes = lp
 
-            dialog.AddButtonC.setOnClickListener {
-                val nameChannel = dialog.findViewById<EditText>(R.id.nameChannel)
+            dialog.addButton.setOnClickListener {
+                val nameChannel = dialog.nameChannel
                 val idCnrChannel = dialog.findViewById<EditText>(R.id.idCnr)
-                val measureUnit = dialog.findViewById<EditText>(R.id.measureUnit)
-                val minRangeChannel = dialog.findViewById<EditText>(R.id.rangeMin)
-                val maxRangeChannel = dialog.findViewById<EditText>(R.id.rangeMax)
+                val measureUnit = dialog.measureUnit
+                val minRangeChannel = dialog.rangeMin
+                val maxRangeChannel = dialog.rangeMax
 
                 val rawRangeMin = minRangeChannel.text.toString()
                 val rawRangeMax = maxRangeChannel.text.toString()
@@ -80,8 +76,7 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
 
                 query {
-
-                   currentSensor.addChannel(
+                    currentSensor.addChannel(
                         ApiChannel(
                             name = nameChannel.text.toString(),
                             idCnr = idCnrChannel.text.toString(),
@@ -98,15 +93,12 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
         }
 
         // SwipeRefreshLayout
-        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
-        swipeRefreshLayout.setOnRefreshListener(this)
+        swipeContainer.setOnRefreshListener(this)
 
-        swipeRefreshLayout.post {
-            swipeRefreshLayout.isRefreshing = true
+        swipeContainer.post {
+            swipeContainer.isRefreshing = true
             reload()
         }
-
-        return view
     }
 
     override fun onRefresh() {
@@ -131,8 +123,8 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.remove -> {
-                val mBuilder = AlertDialog.Builder(context!!)
-                val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.remove_sensor, null)).create()
+                val builder = AlertDialog.Builder(context!!)
+                val dialog = builder.setView(LayoutInflater.from(context!!).inflate(R.layout.remove_sensor, null)).create()
                 val lp = WindowManager.LayoutParams()
                 lp.copyFrom(dialog.window!!.attributes)
                 lp.width = (resources.displayMetrics.widthPixels * 0.75).toInt()
@@ -165,9 +157,9 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
                 dialog.window!!.attributes = lp
 
 
-                val name = dialog.findViewById<EditText>(R.id.name)
+                val name = dialog.name
                 val idCnr = dialog.findViewById<EditText>(R.id.idCnr)
-                val enabled = dialog.findViewById<CheckBox>(R.id.enabled)
+                val enabled = dialog.enabled
 
                 //Log.e(nameSen.toString(),idcnrSen.toString())
 
@@ -223,7 +215,7 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
             currentSensor.channels
         }.onResult { listChannels ->
             activity?.title = currentSensor.name ?: "Sensore"
-            this.listChannels = listChannels
+            this.channels = listChannels
 
             val nameList = listChannels.map { it.name ?: "null" }
 
@@ -231,14 +223,15 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
             val adapter = ArrayAdapter<String>(view!!.context,
                 R.layout.list_channel_item, nameList)
-            listView.adapter = adapter
+            channelList.adapter = adapter
 
-            swipeRefreshLayout.isRefreshing = false
+            swipeContainer.isRefreshing = false
+            noChannelText.visibility = if (listChannels.isEmpty()) View.VISIBLE else View.GONE
         }
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+        channelList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val action = SensorFragmentDirections.actionSensorToQuickGraph(
-                listChannels[position].id
+                channels[position].id
             )
             view!!.findNavController().navigate(action)
         }

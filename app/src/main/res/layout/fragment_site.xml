@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.SiteFragment"
+    >
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,7 +17,7 @@
             android:name="com.cnr_isac.oldmusa.fragments.SiteMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:id="@+id/site_map"
+            android:id="@+id/siteMap"
             app:layout_constraintBottom_toTopOf="@id/guideline15"
             app:layout_constraintEnd_toStartOf="@id/guideline20"
             app:layout_constraintStart_toStartOf="@id/guideline19"
@@ -30,15 +31,25 @@
             app:layout_constraintGuide_percent="0.10" />
 
         <ListView
-            android:id="@+id/SensorList"
+            android:id="@+id/sensorList"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline17"
             app:layout_constraintEnd_toStartOf="@+id/guideline20"
             app:layout_constraintStart_toStartOf="@+id/guideline19"
-            app:layout_constraintTop_toTopOf="@+id/guideline16"
+            app:layout_constraintTop_toTopOf="@+id/guideline16" />
 
-            />
+        <TextView
+            android:id="@+id/noSensorText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="No sensor"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/guideline17"
+            app:layout_constraintEnd_toStartOf="@+id/guideline20"
+            app:layout_constraintStart_toStartOf="@+id/guideline19"
+            app:layout_constraintTop_toTopOf="@+id/guideline16" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline15"

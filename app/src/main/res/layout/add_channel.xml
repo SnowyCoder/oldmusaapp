@@ -19,7 +19,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/AddButtonC"
+            android:id="@+id/addButton"
             android:background="#FFB74D"
             android:text="Aggiungi"
             android:onClick="addChannel"

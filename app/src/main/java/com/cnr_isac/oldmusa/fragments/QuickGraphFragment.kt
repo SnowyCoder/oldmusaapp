@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -19,15 +18,15 @@ import com.cnr_isac.oldmusa.api.Channel
 import com.cnr_isac.oldmusa.api.ChannelReading
 import com.cnr_isac.oldmusa.util.ApiUtil.api
 import com.cnr_isac.oldmusa.util.ApiUtil.query
-import com.cnr_isac.oldmusa.util.TimeUtil.midnightOf
 import com.cnr_isac.oldmusa.util.TimeUtil.copy
+import com.cnr_isac.oldmusa.util.TimeUtil.midnightOf
 import com.cnr_isac.oldmusa.util.TimeUtil.setMidnight
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.android.synthetic.main.edit_channel.*
+import kotlinx.android.synthetic.main.fragment_quickgraph.*
 import kotlinx.android.synthetic.main.remove_channel.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,13 +34,10 @@ import java.util.*
 
 class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
-
     val args: QuickGraphFragmentArgs by navArgs()
 
-    lateinit var chart: LineChart
     lateinit var data: LineData
     private lateinit var currentDate: Calendar
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private lateinit var currentChannel: Channel
 
@@ -53,7 +49,7 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         val view = inflater.inflate(R.layout.fragment_quickgraph, container, false)
 
-        view.findViewById<Button>(R.id.change_date).setOnClickListener {
+        changeDate.setOnClickListener {
             val theme = R.style.AlertDialogCustom
             val datePicker = DatePickerDialog(context!!, theme, { _, year, month, dayOfMonth ->
                 onDateChange(midnightOf(year, month, dayOfMonth))
@@ -62,9 +58,9 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             datePicker.show()
         }
 
-        chart = view.findViewById<LineChart>(R.id.chart).apply {
+        chart.apply {
             setBackgroundColor(Color.WHITE)
-            description.isEnabled = true
+            //description.isEnabled = true
             setTouchEnabled(true)
             //setOnChartValueSelectedListener(this)
             setDrawGridBackground(true)
@@ -92,11 +88,10 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
 
         // SwipeRefreshLayout
-        swipeRefreshLayout = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
-        swipeRefreshLayout.setOnRefreshListener(this)
+        swipeContainer.setOnRefreshListener(this)
 
-        swipeRefreshLayout.post {
-            swipeRefreshLayout.isRefreshing = true
+        swipeContainer.post {
+            swipeContainer.isRefreshing = true
 
             onChannelLoad()
         }
@@ -194,7 +189,7 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         to.add(Calendar.DAY_OF_MONTH, 1)
 
 
-        swipeRefreshLayout.isRefreshing = true
+        swipeContainer.isRefreshing = true
 
         query {
             currentChannel = api.getChannel(channelId)
@@ -228,7 +223,7 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         chart.data = LineData(datasets)
         chart.invalidate()// Refresh
 
-        swipeRefreshLayout.isRefreshing = false
+        swipeContainer.isRefreshing = false
         Log.i(TAG, "Data reloaded: $datasets")
     }
 
