@@ -86,6 +86,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.logout -> {
                 api.logout()
                 Account.saveToken(this)
+                loggedIn = false
+                setLoggedInButtonsVisibility(false)
 
                 navController.navigate(R.id.login, null, NavOptions.Builder().setPopUpTo(R.id.home, true).build())
             }
@@ -143,6 +145,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView.menu.findItem(R.id.home).isVisible = value
         navView.menu.findItem(R.id.current_user_detail).isVisible = value
         navView.menu.findItem(R.id.manage_users).isVisible = value
+        navView.menu.findItem(R.id.logout).isVisible = value
 
         val header = navView.getHeaderView(0)
         val visibility = if (value) View.VISIBLE else View.INVISIBLE
