@@ -1,0 +1,8 @@
+query ChannelReadings($id: Int!, $begin: NaiveDateTime!, $end: NaiveDateTime!) {
+  channel(id: $id) {
+    readings(start: $begin, end: $end) {
+      date,
+      valueMin
+    }
+  }
+}

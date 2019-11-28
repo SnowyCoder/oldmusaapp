@@ -1,0 +1,5 @@
+mutation AddChannel($sensorId: Int!, $data: ChannelInput!) {
+  addChannel(sensorId: $sensorId, data: $data) {
+    id
+  }
+}

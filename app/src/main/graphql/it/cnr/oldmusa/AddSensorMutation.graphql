@@ -1,0 +1,5 @@
+mutation AddSensor($siteId: Int!, $data: SensorInput!) {
+  addSensor(siteId: $siteId, data: $data) {
+    id
+  }
+}

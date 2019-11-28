@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.2.0-alpha02"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
 }
 
@@ -21,6 +21,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.apollographql.android'
 
 android {
     compileSdkVersion 28
@@ -32,7 +33,7 @@ android {
         jvmTarget = "1.8"
     }
     defaultConfig {
-        applicationId "com.cnr_isac.oldmusa"
+        applicationId "it.cnr.oldmusa"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 2
@@ -51,6 +52,12 @@ android {
     packagingOptions {
         exclude 'META-INF/atomicfu.kotlin_module'
     }
+}
+
+apollo {
+    customTypeMapping = [
+            "NaiveDateTime" : "java.util.Date"
+    ]
 }
 
 repositories {
@@ -75,7 +82,7 @@ dependencies {
 
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-    implementation 'com.squareup:android-times-square:1.6.5@aar'
+    implementation 'com.squareup:android-times-square:1.7.10@aar'
     implementation 'com.google.android.material:material:1.0.0'
 
     // Navigation
@@ -98,9 +105,16 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.1"
 
     // HTTP client
-    implementation 'com.squareup.okhttp3:okhttp:3.14.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+
+    // GraphQl client
+    implementation("com.apollographql.apollo:apollo-runtime:$apollo_version")
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
+
+    // Annotations
+    compileOnly("org.jetbrains:annotations:13.0")
+    testCompileOnly("org.jetbrains:annotations:13.0")
 }

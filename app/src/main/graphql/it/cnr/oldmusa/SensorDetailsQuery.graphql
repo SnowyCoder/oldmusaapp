@@ -1,0 +1,8 @@
+query SensorDetails($id: Int!) {
+  sensor(id: $id) {
+    siteId, name, idCnr, enabled, locX, locY,
+    channels {
+      id, name
+    }
+  }
+}

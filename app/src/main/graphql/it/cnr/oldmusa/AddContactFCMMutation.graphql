@@ -1,0 +1,3 @@
+mutation AddContactFCM($registrationId: String!) {
+  addFcmContact(registrationId: $registrationId)
+}

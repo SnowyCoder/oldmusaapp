@@ -1,0 +1,5 @@
+query SiteList {
+  sites {
+    id, name, idCnr
+  }
+}

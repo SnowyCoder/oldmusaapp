@@ -1,0 +1,8 @@
+query SiteDetails($id: Int!) {
+  site(id: $id) {
+    name, idCnr,
+    sensors {
+      id, name, locX, locY, status
+    }
+  }
+}

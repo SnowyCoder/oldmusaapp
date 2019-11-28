@@ -1,0 +1,3 @@
+mutation UpdateSensor($sensorId: Int!, $data: SensorInput!) {
+  updateSensor(id: $sensorId, data: $data) { id }
+}

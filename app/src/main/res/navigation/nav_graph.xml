@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="com.cnr_isac.oldmusa.fragments.HomeFragment"
+        android:name="it.cnr.oldmusa.fragments.HomeFragment"
         android:label="Home" >
         <action
             android:id="@+id/action_home_to_site"
@@ -15,37 +15,37 @@
     </fragment>
     <fragment
         android:id="@+id/site"
-        android:name="com.cnr_isac.oldmusa.fragments.SiteFragment"
+        android:name="it.cnr.oldmusa.fragments.SiteFragment"
         android:label="Site">
         <action
             android:id="@+id/action_site_to_channel"
             app:destination="@id/sensor" />
         <argument
             android:name="siteId"
-            app:argType="long" />
+            app:argType="integer" />
     </fragment>
     <fragment
             android:id="@+id/sensor"
-            android:name="com.cnr_isac.oldmusa.fragments.SensorFragment"
+            android:name="it.cnr.oldmusa.fragments.SensorFragment"
             android:label="Sensor">
         <action
                 android:id="@+id/action_sensor_to_quickGraph"
                 app:destination="@id/quickGraph" />
         <argument
-                android:name="channelId"
-                app:argType="long" />
+                android:name="sensorId"
+                app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/quickGraph"
-        android:name="com.cnr_isac.oldmusa.fragments.QuickGraphFragment"
+        android:name="it.cnr.oldmusa.fragments.QuickGraphFragment"
         android:label="QuickGraph" >
         <argument
             android:name="channelId"
-            app:argType="long" />
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/manageUsers"
-        android:name="com.cnr_isac.oldmusa.fragments.ManageUsersFragment"
+        android:name="it.cnr.oldmusa.fragments.ManageUsersFragment"
         android:label="ManageUsers" >
         <action
             android:id="@+id/action_manageUsers_to_userDetailsEdit"
@@ -53,32 +53,32 @@
     </fragment>
     <fragment
         android:id="@+id/userDetailsEdit"
-        android:name="com.cnr_isac.oldmusa.fragments.UserDetailsEditFragment"
+        android:name="it.cnr.oldmusa.fragments.UserDetailsEditFragment"
         android:label="fragment_user_details_edit"
         tools:layout="@layout/fragment_user_details_edit" >
         <argument
             android:name="userId"
-            app:argType="long" />
+            app:argType="integer" />
         <action
             android:id="@+id/action_userDetailsEdit_to_userAccessEdit"
             app:destination="@id/userAccessEdit" />
     </fragment>
     <fragment
         android:id="@+id/userAccessEdit"
-        android:name="com.cnr_isac.oldmusa.fragments.UserAccessEditFragment"
+        android:name="it.cnr.oldmusa.fragments.UserAccessEditFragment"
         android:label="fragment_user_access_edit"
         tools:layout="@layout/fragment_user_access_edit" >
         <argument
             android:name="userId"
-            app:argType="long" />
+            app:argType="integer" />
     </fragment>
-    <fragment android:id="@+id/about" android:label="About" android:name="com.cnr_isac.oldmusa.fragments.AboutFragment"/>
+    <fragment android:id="@+id/about" android:label="About" android:name="it.cnr.oldmusa.fragments.AboutFragment"/>
     <fragment
         android:id="@+id/login"
-        android:name="com.cnr_isac.oldmusa.fragments.LoginFragment"
+        android:name="it.cnr.oldmusa.fragments.LoginFragment"
         android:label="Login" />
     <fragment
         android:id="@+id/settings"
-        android:name="com.cnr_isac.oldmusa.fragments.SettingsFragment"
+        android:name="it.cnr.oldmusa.fragments.SettingsFragment"
         android:label="Settings" />
 </navigation>

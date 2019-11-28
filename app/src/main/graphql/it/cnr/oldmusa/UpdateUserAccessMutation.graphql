@@ -1,0 +1,4 @@
+mutation UpdateUserAccess($userId: Int!, $toGive: [Int!]!, $toRevoke: [Int!]!) {
+  giveUserAccess(userId: $userId, siteIds: $toGive)
+  revokeUserAccess(userId: $userId, siteIds: $toRevoke)
+}

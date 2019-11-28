@@ -1,0 +1,3 @@
+mutation UpdateChannel($channelId: Int!, $data: ChannelInput!) {
+  updateChannel(id: $channelId, data: $data) { id }
+}

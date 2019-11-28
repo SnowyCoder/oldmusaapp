@@ -1,0 +1,3 @@
+mutation UpdateSite($siteId: Int!, $data: SiteInput!) {
+  updateSite(id: $siteId, data: $data) { id }
+}

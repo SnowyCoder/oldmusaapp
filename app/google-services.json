@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:120756554732:android:d830159c01ca985b",
         "android_client_info": {
-          "package_name": "com.cnr_isac.oldmusa"
+          "package_name": "it.cnr.oldmusa"
         }
       },
       "oauth_client": [],

@@ -1,0 +1,8 @@
+mutation AddSite($name: String, $idCnr: String) {
+  addSite(data: {
+    name: $name,
+    idCnr: $idCnr
+  }) {
+    id
+  }
+}

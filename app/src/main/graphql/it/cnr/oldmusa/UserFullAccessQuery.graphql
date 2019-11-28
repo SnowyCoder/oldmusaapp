@@ -1,0 +1,8 @@
+query UserFullAcces($userId: Int!) {
+  sites {
+    id, name
+  }
+  user(id: $userId) {
+    sites { id }
+  }
+}

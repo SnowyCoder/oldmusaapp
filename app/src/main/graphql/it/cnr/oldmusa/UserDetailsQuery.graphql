@@ -1,0 +1,8 @@
+query UserDetails($userId: Int!) {
+  user(id: $userId) {
+    id, username, permission
+  }
+  userMe {
+    id
+  }
+}
