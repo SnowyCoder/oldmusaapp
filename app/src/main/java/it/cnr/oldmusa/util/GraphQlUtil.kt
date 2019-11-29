@@ -204,60 +204,49 @@ object GraphQlUtil {
         }
     }
 
-    fun downloadImage(context: Context, siteId: Int): AsyncUtil.RawTask<Bitmap?> {
-        return context.async {
-            val httpClient = Account.getHttpClient(context)
+    fun downloadImageSync(context: Context, siteId: Int): Bitmap? {
+        val httpClient = Account.getHttpClient(context)
 
-            val fullUrl = Account.getUrl(context) + "site_map/" + siteId
+        val fullUrl = Account.getUrl(context) + "site_map/" + siteId
 
-            val req = Request.Builder().run {
-                url(fullUrl)
-                get()
-                build()
+        val req = Request.Builder().run {
+            url(fullUrl)
+            get()
+            build()
+        }
+
+        val res = httpClient.newCall(req).execute()
+        if (!res.isSuccessful) {
+            if (res.code == 404) {
+                return null
             }
+            throw ServiceGraphQlException.fromHttpCode("SiteImage", res.code, res.body?.toString())
+        }
 
-            val res = httpClient.newCall(req).execute()
-            if (!res.isSuccessful) {
-                if (res.code == 404) {
-                    return@async null
-                }
-                throw ServiceGraphQlException.fromHttpCode("SiteImage", res.code, res.body?.toString())
-            }
-
-            res.body?.byteStream()?.readBytes()?.let {
-                BitmapFactory.decodeByteArray(it, 0, it.size)
-            }
+        return res.body?.byteStream()?.readBytes()?.let {
+            BitmapFactory.decodeByteArray(it, 0, it.size)
         }
     }
 
-    fun uploadImage(context: Context, siteId: Int, image: InputStream, resizeData: MapResizeData? = null): AsyncUtil.RawTask<Bitmap?> {
-        return context.async {
-            val httpClient = Account.getHttpClient(context)
+    fun uploadImageSync(context: Context, siteId: Int, image: InputStream, resizeData: MapResizeData? = null) {
+        val httpClient = Account.getHttpClient(context)
 
-            var fullUrl = Account.getUrl(context) + "site_map/" + siteId
+        var fullUrl = Account.getUrl(context) + "site_map/" + siteId
 
-            if (resizeData != null) {
-                fullUrl += "?fromH=" + resizeData.fromH + "&fromW=" + resizeData.fromW +
-                        "&toH=" + resizeData.toH + "&toW=" + resizeData.toW
-            }
+        if (resizeData != null) {
+            fullUrl += "?fromH=" + resizeData.fromH + "&fromW=" + resizeData.fromW +
+                    "&toH=" + resizeData.toH + "&toW=" + resizeData.toW
+        }
 
-            val req = Request.Builder().run {
-                url(fullUrl)
-                post(image.readBytes().toRequestBody("image/png".toMediaType()))
-                build()
-            }
+        val req = Request.Builder().run {
+            url(fullUrl)
+            post(image.readBytes().toRequestBody("image/png".toMediaType()))
+            build()
+        }
 
-            val res = httpClient.newCall(req).execute()
-            if (!res.isSuccessful) {
-                if (res.code == 404) {
-                    return@async null
-                }
-                throw ServiceGraphQlException.fromHttpCode("SiteImage", res.code, res.body?.toString())
-            }
-
-            res.body?.byteStream()?.readBytes()?.let {
-                BitmapFactory.decodeByteArray(it, 0, it.size)
-            }
+        val res = httpClient.newCall(req).execute()
+        if (!res.isSuccessful) {
+            throw ServiceGraphQlException.fromHttpCode("SiteImageUpload", res.code, res.body?.toString())
         }
     }
 

@@ -108,7 +108,7 @@ object AsyncUtil {
         return RawTask(true, f).onError { handleError(this.applicationContext, it) }
     }
 
-    fun <R> Fragment.async(mayInterruptIfRunning: Boolean = false, f: () -> R): RawTask<R> {
+    fun <R> Fragment.async(mayInterruptIfRunning: Boolean = false, defaultErrorHandler: Boolean = true, f: () -> R): RawTask<R> {
         val query = RawTask(true, f)
 
         // Check if the fragment is paused, then cancel it to mitigate exceptions
@@ -118,7 +118,9 @@ object AsyncUtil {
             lifecycle.removeObserver(observer)
         }
 
-        query.onError { handleError(this.context!!.applicationContext, it) }
+        if (defaultErrorHandler) {
+            query.onError { handleError(this.context!!.applicationContext, it) }
+        }
         return query
     }
 

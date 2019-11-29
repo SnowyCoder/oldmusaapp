@@ -17,18 +17,38 @@ open class ServiceGraphQlException(operationName: String, message: String)
             }
             val error = errors[0]
 
-            return error.customAttributes()["type"]?.let {
-                when (it) {
-                    "INTERNAL_SERVER_ERROR" -> InternalServerErrorGraphQlException(operationName, error.customAttributes()["info"]?.toString() ?: "Unknown")
-                    "BAD_REQUEST" -> BadRequestGraphQlException(operationName, error.message() ?: "Unknown")
-                    "NOT_FOUND" -> NotFoundGraphQlException(operationName, error.message() ?: "Unknown")
-                    "UNAUTHORIZED" -> UnauthorizedraphQlException(operationName)
-                    "WRONG_PASSWORD" -> WrongPasswordGraphQlException(operationName)
-                    "LOGIN_REQUIRED" -> LoginRequiredGraphQlException(operationName)
-                    "ALREADY_PRESENT" -> AlreadyPresentGraphQlException(operationName, error.message() ?: "Unknown")
-                    else -> null
-                }
-            } ?: ServiceGraphQlException(operationName, error.message() ?: "Unknown")
+            val extensions: Map<String, String>? =
+                error.customAttributes()["extensions"] as? Map<String, String>
+
+            return extensions?.let { Pair(it["type"], it["info"]) }
+                ?.let { data ->
+                    val (type, info) = data
+                    when (type) {
+                        "INTERNAL_SERVER_ERROR" -> InternalServerErrorGraphQlException(
+                            operationName,
+                            info ?: "Unknown"
+                        )
+                        "BAD_REQUEST" -> BadRequestGraphQlException(
+                            operationName,
+                            error.message() ?: "Unknown"
+                        )
+                        "NOT_FOUND" -> NotFoundGraphQlException(
+                            operationName,
+                            error.message() ?: "Unknown"
+                        )
+                        "UNAUTHORIZED" -> UnauthorizedraphQlException(operationName)
+                        "WRONG_PASSWORD" -> WrongPasswordGraphQlException(operationName)
+                        "LOGIN_REQUIRED" -> LoginRequiredGraphQlException(operationName)
+                        "ALREADY_PRESENT" -> AlreadyPresentGraphQlException(
+                            operationName,
+                            error.message() ?: "Unknown"
+                        )
+                        else -> null
+                    }
+                } ?: ServiceGraphQlException(
+                operationName,
+                "${error.message() ?: "Unknown"} of type ${error.customAttributes()["type"]}"
+            )
         }
 
         fun fromHttpCode(operationName: String, code: Int, messageBody: String?): ServiceGraphQlException {

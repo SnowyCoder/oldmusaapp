@@ -18,7 +18,8 @@ import it.cnr.oldmusa.util.GraphQlUtil.query
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AndroidUtil.toNullableString
-import it.cnr.oldmusa.util.GraphQlUtil.downloadImage
+import it.cnr.oldmusa.util.AsyncUtil.async
+import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
 import kotlinx.android.synthetic.main.add_channel.*
 import kotlinx.android.synthetic.main.edit_sensor.*
 import kotlinx.android.synthetic.main.fragment_sensor.*
@@ -181,7 +182,9 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
             R.id.resetPosition -> {
                 // TODO
                 // This will be slow as hell
-                downloadImage(requireContext(), currentSensor.siteId()).onResult {
+                async {
+                    downloadImageSync(requireContext(), currentSensor.siteId())
+                }.onResult {
                     val x = it?.width ?: 0
                     val y = it?.height ?: 0
 
@@ -199,14 +202,6 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
     }
 
     fun reload() {
-        // permission
-        /*isAdmin {
-            if (!it) return@isAdmin
-
-            val buttonVisible = view.findViewById<ImageButton>(R.id.addSiti)
-            buttonVisible.visibility = View.VISIBLE
-        }*/
-
         query(SensorDetailsQuery(args.sensorId)).onResult { data ->
             currentSensor = data.sensor()
             activity?.title = currentSensor.name() ?: "Sensore"

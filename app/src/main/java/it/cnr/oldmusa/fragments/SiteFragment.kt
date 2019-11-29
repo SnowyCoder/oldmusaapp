@@ -25,10 +25,10 @@ import it.cnr.oldmusa.util.AndroidUtil.toNullableString
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
-import it.cnr.oldmusa.util.GraphQlUtil
+import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.MapResizeData
-import it.cnr.oldmusa.util.GraphQlUtil.downloadImage
-import it.cnr.oldmusa.util.GraphQlUtil.uploadImage
+import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
+import it.cnr.oldmusa.util.GraphQlUtil.uploadImageSync
 import kotlinx.android.synthetic.main.add_map.*
 import kotlinx.android.synthetic.main.add_sensor.*
 import kotlinx.android.synthetic.main.edit_museum.*
@@ -267,8 +267,9 @@ class SiteFragment : Fragment(),
 
             swipeContainer.isRefreshing = false
 
-
-            downloadImage(requireContext(), args.siteId).onResult { mapData ->
+            async {
+                downloadImageSync(requireContext(), args.siteId)
+            }.onResult { mapData ->
                 if (mapData != null) {
                     currentImageW = mapData.width
                     currentImageH = mapData.height
@@ -282,7 +283,10 @@ class SiteFragment : Fragment(),
                     noMapText.visibility = View.VISIBLE
                     noMapImage.visibility = View.VISIBLE
                 }
-            }
+            }//.useLoadingBar(this)
+            // TODO: think
+            // Should we add a loading bar?
+            // We might ask for the last time change from the server to build a safe-cache
         }
     }
 
@@ -327,8 +331,9 @@ class SiteFragment : Fragment(),
                 resize = MapResizeData(currentImageW, currentImageH, bitmap.width, bitmap.height)
             }
 
-            uploadImage(context!!, args.siteId, context!!.contentResolver.openInputStream(data.data!!)!!, resize).onResult {
-
+            async {
+                uploadImageSync(context!!, args.siteId, context!!.contentResolver.openInputStream(data.data!!)!!, resize)
+            }.onResult {
                 reloadSite()
             }.useLoadingBar(this)
         }

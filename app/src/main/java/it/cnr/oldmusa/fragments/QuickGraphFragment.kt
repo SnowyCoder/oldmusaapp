@@ -232,8 +232,7 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             val diff = it.date().time - start.timeInMillis
 
             Entry(diff.toFloat(), it.valueMin().toFloat())
-        }
-
+        }.sortedBy { it.x }
 
         val dataSet = LineDataSet(vals, channel.name())
         dataSet.color = color
