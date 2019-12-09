@@ -1,30 +1,27 @@
 package it.cnr.oldmusa.fragments
 
 import android.app.AlertDialog
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import it.cnr.oldmusa.*
 import it.cnr.oldmusa.Account.isAdmin
-import it.cnr.oldmusa.type.ChannelInput
+import it.cnr.oldmusa.DeleteSensorMutation
+import it.cnr.oldmusa.R
+import it.cnr.oldmusa.SensorDetailsQuery
+import it.cnr.oldmusa.UpdateSensorMutation
 import it.cnr.oldmusa.type.SensorInput
-import it.cnr.oldmusa.util.GraphQlUtil.query
-import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
-import it.cnr.oldmusa.util.AndroidUtil.toNullableString
 import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
-import kotlinx.android.synthetic.main.add_channel.*
-import kotlinx.android.synthetic.main.edit_sensor.*
+import it.cnr.oldmusa.util.GraphQlUtil.mutate
+import it.cnr.oldmusa.util.GraphQlUtil.query
 import kotlinx.android.synthetic.main.fragment_sensor.*
-import kotlinx.android.synthetic.main.fragment_sensor.swipeContainer
-import kotlinx.android.synthetic.main.fragment_site.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
 class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
@@ -53,45 +50,7 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
         // open add channel modal
         addChannelButton.setOnClickListener {
-            val builder = AlertDialog.Builder(context!!)
-            builder.setTitle("Aggiungi canale")
-            val dialogView = LayoutInflater.from(context!!).inflate(R.layout.add_channel, null)
-            val dialog = builder.setView(dialogView).create()
-            val lp = WindowManager.LayoutParams()
-            lp.copyFrom(dialog.window!!.attributes)
-            lp.title = "Aggiungi canale"
-            lp.width = (resources.displayMetrics.widthPixels * 0.90).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.70).toInt()
-            dialog.show()
-            dialog.window!!.attributes = lp
-
-            dialog.addButton.setOnClickListener {
-                val nameChannel = dialog.nameChannel
-                val idCnrChannel = dialog.findViewById<EditText>(R.id.idCnr)
-                val measureUnit = dialog.measureUnit
-                val minRangeChannel = dialog.rangeMin
-                val maxRangeChannel = dialog.rangeMax
-
-                val rawRangeMin = minRangeChannel.text.toString()
-                val rawRangeMax = maxRangeChannel.text.toString()
-
-                val rangeMin = rawRangeMin.toDoubleOrNull()
-                val rangeMax = rawRangeMax.toDoubleOrNull()
-
-                mutate(AddChannelMutation(
-                    args.sensorId,
-                    ChannelInput.builder()
-                        .name(nameChannel.text.toNullableString())
-                        .idCnr(idCnrChannel.text.toNullableString())
-                        .measureUnit(measureUnit.text.toNullableString())
-                        .rangeMin(rangeMin)
-                        .rangeMax(rangeMax)
-                        .build()
-                )).onResult {
-                    dialog.dismiss()
-                    reload()
-                }.useLoadingBar(this)
-            }
+            findNavController().navigate(SensorFragmentDirections.actionSensorToCreateChannelFragment(args.sensorId))
         }
 
         // SwipeRefreshLayout
@@ -145,39 +104,17 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
                 }
             }
             R.id.edit -> {
-                val mBuilder = AlertDialog.Builder(context!!)
-                mBuilder.setTitle("Modifica il sensore")
-                val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.edit_sensor, null)).create()
-                val lp = WindowManager.LayoutParams()
-                lp.copyFrom(dialog.window!!.attributes)
-                lp.title = "modifica il sensore"
-                lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-                lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
-                dialog.show()
-                dialog.window!!.attributes = lp
-
-
-                val name = dialog.name
-                val idCnr = dialog.findViewById<EditText>(R.id.idCnr)
-                val enabled = dialog.enabled
-
-                name.setText(currentSensor.name() ?: "")
-                idCnr.setText(currentSensor.idCnr() ?: "")
-                enabled.isChecked = currentSensor.enabled()
-
-                dialog.aggiorna.setOnClickListener {
-                    mutate(UpdateSensorMutation(
-                        args.sensorId,
-                        SensorInput.builder()
-                            .name(name.text.toNullableString())
-                            .idCnr(idCnr.text.toNullableString())
-                            .enabled(enabled.isChecked)
-                            .build()
-                    )).onResult {
-                        dialog.dismiss()
-                        reload()
-                    }.useLoadingBar(this)
-                }
+                findNavController().navigate(
+                    SensorFragmentDirections.actionSensorToCreateSensor(
+                        currentSensor.siteId(),
+                        CreateSensorFragment.SensorDetails(
+                            args.sensorId,
+                            currentSensor.name(),
+                            currentSensor.idCnr(),
+                            currentSensor.enabled()
+                        )
+                    )
+                )
             }
             R.id.resetPosition -> {
                 // TODO

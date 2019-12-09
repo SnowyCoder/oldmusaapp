@@ -14,24 +14,22 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import it.cnr.oldmusa.*
 import it.cnr.oldmusa.Account.isAdmin
+import it.cnr.oldmusa.DeleteSiteMutation
+import it.cnr.oldmusa.R
 import it.cnr.oldmusa.R.layout.*
-import it.cnr.oldmusa.type.SensorInput
-import it.cnr.oldmusa.type.SiteInput
-import it.cnr.oldmusa.util.AndroidUtil.toNullableString
-import it.cnr.oldmusa.util.GraphQlUtil.mutate
-import it.cnr.oldmusa.util.GraphQlUtil.query
+import it.cnr.oldmusa.SiteDetailsQuery
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.MapResizeData
 import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
+import it.cnr.oldmusa.util.GraphQlUtil.mutate
+import it.cnr.oldmusa.util.GraphQlUtil.query
 import it.cnr.oldmusa.util.GraphQlUtil.uploadImageSync
 import kotlinx.android.synthetic.main.add_map.*
-import kotlinx.android.synthetic.main.add_sensor.*
-import kotlinx.android.synthetic.main.edit_museum.*
 import kotlinx.android.synthetic.main.fragment_home.swipeContainer
 import kotlinx.android.synthetic.main.fragment_site.*
 import kotlinx.android.synthetic.main.remove_museum.*
@@ -39,7 +37,6 @@ import kotlinx.android.synthetic.main.remove_museum.*
 
 class SiteFragment : Fragment(),
     SiteMapFragment.OnSensorSelectListener, SwipeRefreshLayout.OnRefreshListener {
-
 
     val args: SiteFragmentArgs by navArgs()
 
@@ -128,38 +125,7 @@ class SiteFragment : Fragment(),
 
         // open add sensor modal
         addSensorbutton.setOnClickListener {
-            //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
-
-            val mBuilder = AlertDialog.Builder(context!!)
-            mBuilder.setTitle("Aggiungi sensore")
-            val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_sensor, null)).create()
-            val lp = WindowManager.LayoutParams()
-            lp.copyFrom(dialog.window!!.attributes)
-            lp.title = "Aggiungi sensore"
-            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.55).toInt()
-            dialog.show()
-            dialog.window!!.attributes = lp
-
-            dialog.AddButtonS.setOnClickListener {
-                val name = dialog.name
-                val idCnr = dialog.idCnr
-                val enabled = dialog.enabled
-
-                mutate(
-                    AddSensorMutation(
-                        args.siteId,
-                        SensorInput.builder()
-                            .name(name.text.toNullableString())
-                            .idCnr(idCnr.text.toNullableString())
-                            .enabled(enabled.isChecked)
-                            .build()
-                    )
-                ).onResult {
-                    dialog.dismiss()
-                    reloadSite()
-                }.useLoadingBar(this)
-            }
+            findNavController().navigate(SiteFragmentDirections.actionSiteToCreateSensor(args.siteId))
         }
 
         // SwipeRefreshLayout
@@ -215,38 +181,15 @@ class SiteFragment : Fragment(),
 
             }
             R.id.edit -> {
-                val mBuilder = AlertDialog.Builder(context!!)
-                mBuilder.setTitle("Modifica il museo")
-                val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(edit_museum, null)).create()
-                val lp = WindowManager.LayoutParams()
-                lp.copyFrom(dialog.window!!.attributes)
-                lp.title = "modifica il museo"
-                lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-                lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
-                dialog.show()
-                dialog.window!!.attributes = lp
-
-                val nameSite = dialog.nameSite
-                val idCnrSite = dialog.idCnrSite
-
-                nameSite.setText(currentSite.name() ?: "")
-                idCnrSite.setText(currentSite.idCnr() ?: "")
-
-                dialog.Aggiorna.setOnClickListener {
-                    mutate(
-                        UpdateSiteMutation(
+                findNavController().navigate(
+                    SiteFragmentDirections.actionSiteToCreateSite(
+                        CreateSiteFragment.SiteDetails(
                             args.siteId,
-                            SiteInput.builder()
-                                .name(nameSite.text.toNullableString())
-                                .idCnr(idCnrSite.text.toNullableString())
-                                .build()
+                            currentSite.name(),
+                            currentSite.idCnr()
                         )
-                    ).onResult {
-                        dialog.dismiss()
-                        reloadSite()
-                    }.useLoadingBar(this)
-                }
-
+                    )
+                )
             }
         }
         return super.onOptionsItemSelected(item)

@@ -1,0 +1,5 @@
+query cnrChannelIds($sensorId: Int!) {
+    sensor(id: $sensorId) {
+        cnrChannelIds
+    }
+}

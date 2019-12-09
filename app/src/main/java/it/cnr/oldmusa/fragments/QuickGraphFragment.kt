@@ -6,26 +6,25 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
-import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import it.cnr.oldmusa.Account.isAdmin
-import it.cnr.oldmusa.util.TimeUtil.copy
-import it.cnr.oldmusa.util.TimeUtil.midnightOf
-import it.cnr.oldmusa.util.TimeUtil.setMidnight
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import it.cnr.oldmusa.*
-import it.cnr.oldmusa.type.ChannelInput
-import it.cnr.oldmusa.util.GraphQlUtil.mutate
+import it.cnr.oldmusa.Account.isAdmin
+import it.cnr.oldmusa.ChannelDetailsQuery
+import it.cnr.oldmusa.DeleteChannelMutation
+import it.cnr.oldmusa.R
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
-import it.cnr.oldmusa.util.AndroidUtil.toNullableString
+import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
-import kotlinx.android.synthetic.main.edit_channel.*
+import it.cnr.oldmusa.util.TimeUtil.copy
+import it.cnr.oldmusa.util.TimeUtil.midnightOf
+import it.cnr.oldmusa.util.TimeUtil.setMidnight
 import kotlinx.android.synthetic.main.fragment_quickgraph.*
 import kotlinx.android.synthetic.main.remove_channel.*
 import java.text.SimpleDateFormat
@@ -141,44 +140,19 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 }
             }
             R.id.edit -> {
-                val mBuilder = AlertDialog.Builder(context!!)
-                mBuilder.setTitle("Modifica il canale")
-                val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.edit_channel, null)).create()
-                val lp = WindowManager.LayoutParams()
-                lp.copyFrom(dialog.window!!.attributes)
-                lp.title = "modifica il canale"
-                lp.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-                lp.height = (resources.displayMetrics.heightPixels * 0.75).toInt()
-                dialog.show()
-                dialog.window!!.attributes = lp
-
-                val nameCha = dialog.findViewById<EditText>(R.id.name)
-                val unitCha = dialog.findViewById<EditText>(R.id.measureUnit)
-                val idcnrCha = dialog.findViewById<EditText>(R.id.idCnr)
-                val minCha = dialog.findViewById<EditText>(R.id.rangeMin)
-                val maxCha = dialog.findViewById<EditText>(R.id.rangeMax)
-
-                nameCha.setText(currentChannel.name() ?: "")
-                idcnrCha.setText(currentChannel.idCnr() ?: "")
-                unitCha.setText(currentChannel.measureUnit() ?: "")
-                minCha.setText(currentChannel.rangeMin()?.toString() ?: "")
-                maxCha.setText(currentChannel.rangeMax()?.toString() ?: "")
-
-                dialog.aggiornaC.setOnClickListener {
-                    mutate(UpdateChannelMutation(
-                        args.channelId,
-                        ChannelInput.builder()
-                            .name(nameCha.text.toNullableString())
-                            .idCnr(idcnrCha.text.toNullableString())
-                            .measureUnit(unitCha.text.toNullableString())
-                            .rangeMin(minCha.text.toNullableString()?.toDoubleOrNull())
-                            .rangeMax(maxCha.text.toNullableString()?.toDoubleOrNull())
-                            .build()
-                    )).onResult {
-                        dialog.dismiss()
-                        onChannelLoad()
-                    }
-                }
+                findNavController().navigate(
+                    QuickGraphFragmentDirections.actionQuickGraphToCreateChannel(
+                        currentChannel.sensorId(),
+                        CreateChannelFragment.ChannelDetails(
+                            args.channelId,
+                            currentChannel.name(),
+                            currentChannel.idCnr(),
+                            currentChannel.measureUnit(),
+                            currentChannel.rangeMin(),
+                            currentChannel.rangeMax()
+                        )
+                    )
+                )
             }
         }
         return super.onOptionsItemSelected(item)

@@ -1,12 +1,17 @@
 package it.cnr.oldmusa.util
 
 import android.app.Activity
+import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AutoCompleteTextView
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import it.cnr.oldmusa.util.AndroidUtil.alwaysComplete
 
 object AndroidUtil {
     fun Any.toNullableString(): String? {
@@ -32,6 +37,28 @@ object AndroidUtil {
             (layout.parent as ViewGroup).removeView(layout)
             context.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
+    }
+
+    fun AutoCompleteTextView.alwaysComplete() {
+        this.threshold = 1
+        this.setOnTouchListener { v, event -> if (this.text.isEmpty()) this.showDropDown(); false }
+        val textView = this
+        this.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.isEmpty() == true) {
+                    Handler().postDelayed({
+                        //manually show drop down
+                        textView.showDropDown()
+                    }, 100) // with 100 millis of delay
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
     }
 
     /**

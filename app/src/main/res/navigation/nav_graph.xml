@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_home_to_site"
             app:destination="@id/site" />
+        <action
+            android:id="@+id/action_home_to_createSiteFragment"
+            app:destination="@id/createSite" />
     </fragment>
     <fragment
         android:id="@+id/site"
@@ -23,6 +26,12 @@
         <argument
             android:name="siteId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_site_to_createSensor"
+            app:destination="@id/createSensor" />
+        <action
+            android:id="@+id/action_site_to_createSite"
+            app:destination="@id/createSite" />
     </fragment>
     <fragment
             android:id="@+id/sensor"
@@ -34,6 +43,12 @@
         <argument
                 android:name="sensorId"
                 app:argType="integer" />
+        <action
+            android:id="@+id/action_sensor_to_createChannelFragment"
+            app:destination="@id/createChannel" />
+        <action
+            android:id="@+id/action_sensor_to_createSensor"
+            app:destination="@id/createSensor" />
     </fragment>
     <fragment
         android:id="@+id/quickGraph"
@@ -42,6 +57,9 @@
         <argument
             android:name="channelId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_quickGraph_to_createChannel"
+            app:destination="@id/createChannel" />
     </fragment>
     <fragment
         android:id="@+id/manageUsers"
@@ -81,4 +99,43 @@
         android:id="@+id/settings"
         android:name="it.cnr.oldmusa.fragments.SettingsFragment"
         android:label="Settings" />
+    <fragment
+        android:id="@+id/createSite"
+        android:name="it.cnr.oldmusa.fragments.CreateSiteFragment"
+        android:label="fragment_create_site"
+        tools:layout="@layout/fragment_create_site" >
+        <argument
+            android:name="details"
+            app:argType="it.cnr.oldmusa.fragments.CreateSiteFragment$SiteDetails"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/createSensor"
+        android:name="it.cnr.oldmusa.fragments.CreateSensorFragment"
+        android:label="fragment_create_sensor"
+        tools:layout="@layout/fragment_create_sensor" >
+        <argument
+            android:name="siteId"
+            app:argType="integer" />
+        <argument
+            android:name="details"
+            app:argType="it.cnr.oldmusa.fragments.CreateSensorFragment$SensorDetails"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/createChannel"
+        android:name="it.cnr.oldmusa.fragments.CreateChannelFragment"
+        android:label="fragment_create_channel"
+        tools:layout="@layout/fragment_create_channel" >
+        <argument
+            android:name="sensorId"
+            app:argType="integer" />
+        <argument
+            android:name="details"
+            app:argType="it.cnr.oldmusa.fragments.CreateChannelFragment$ChannelDetails"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

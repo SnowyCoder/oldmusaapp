@@ -1,178 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:orientation="vertical"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <TextView
-            android:text="Sviluppatori"
-            android:layout_width="0dp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:textSize="26sp"
-            android:layout_height="wrap_content" android:id="@+id/title"
-            app:layout_constraintTop_toTopOf="@+id/guideline106"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintStart_toStartOf="@+id/guideline112"/>
+        android:id="@+id/title"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Sviluppatori"
+        android:textAlignment="center"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-            android:text="Alessandro Pilleri"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/nome1"
-            app:layout_constraintTop_toTopOf="@+id/guideline111"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintStart_toStartOf="@+id/guideline115"
-    />
-    <TextView
-            android:text="Lorenzo Rossi"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/nome2"
-            app:layout_constraintTop_toBottomOf="@+id/nome3"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintStart_toStartOf="@+id/guideline115"/>
-    <TextView
-            android:text="Giorgia Bertacchini"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/nome3"
-            app:layout_constraintTop_toBottomOf="@+id/nome1"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintStart_toStartOf="@+id/guideline115"
-    />
-    <TextView
-            android:text="Michele Silvestri"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/nome4"
-            app:layout_constraintTop_toBottomOf="@+id/nome2"
-            app:layout_constraintStart_toStartOf="@+id/guideline115"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"/>
+        android:id="@+id/nome1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Alessandro Pilleri\nGiorgia Bertacchini\nLorenzo Rossi\nMichele Silvestri"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
     <ImageView
-            android:layout_width="0dp"
-            android:layout_height="110dp" app:srcCompat="@drawable/logo_isac" android:id="@+id/imageView2"
-            app:layout_constraintBottom_toTopOf="@+id/guideline58"
-            app:layout_constraintStart_toStartOf="@+id/guideline112"
-            app:layout_constraintEnd_toStartOf="@+id/guideline115"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline58"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.97"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline106"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.08"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline111"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.15"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline112"
-                                                android:orientation="vertical"
-                                                app:layout_constraintGuide_percent="0.05"/>
+        android:id="@+id/imageView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linkGitHub"
+        app:srcCompat="@drawable/logo_isac" />
+
     <ImageView
-            android:layout_width="0dp"
-            android:layout_height="110dp" app:srcCompat="@drawable/logo_fermi"
-            android:id="@+id/imageView4"
-            app:layout_constraintBottom_toTopOf="@+id/guideline58"
-            app:layout_constraintStart_toStartOf="@+id/guideline116"
-            app:layout_constraintEnd_toStartOf="@+id/guideline117"/>
+        android:id="@+id/imageView4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline58"
+        app:layout_constraintStart_toStartOf="@+id/guideline10"
+        app:layout_constraintTop_toBottomOf="@+id/linkGitHub"
+        app:srcCompat="@drawable/logo_fermi" />
+
     <ImageView
-            android:layout_width="0dp"
-            android:layout_height="100dp" app:srcCompat="@drawable/operapro"
-            android:id="@+id/imageView5"
-            app:layout_constraintBottom_toTopOf="@+id/guideline58"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintStart_toStartOf="@+id/guideline118"/>
-    <TextView
-            android:text="Professori a sostegno"
-            android:layout_width="0dp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:textSize="26sp"
-            android:layout_height="wrap_content" android:id="@+id/prof"
-            app:layout_constraintTop_toTopOf="@+id/guideline9"
-            app:layout_constraintStart_toStartOf="@+id/guideline112"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"/>
+        android:id="@+id/imageView5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toTopOf="@+id/imageView4"
+        app:srcCompat="@drawable/operapro" />
 
     <TextView
-            android:text="Severi Roberta"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/profSeveri"
-            app:layout_constraintTop_toBottomOf="@+id/profMescoli"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintStart_toStartOf="@+id/guideline115"/>
+        android:id="@+id/prof"
+        android:layout_width="343dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Professori a sostegno"
+        android:textAlignment="center"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/nome1" />
 
     <TextView
-            android:text="Mescoli Marco"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/profMescoli"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintTop_toTopOf="@+id/guideline10" app:layout_constraintStart_toStartOf="@+id/guideline115"
-            app:layout_constraintHorizontal_bias="0.0"/>
+        android:id="@+id/profSeveri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Severi Roberta\nMescoli Marco"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/prof"
+        app:layout_constraintStart_toStartOf="@+id/prof"
+        app:layout_constraintTop_toBottomOf="@+id/prof" />
 
     <TextView
-            android:text="Link GitHub del progetto"
-            android:layout_width="0dp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:textSize="26sp"
-            android:layout_height="wrap_content" android:id="@+id/link"
-            app:layout_constraintStart_toStartOf="@+id/guideline112"
-            app:layout_constraintEnd_toStartOf="@+id/guideline114"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintTop_toTopOf="@+id/guideline119"/>
+        android:id="@+id/link"
+        android:layout_width="343dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Link GitHub del progetto"
+        android:textAlignment="center"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/profSeveri" />
 
     <TextView
-            android:text="Go to Link"
-            android:textColor="#FFB74D"
-            android:autoLink="web"
-            android:clickable="true"
-            android:textAlignment="center"
-            android:layout_width="0dp"
-            android:textSize="20sp"
-            android:layout_height="wrap_content" android:id="@+id/linkGitHub"
-            app:layout_constraintStart_toStartOf="@+id/guideline116"
-            app:layout_constraintEnd_toStartOf="@+id/guideline117"
-            app:layout_constraintTop_toTopOf="@+id/guideline121"
-    />
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline114"
-                                                android:orientation="vertical"
-                                                app:layout_constraintGuide_percent="0.95"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline115"
-                                                android:orientation="vertical"
-                                                app:layout_constraintGuide_percent="0.3"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline116"
-                                                android:orientation="vertical"
-                                                app:layout_constraintGuide_percent="0.36"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline117"
-                                                android:orientation="vertical"
-                                                app:layout_constraintGuide_percent="0.64"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline118"
-                                                android:orientation="vertical"
-                                                app:layout_constraintGuide_percent="0.7"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline9"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.36"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline10"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.43"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline119"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.59"/>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                                android:id="@+id/guideline121"
-                                                android:orientation="horizontal"
-                                                app:layout_constraintGuide_percent="0.66"/>
+        android:id="@+id/linkGitHub"
+        android:layout_width="269dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:autoLink="web"
+        android:clickable="true"
+        android:text="Go to Link"
+        android:textAlignment="center"
+        android:textColor="#FFB74D"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/link"
+        app:layout_constraintStart_toStartOf="@+id/link"
+        app:layout_constraintTop_toBottomOf="@+id/link" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.333" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline58"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.666" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

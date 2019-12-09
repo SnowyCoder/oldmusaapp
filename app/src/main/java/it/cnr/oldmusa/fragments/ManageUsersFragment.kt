@@ -3,7 +3,6 @@ package it.cnr.oldmusa.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import it.cnr.oldmusa.type.UserInput
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
-import kotlinx.android.synthetic.main.add_museum.*
+import kotlinx.android.synthetic.main.fragment_create_site.*
 
 
 class ManageUsersFragment : Fragment() {
@@ -46,8 +45,6 @@ class ManageUsersFragment : Fragment() {
         }
 
         view.findViewById<ImageButton>(R.id.addUser).setOnClickListener {
-            //val mDialogView = LayoutInflater.from(this).inflate(R.layout.add_museum, null)
-
             val mBuilder = AlertDialog.Builder(context!!)
             mBuilder.setTitle("Aggiungi utente")
             val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_user, null)).create()
@@ -59,7 +56,7 @@ class ManageUsersFragment : Fragment() {
             dialog.show()
             dialog.window!!.attributes = lp
 
-            dialog.AddButtonM.setOnClickListener { view ->
+            dialog.add.setOnClickListener { view ->
                 dialog.dismiss()
                 addUser(dialog)
             }

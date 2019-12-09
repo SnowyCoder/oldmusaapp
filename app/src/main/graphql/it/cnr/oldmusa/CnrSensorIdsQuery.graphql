@@ -1,0 +1,5 @@
+query CnrSensorIds($siteId: Int!) {
+    site(id: $siteId) {
+        cnrSensorIds
+    }
+}
