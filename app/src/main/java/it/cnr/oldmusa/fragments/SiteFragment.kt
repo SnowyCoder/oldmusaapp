@@ -22,6 +22,7 @@ import it.cnr.oldmusa.DeleteSiteMutation
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.R.layout.*
 import it.cnr.oldmusa.SiteDetailsQuery
+import it.cnr.oldmusa.util.AndroidUtil.linkToList
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.MapResizeData
@@ -136,6 +137,8 @@ class SiteFragment : Fragment(),
 
             reloadSite()
         }
+
+        swipeContainer.linkToList(sensorList)
     }
 
     override fun onRefresh() {

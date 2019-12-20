@@ -15,6 +15,7 @@ import it.cnr.oldmusa.Account.isAdmin
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.SiteListQuery
 import it.cnr.oldmusa.util.GraphQlUtil.query
+import it.cnr.oldmusa.util.AndroidUtil.linkToList
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -42,6 +43,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
             reload(view)
         }
+        swipeRefreshLayout.linkToList(siteList)
 
         // Buttons
         addSiti.setOnClickListener {

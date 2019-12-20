@@ -16,6 +16,7 @@ import it.cnr.oldmusa.R
 import it.cnr.oldmusa.SensorDetailsQuery
 import it.cnr.oldmusa.UpdateSensorMutation
 import it.cnr.oldmusa.type.SensorUpdateInput
+import it.cnr.oldmusa.util.AndroidUtil.linkToList
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
@@ -60,6 +61,8 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
             swipeContainer.isRefreshing = true
             reload()
         }
+
+        swipeContainer.linkToList(channelList)
     }
 
     override fun onRefresh() {

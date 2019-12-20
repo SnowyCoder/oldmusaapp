@@ -7,11 +7,12 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AbsListView
 import android.widget.AutoCompleteTextView
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import it.cnr.oldmusa.util.AndroidUtil.alwaysComplete
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 object AndroidUtil {
     fun Any.toNullableString(): String? {
@@ -57,6 +58,30 @@ object AndroidUtil {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+    fun SwipeRefreshLayout.linkToList(list: AbsListView) {
+        list.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(
+                view: AbsListView?,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
+                this@linkToList.isEnabled = if (view == null || view.childCount == 0) {
+                    true// There is no view, or else the view is empty, we should allow refreshing
+                } else {
+                    // We should allow refreshing only if the first element in the adapter is at the
+                    // top, note that AbsListView.getChildAt recycles views so you also need to
+                    // check if the firsVisibleItem is really the first as the 0th view can be
+                    // reused while scrolling.
+                    firstVisibleItem == 0 && view.getChildAt(0).top >= 0
+                }
+            }
+
+            override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
             }
         })
     }
