@@ -15,7 +15,7 @@ import it.cnr.oldmusa.DeleteSensorMutation
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.SensorDetailsQuery
 import it.cnr.oldmusa.UpdateSensorMutation
-import it.cnr.oldmusa.type.SensorInput
+import it.cnr.oldmusa.type.SensorUpdateInput
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
@@ -117,7 +117,6 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
                 )
             }
             R.id.resetPosition -> {
-                // TODO
                 // This will be slow as hell
                 async {
                     downloadImageSync(requireContext(), currentSensor.siteId())
@@ -127,7 +126,7 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
 
                     mutate(UpdateSensorMutation(
                         args.sensorId,
-                        SensorInput.builder()
+                        SensorUpdateInput.builder()
                             .locX(x / 2)
                             .locY(y / 2)
                             .build()

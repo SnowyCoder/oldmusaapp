@@ -50,7 +50,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             )
         }
 
-        museumList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+        siteList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val action = HomeFragmentDirections.actionHomeToSite(sites[position].id())
             view.findNavController().navigate(action)
         }
@@ -75,7 +75,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
             val adapter = ArrayAdapter<String>(context!!,
                 R.layout.list_museum_item, nameList)
-            museumList.adapter = adapter
+            siteList.adapter = adapter
 
             emptyText.visibility = if (sites.isEmpty()) View.VISIBLE else View.GONE
 

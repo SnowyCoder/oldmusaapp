@@ -15,8 +15,8 @@ import it.cnr.oldmusa.Account.isAdmin
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.SiteDetailsQuery.Sensor
 import it.cnr.oldmusa.UpdateSensorMutation
-import it.cnr.oldmusa.type.SensorInput
 import it.cnr.oldmusa.type.SensorStateType
+import it.cnr.oldmusa.type.SensorUpdateInput
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import kotlin.math.roundToInt
 
@@ -204,7 +204,7 @@ class SiteMapFragment : Fragment() {
             mutate(
                 UpdateSensorMutation(
                     sensor.id(),
-                    SensorInput.builder()
+                    SensorUpdateInput.builder()
                         .locX(locX)
                         .locY(locY)
                         .build()

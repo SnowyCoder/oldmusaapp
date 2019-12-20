@@ -14,7 +14,8 @@ import it.cnr.oldmusa.AddSiteMutation
 import it.cnr.oldmusa.CnrSiteIdsQuery
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.UpdateSiteMutation
-import it.cnr.oldmusa.type.SiteInput
+import it.cnr.oldmusa.type.SiteCreateInput
+import it.cnr.oldmusa.type.SiteUpdateInput
 import it.cnr.oldmusa.util.AndroidUtil.alwaysComplete
 import it.cnr.oldmusa.util.AndroidUtil.toNullableString
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
@@ -37,9 +38,13 @@ class CreateSiteFragment : Fragment() {
         if (details == null) {
             activity?.title = "Aggiungi Sito"
             view.add.text = "Aggiungi"
+
+            view.autoCreate.visibility = View.VISIBLE
         } else {
             activity?.title = "Modifica Sito"
             view.add.text = "Aggiorna"
+
+            view.autoCreate.visibility = View.GONE
 
             view.name.setText(details.name ?: "")
             view.idCnr.setText(details.idCnr ?: "")
@@ -64,13 +69,16 @@ class CreateSiteFragment : Fragment() {
 
         val details = args.details
         val op = if (details == null) { // Create
-            AddSiteMutation.builder()
-                .name(name)
-                .idCnr(idCnr)
-                .build()
+            AddSiteMutation(
+                SiteCreateInput.builder()
+                    .name(name)
+                    .idCnr(idCnr)
+                    .autoCreate(this.autoCreate.isChecked)
+                    .build()
+            )
         } else { // Update
             UpdateSiteMutation(
-                details.id, SiteInput.builder()
+                details.id, SiteUpdateInput.builder()
                     .name(name)
                     .idCnr(idCnr)
                     .build()

@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <ListView
-            android:id="@+id/museumList"
+            android:id="@+id/siteList"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline23"
@@ -26,7 +26,7 @@
             android:id="@+id/emptyText"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="No museum"
+            android:text="No site"
             android:textAlignment="center"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/guideline23"

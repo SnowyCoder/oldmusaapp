@@ -14,7 +14,8 @@ import it.cnr.oldmusa.AddSensorMutation
 import it.cnr.oldmusa.CnrSensorIdsQuery
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.UpdateSensorMutation
-import it.cnr.oldmusa.type.SensorInput
+import it.cnr.oldmusa.type.SensorCreateInput
+import it.cnr.oldmusa.type.SensorUpdateInput
 import it.cnr.oldmusa.util.AndroidUtil.alwaysComplete
 import it.cnr.oldmusa.util.AndroidUtil.toNullableString
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
@@ -40,9 +41,13 @@ class CreateSensorFragment : Fragment() {
         if (details == null) {
             activity?.title = "Aggiungi Sensore"
             view.add.text = "Aggiungi"
+
+            view.autoCreate.visibility = View.VISIBLE
         } else {
             activity?.title = "Modifica Sensore"
             view.add.text = "Aggiorna"
+
+            view.autoCreate.visibility = View.GONE
 
             view.name.setText(details.name ?: "")
             view.idCnr.setText(details.idCnr ?: "")
@@ -72,16 +77,17 @@ class CreateSensorFragment : Fragment() {
         val op = if (details == null) { // Create
             AddSensorMutation(
                 args.siteId,
-                SensorInput.builder()
+                SensorCreateInput.builder()
                     .name(name)
                     .idCnr(idCnr)
                     .enabled(enabled)
+                    .autoCreate(this.autoCreate.isChecked)
                     .build()
             )
         } else { // Update
             UpdateSensorMutation(
                 details.id,
-                SensorInput.builder()
+                SensorUpdateInput.builder()
                     .name(name)
                     .idCnr(idCnr)
                     .enabled(enabled)
