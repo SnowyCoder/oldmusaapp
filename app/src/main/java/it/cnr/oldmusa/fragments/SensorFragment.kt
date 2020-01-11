@@ -80,8 +80,9 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (isAdmin) {
             inflater.inflate(R.menu.sensor_overflow_menu, menu)
-            super.onCreateOptionsMenu(menu, inflater)
         }
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -135,6 +136,11 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
                             .build()
                     )).useLoadingBar(this)
                 }.useLoadingBar(this)
+            }
+            R.id.complexGraph -> {
+                findNavController().navigate(
+                    SensorFragmentDirections.actionSensorToGraphOptionsBuilder(args.sensorId)
+                )
             }
         }
         return super.onOptionsItemSelected(item)

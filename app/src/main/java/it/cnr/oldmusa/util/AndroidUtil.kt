@@ -1,20 +1,35 @@
 package it.cnr.oldmusa.util
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.AbsListView
-import android.widget.AutoCompleteTextView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
+import android.widget.*
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.mikephil.charting.charts.Chart
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.ChartData
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.interfaces.datasets.IDataSet
+import com.google.android.material.textfield.TextInputLayout
+import it.cnr.oldmusa.charter.CustomLineChart
+import it.cnr.oldmusa.charter.CustomViewPortHandler
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.*
 
 object AndroidUtil {
+    val isoSimpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+
+
     fun Any.toNullableString(): String? {
         val str = this.toString()
         if (str.isBlank()) return null
@@ -62,6 +77,18 @@ object AndroidUtil {
         })
     }
 
+    fun View?.onScroll(callback: (x: Int, y: Int) -> Unit) {
+        var oldX = 0
+        var oldY = 0
+        this?.viewTreeObserver?.addOnScrollChangedListener {
+            if (oldX != scrollX || oldY != scrollY) {
+                callback(scrollX, scrollY)
+                oldX = scrollX
+                oldY = scrollY
+            }
+        }
+    }
+
     fun SwipeRefreshLayout.linkToList(list: AbsListView) {
         list.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScroll(
@@ -84,6 +111,40 @@ object AndroidUtil {
             override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
             }
         })
+    }
+
+    fun SwipeRefreshLayout.linkToChart(graph: CustomLineChart) {
+        val handler = graph.viewPortHandler as CustomViewPortHandler
+        handler.translationListener = {
+            this@linkToChart.isEnabled = !handler.canScrollUp
+        }
+    }
+
+    fun parseIsoDate(calendar: Calendar, raw: String): Boolean {
+        try {
+            calendar.timeInMillis = isoSimpleDateFormat.parse(raw).time
+        } catch (e: ParseException) {
+            return false
+        }
+
+        return true
+    }
+
+    fun EditText.dateSelectPopupSetup() {
+        this.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) return@setOnFocusChangeListener
+            val calendar = Calendar.getInstance()
+            
+            parseIsoDate(calendar, this.text.toString())
+            // Ignore failure, use today as default
+
+            val dialog = DatePickerDialog(context!!, { view, year, monthOfYear, dayOfMonth ->
+                calendar.set(year, monthOfYear, dayOfMonth)
+                this.setText(isoSimpleDateFormat.format(calendar.time))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+            dialog.show()
+        }
     }
 
     /**

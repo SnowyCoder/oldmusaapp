@@ -3,4 +3,5 @@
     <item android:id="@+id/edit" android:title="Edit"/>
     <item android:id="@+id/remove" android:title="Remove"/>
     <item android:id="@+id/resetPosition" android:title="Reset position"/>
+    <item android:id="@+id/complexGraph" android:title="Complex Graph"/>
 </menu>

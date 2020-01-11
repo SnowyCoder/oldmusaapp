@@ -19,6 +19,7 @@ import it.cnr.oldmusa.Account.isAdmin
 import it.cnr.oldmusa.ChannelDetailsQuery
 import it.cnr.oldmusa.DeleteChannelMutation
 import it.cnr.oldmusa.R
+import it.cnr.oldmusa.util.AndroidUtil.linkToChart
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
@@ -91,6 +92,7 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
 
         // SwipeRefreshLayout
+        swipeContainer.linkToChart(chart)
         swipeContainer.setOnRefreshListener(this)
 
         swipeContainer.post {
@@ -113,8 +115,8 @@ class QuickGraphFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (isAdmin) {
             inflater.inflate(R.menu.overflow_menu, menu)
-            super.onCreateOptionsMenu(menu, inflater)
         }
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

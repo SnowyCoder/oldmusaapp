@@ -1,0 +1,11 @@
+query ComplexChannelReadings($id: Int!, $begin: NaiveDateTime!, $end: NaiveDateTime!) {
+  sensor(id: $id) {
+    channels {
+      name, measureUnit,
+      readings(start: $begin, end: $end) {
+        date,
+        valueMin
+      }
+    }
+  }
+}

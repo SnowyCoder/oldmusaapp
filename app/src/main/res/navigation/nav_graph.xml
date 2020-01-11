@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_sensor_to_createSensor"
             app:destination="@id/createSensor" />
+        <action
+            android:id="@+id/action_sensor_to_graphOptionsBuilder"
+            app:destination="@id/graphOptionsBuilder" />
     </fragment>
     <fragment
         android:id="@+id/quickGraph"
@@ -137,5 +140,32 @@
             app:argType="it.cnr.oldmusa.fragments.CreateChannelFragment$ChannelDetails"
             app:nullable="true"
             android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/sensorGraph"
+        android:name="it.cnr.oldmusa.fragments.SensorGraphFragment"
+        android:label="fragment_sensor_graph"
+        tools:layout="@layout/fragment_sensor_graph" >
+        <argument
+            android:name="sensorId"
+            app:argType="integer" />
+        <argument
+            android:name="startDate"
+            app:argType="long" />
+        <argument
+            android:name="endDate"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/graphOptionsBuilder"
+        android:name="it.cnr.oldmusa.fragments.GraphOptionsBuilder"
+        android:label="fragment_graph_options_builder"
+        tools:layout="@layout/fragment_graph_options_builder" >
+        <action
+            android:id="@+id/action_graphOptionsBuilder_to_sensorGraph"
+            app:destination="@id/sensorGraph" />
+        <argument
+            android:name="sensorId"
+            app:argType="integer" />
     </fragment>
 </navigation>
