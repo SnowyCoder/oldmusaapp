@@ -25,9 +25,9 @@ import com.github.mikephil.charting.utils.ColorTemplate.rgb
 import it.cnr.oldmusa.ComplexChannelReadingsQuery
 import it.cnr.oldmusa.ComplexChannelReadingsQuery.Channel
 import it.cnr.oldmusa.R
-import it.cnr.oldmusa.util.GraphQlUtil.query
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
+import it.cnr.oldmusa.util.GraphQlUtil.query
 import kotlinx.android.synthetic.main.fragment_sensor_graph.*
 import java.io.File
 import java.io.FileOutputStream
@@ -60,7 +60,7 @@ class SensorGraphFragment : Fragment() {
             setDrawGridBackground(true)
         }
 
-        loadData(args.sensorId, Date(args.startDate), Date(args.endDate))
+        loadData(args.channelsId, Date(args.startDate), Date(args.endDate))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -206,11 +206,11 @@ class SensorGraphFragment : Fragment() {
     }
 
 
-    fun loadData(sensorId: Int, begin: Date, end: Date) {
-        query(ComplexChannelReadingsQuery(sensorId, begin, end)).onResult {
+    fun loadData(channelsId: IntArray, begin: Date, end: Date) {
+        query(ComplexChannelReadingsQuery(channelsId.asList(), begin, end)).onResult {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = begin.time
-            setupGraph(it.sensor().channels(), calendar)
+            setupGraph(it.channels(), calendar)
         }.useLoadingBar(this)
     }
 

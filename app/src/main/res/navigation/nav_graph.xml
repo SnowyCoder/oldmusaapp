@@ -147,8 +147,8 @@
         android:label="fragment_sensor_graph"
         tools:layout="@layout/fragment_sensor_graph" >
         <argument
-            android:name="sensorId"
-            app:argType="integer" />
+            android:name="channelsId"
+            app:argType="integer[]" />
         <argument
             android:name="startDate"
             app:argType="long" />
@@ -166,6 +166,21 @@
             app:destination="@id/sensorGraph" />
         <argument
             android:name="sensorId"
+            app:argType="integer" />
+        <argument
+            android:name="siteId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_graphOptionsBuilder_to_plotChannelSelection"
+            app:destination="@id/plotChannelSelection" />
+    </fragment>
+    <fragment
+        android:id="@+id/plotChannelSelection"
+        android:name="it.cnr.oldmusa.fragments.PlotChannelSelectionFragment"
+        android:label="fragment_plotchannelselection_list"
+        tools:layout="@layout/fragment_plot_channel_selection" >
+        <argument
+            android:name="defaultSensorId"
             app:argType="integer" />
     </fragment>
 </navigation>

@@ -5,29 +5,26 @@ import android.app.DatePickerDialog
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.github.mikephil.charting.charts.Chart
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.ChartData
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.interfaces.datasets.IDataSet
-import com.google.android.material.textfield.TextInputLayout
 import it.cnr.oldmusa.charter.CustomLineChart
 import it.cnr.oldmusa.charter.CustomViewPortHandler
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.*
 
 object AndroidUtil {
     val isoSimpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    val navControllerMBackStack = NavController::class.java.getDeclaredField("mBackStack").apply {
+        isAccessible = true
+    }
 
 
     fun Any.toNullableString(): String? {
@@ -171,6 +168,11 @@ object AndroidUtil {
 
     fun <P> GraphQlUtil.RawCall<P>.useLoadingBar(context: Fragment): GraphQlUtil.RawCall<P> {
         return useLoadingBar(context.activity!!)
+    }
+
+    fun Fragment.getBackStackEntry(index: Int): NavBackStackEntry? {
+        val backStack = navControllerMBackStack.get(findNavController()) as Deque<NavBackStackEntry>
+        return backStack.descendingIterator().asSequence().drop(index).firstOrNull()
     }
 
 }

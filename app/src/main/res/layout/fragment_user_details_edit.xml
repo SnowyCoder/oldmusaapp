@@ -70,7 +70,7 @@
         android:id="@+id/editAccessButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#FFB74D"
+        android:backgroundTint="@color/colorButton"
         android:text="@string/change_site_access" />
 
     <LinearLayout
@@ -83,21 +83,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#FFB74D"
+            android:backgroundTint="@color/colorButton"
             android:text="@string/save" />
 
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#FFB74D"
+            android:backgroundTint="@color/colorButton"
             android:layout_weight="1"
             android:text="@string/cancel" />
     </LinearLayout>
 
     <Button
             android:id="@+id/deleteButton"
-            android:backgroundTint="#FFB74D"
+            android:backgroundTint="@color/colorButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete_user" />

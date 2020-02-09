@@ -1,0 +1,14 @@
+query CollectChannelsQuery($siteIds: [Int!]!, $sensorIds: [Int!]!) {
+    sites(ids: $siteIds) {
+        sensors {
+            channels {
+                id
+            }
+        }
+    }
+    sensors(ids: $sensorIds) {
+        channels {
+            id
+        }
+    }
+}

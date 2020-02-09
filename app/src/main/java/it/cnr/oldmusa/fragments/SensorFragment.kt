@@ -139,7 +139,7 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
             }
             R.id.complexGraph -> {
                 findNavController().navigate(
-                    SensorFragmentDirections.actionSensorToGraphOptionsBuilder(args.sensorId)
+                    SensorFragmentDirections.actionSensorToGraphOptionsBuilder(args.sensorId, currentSensor.siteId())
                 )
             }
         }

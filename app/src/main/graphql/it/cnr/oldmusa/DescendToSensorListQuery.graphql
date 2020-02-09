@@ -1,0 +1,14 @@
+query DescendToSensorListQuery($sensorId: Int!) {
+    sites {
+        id, name
+    }
+    sensor(id: $sensorId) {
+        name,
+        site {
+            id, sensors { id, name }
+        },
+        channels {
+            id, name
+        }
+    }
+}
