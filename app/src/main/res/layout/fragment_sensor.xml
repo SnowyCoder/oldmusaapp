@@ -17,7 +17,7 @@
             android:id="@+id/channelList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline78"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline120"
             app:layout_constraintStart_toStartOf="@+id/guideline113"
             app:layout_constraintTop_toTopOf="@+id/guideline75" />
@@ -29,7 +29,6 @@
             android:text="No channel"
             android:textAlignment="center"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/guideline78"
             app:layout_constraintEnd_toStartOf="@+id/guideline120"
             app:layout_constraintStart_toStartOf="@+id/guideline113"
             app:layout_constraintTop_toTopOf="@+id/guideline75" />
@@ -41,52 +40,17 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.10" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline78"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.85" />
-
-        <ImageButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addChannelButton"
             android:layout_width="55sp"
             android:layout_height="55sp"
             android:background="@drawable/ic_circle_button"
             android:src="@drawable/ic_channel"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/guideline81"
-            app:layout_constraintEnd_toStartOf="@+id/guideline82"
-            app:layout_constraintStart_toStartOf="@+id/guideline79"
-            app:layout_constraintTop_toTopOf="@+id/guideline80" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline79"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.40" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline80"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.90" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline81"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.95" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline82"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.55" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_margin="16dp"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline113"

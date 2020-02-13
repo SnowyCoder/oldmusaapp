@@ -2,4 +2,6 @@
 <resources>
     <item name="open" type="id"/>
     <item name="move" type="id"/>
+    <item name="fab_add_sensor" type="id"/>
+    <item name="fab_change_image" type="id"/>
 </resources>

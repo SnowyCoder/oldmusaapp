@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -13,9 +14,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import it.cnr.oldmusa.charter.CustomLineChart
 import it.cnr.oldmusa.charter.CustomViewPortHandler
+import java.lang.ref.WeakReference
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,6 +28,7 @@ object AndroidUtil {
     val navControllerMBackStack = NavController::class.java.getDeclaredField("mBackStack").apply {
         isAccessible = true
     }
+    private val viewToFilterData = WeakHashMap<SwipeRefreshLayout, RefreshFilterData>()
 
 
     fun Any.toNullableString(): String? {
@@ -86,7 +90,19 @@ object AndroidUtil {
         }
     }
 
+    fun SwipeRefreshLayout.addRefreshFilter(): RefreshFilter {
+        var parent = viewToFilterData[this]
+
+        if (parent == null) {
+            parent = RefreshFilterData(WeakReference(this))
+            viewToFilterData[this] = parent
+        }
+
+        return  RefreshFilter(parent)
+    }
+
     fun SwipeRefreshLayout.linkToList(list: AbsListView) {
+        val filter = addRefreshFilter()
         list.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScroll(
                 view: AbsListView?,
@@ -94,7 +110,7 @@ object AndroidUtil {
                 visibleItemCount: Int,
                 totalItemCount: Int
             ) {
-                this@linkToList.isEnabled = if (view == null || view.childCount == 0) {
+                filter.enabled = !if (view == null || view.childCount == 0) {
                     true// There is no view, or else the view is empty, we should allow refreshing
                 } else {
                     // We should allow refreshing only if the first element in the adapter is at the
@@ -110,10 +126,24 @@ object AndroidUtil {
         })
     }
 
+    fun SwipeRefreshLayout.linkToList(list: RecyclerView) {
+        val filter = addRefreshFilter()
+        list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+                filter.enabled = !if (view.childCount == 0) {
+                    true// There is no view, or else the view is empty, we should allow refreshing
+                } else {
+                    dy >= 0
+                }
+            }
+        })
+    }
+
     fun SwipeRefreshLayout.linkToChart(graph: CustomLineChart) {
+        val filter = addRefreshFilter()
         val handler = graph.viewPortHandler as CustomViewPortHandler
         handler.translationListener = {
-            this@linkToChart.isEnabled = !handler.canScrollUp
+            filter.enabled = handler.canScrollUp
         }
     }
 
@@ -148,12 +178,12 @@ object AndroidUtil {
      * Displays a loading bar while the query is running.
      * This also disables user interaction
      */
-    fun <P> AsyncUtil.RawTask<P>.useLoadingBar(context: Activity): AsyncUtil.RawTask<P> {
+    fun <P : Any> AsyncUtil.RawTask<P>.useLoadingBar(context: Activity): AsyncUtil.RawTask<P> {
         this.onDone(addLoadingBar(context))
         return this
     }
 
-    fun <P> AsyncUtil.RawTask<P>.useLoadingBar(context: Fragment): AsyncUtil.RawTask<P> {
+    fun <P : Any> AsyncUtil.RawTask<P>.useLoadingBar(context: Fragment): AsyncUtil.RawTask<P> {
         return useLoadingBar(context.activity!!)
     }
 
@@ -161,12 +191,12 @@ object AndroidUtil {
      * Displays a loading bar while the query is running.
      * This also disables user interaction
      */
-    fun <P> GraphQlUtil.RawCall<P>.useLoadingBar(context: Activity): GraphQlUtil.RawCall<P> {
+    fun <P : Any> GraphQlUtil.RawCall<P>.useLoadingBar(context: Activity): GraphQlUtil.RawCall<P> {
         this.onDone(addLoadingBar(context))
         return this
     }
 
-    fun <P> GraphQlUtil.RawCall<P>.useLoadingBar(context: Fragment): GraphQlUtil.RawCall<P> {
+    fun <P : Any> GraphQlUtil.RawCall<P>.useLoadingBar(context: Fragment): GraphQlUtil.RawCall<P> {
         return useLoadingBar(context.activity!!)
     }
 
@@ -175,4 +205,28 @@ object AndroidUtil {
         return backStack.descendingIterator().asSequence().drop(index).firstOrNull()
     }
 
+    class RefreshFilterData(val layout: WeakReference<SwipeRefreshLayout>) {
+        var count = 0
+
+        fun increment() {
+            if (count++ == 0) layout.get()?.isEnabled = false
+        }
+
+        fun decrement() {
+            if (--count == 0) layout.get()?.isEnabled = true
+        }
+    }
+
+    class RefreshFilter(private val parent: RefreshFilterData) {
+        private var _enabled = false
+
+        var enabled: Boolean
+        get() = _enabled
+        set(value) {
+            if (value == enabled) return
+            if (value) parent.increment()
+            else parent.decrement()
+            _enabled = value
+        }
+    }
 }

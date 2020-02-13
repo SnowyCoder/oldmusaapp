@@ -28,16 +28,16 @@ import it.cnr.oldmusa.R
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.query
-import kotlinx.android.synthetic.main.fragment_sensor_graph.*
+import kotlinx.android.synthetic.main.fragment_complex_graph.*
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class SensorGraphFragment : Fragment() {
+class ComplexGraphFragment : Fragment() {
 
-    val args: SensorGraphFragmentArgs by navArgs()
+    val args: ComplexGraphFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +48,7 @@ class SensorGraphFragment : Fragment() {
         setHasOptionsMenu(true)
         activity?.title = "Graph"
 
-        return inflater.inflate(R.layout.fragment_sensor_graph, container, false)
+        return inflater.inflate(R.layout.fragment_complex_graph, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

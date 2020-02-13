@@ -15,19 +15,22 @@ import it.cnr.oldmusa.Account.isAdmin
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.SiteDetailsQuery.Sensor
 import it.cnr.oldmusa.UpdateSensorMutation
+import it.cnr.oldmusa.ZoomView
 import it.cnr.oldmusa.type.SensorStateType
 import it.cnr.oldmusa.type.SensorUpdateInput
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
+import kotlinx.android.synthetic.main.site_map.view.*
 import kotlin.math.roundToInt
 
 
 class SiteMapFragment : Fragment() {
-    lateinit var mapContainer: ViewGroup
-    lateinit var mapImageView: ImageView
-
     lateinit var sensors: List<Sensor>
     var mapWidth: Int = 0
     var mapHeight: Int = 0
+
+    lateinit var noMapText: TextView
+    lateinit var mapImage: ImageView
+    lateinit var mapContainer: ZoomView
 
     var sensorSelectListener: OnSensorSelectListener? = null
 
@@ -41,15 +44,26 @@ class SiteMapFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.site_map, container, false)
 
-        mapContainer = view.findViewById(R.id.mapContainer)
-        mapImageView = view.findViewById(R.id.mapMuseum)
-
         imageSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics).toInt()
 
+        noMapText = view.noMapText
+        mapImage = view.mapImage
+        mapContainer = view.mapContainer
         return view
     }
 
-    fun onRefresh(map: Bitmap, sensors: List<Sensor>) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mapImage.adjustViewBounds = true
+    }
+
+    fun setImageSize(width: Int, height: Int) {
+        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        mapImage.setImageBitmap(bmp)
+    }
+
+    fun onRefresh(map: Bitmap?, sensors: List<Sensor>) {
         // Cleanup
         for (i in (1 until mapContainer.childCount).reversed()) {
             this.mapContainer.removeViewAt(i)
@@ -57,10 +71,18 @@ class SiteMapFragment : Fragment() {
 
         this.sensors = sensors
 
-        mapImageView.setImageBitmap(map)
+        if (map != null) {
+            mapImage.visibility = View.VISIBLE
+            noMapText.visibility = View.GONE
 
-        mapWidth = map.width
-        mapHeight = map.height
+            mapImage.setImageBitmap(map)
+
+            mapWidth = map.width
+            mapHeight = map.height
+        } else {
+            mapImage.visibility = View.GONE
+            noMapText.visibility = View.VISIBLE
+        }
 
         sensors.forEachIndexed { index, sensor ->
             addSensorState(mapContainer, sensor, index)
@@ -146,6 +168,8 @@ class SiteMapFragment : Fragment() {
 
         override fun onTouch(v: View, event: MotionEvent): Boolean {
             if (currentMovingSensor === sensor) {
+                v.parent.requestDisallowInterceptTouchEvent(true)
+
                 val rawX = event.rawX.toInt()
                 val rawY = event.rawY.toInt()
                 when (event.action) {
@@ -246,7 +270,6 @@ class SiteMapFragment : Fragment() {
             changeViewPosition(padLeft, padTop)
         }
     }
-
 
     interface OnSensorSelectListener {
         fun onSensorSelect(sensorId: Int)

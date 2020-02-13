@@ -11,7 +11,7 @@ import androidx.lifecycle.OnLifecycleEvent
 
 
 object AsyncUtil {
-    class CustomAsyncTask<R>(val query: RawTask<R>) : AsyncTask<Void, Void, Void>() {
+    class CustomAsyncTask<R : Any>(val query: RawTask<R>) : AsyncTask<Void, Void, Void>() {
         var result: R? = null
         var error: Exception? = null
 
@@ -33,7 +33,7 @@ object AsyncUtil {
         }
     }
 
-    class RawTask<R>(autoexec: Boolean = true, val f: () -> R) {
+    class RawTask<R : Any>(autoexec: Boolean = true, val f: () -> R) {
         private var resultCallbacks: MutableList<(R) -> Unit> = ArrayList()
         private var errorCallbacks: MutableList<(Exception) -> Unit> = ArrayList()
         private var doneCallbacks: MutableList<() -> Unit> = ArrayList()
@@ -97,18 +97,18 @@ object AsyncUtil {
         }
     }
 
-    class QueryLifecycleObserver<T>(val query: RawTask<T>, val mayInterruptIfRunning: Boolean) : LifecycleObserver {
+    class QueryLifecycleObserver<T : Any>(val query: RawTask<T>, val mayInterruptIfRunning: Boolean) : LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
         fun cancelQuery() {
             query.cancel(mayInterruptIfRunning)
         }
     }
 
-    fun <R> Context.async(f: () -> R): RawTask<R> {
+    fun <R : Any> Context.async(f: () -> R): RawTask<R> {
         return RawTask(true, f).onError { handleError(this.applicationContext, it) }
     }
 
-    fun <R> Fragment.async(mayInterruptIfRunning: Boolean = false, defaultErrorHandler: Boolean = true, f: () -> R): RawTask<R> {
+    fun <R : Any> Fragment.async(mayInterruptIfRunning: Boolean = false, defaultErrorHandler: Boolean = true, f: () -> R): RawTask<R> {
         val query = RawTask(true, f)
 
         // Check if the fragment is paused, then cancel it to mitigate exceptions

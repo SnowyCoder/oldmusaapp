@@ -5,35 +5,42 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.leinardi.android.speeddial.SpeedDialActionItem
 import it.cnr.oldmusa.Account.isAdmin
 import it.cnr.oldmusa.DeleteSiteMutation
 import it.cnr.oldmusa.R
-import it.cnr.oldmusa.R.layout.*
 import it.cnr.oldmusa.SiteDetailsQuery
 import it.cnr.oldmusa.util.AndroidUtil.linkToList
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
-import it.cnr.oldmusa.util.GraphQlUtil.MapResizeData
 import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
 import it.cnr.oldmusa.util.GraphQlUtil.uploadImageSync
+import it.cnr.oldmusa.util.None
+import it.cnr.oldmusa.util.Optional
+import it.cnr.oldmusa.util.Some
 import kotlinx.android.synthetic.main.add_map.*
 import kotlinx.android.synthetic.main.fragment_home.swipeContainer
 import kotlinx.android.synthetic.main.fragment_site.*
+import kotlinx.android.synthetic.main.fragment_site.view.*
 import kotlinx.android.synthetic.main.remove_museum.*
+import kotlin.math.max
 
 
 class SiteFragment : Fragment(),
@@ -43,8 +50,11 @@ class SiteFragment : Fragment(),
 
     lateinit var currentSite: SiteDetailsQuery.Site
 
-    var currentImageW: Int = 0
-    var currentImageH: Int = 0
+    var siteMap: SiteMapFragment? = null
+
+    var currentImageW: Int = 1
+    var currentImageH: Int = 1
+    var currentBitmap: Bitmap? = null
 
     data class SensorData(val handle: SiteDetailsQuery.Sensor) {
         override fun toString(): String {
@@ -57,10 +67,10 @@ class SiteFragment : Fragment(),
         setHasOptionsMenu(true)
         activity?.title = "Sito"
 
-        val view = inflater.inflate(fragment_site, container, false)
-
-
-        (childFragmentManager.findFragmentById(R.id.siteMap)!! as SiteMapFragment).sensorSelectListener = this
+        val view = inflater.inflate(R.layout.fragment_site, container, false)
+        view.sensorList.layoutManager = LinearLayoutManager(context!!).apply {
+            orientation = LinearLayoutManager.VERTICAL
+        }
 
         return view
     }
@@ -70,63 +80,31 @@ class SiteFragment : Fragment(),
 
         // permission
         if (isAdmin) {
-            addMapbutton.visibility = View.VISIBLE
-
-            addSensorbutton.visibility = View.VISIBLE
-        }
-
-        // add event listener to array items
-        sensorList.onItemClickListener = AdapterView.OnItemClickListener { _, view, index, _ ->
-            val sensor = sensorList.adapter.getItem(index) as SensorData
-
-            view.findNavController().navigate(
-                SiteFragmentDirections.actionSiteToChannel(
-                    sensor.handle.id()
-                )
+            speedDial.visibility = View.VISIBLE
+            speedDial.addActionItem(
+                SpeedDialActionItem.Builder(R.id.fab_add_sensor, R.drawable.ic_sensor)
+                    .setLabel("Add Sensor")
+                    .create()
             )
-        }
+            speedDial.addActionItem(
+                SpeedDialActionItem.Builder(R.id.fab_change_image, R.drawable.ic_map)
+                    .setLabel("Change image")
+                    .create()
+            )
 
-        // open map options modal
-        addMapbutton.setOnClickListener {
-            val mBuilder = AlertDialog.Builder(context!!)
-            mBuilder.setTitle("Aggiungi mappa")
-            val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(add_map, null)).create()
-            val lp = WindowManager.LayoutParams()
-            lp.copyFrom(d.window!!.attributes)
-            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.35).toInt()
-            d.show()
-            d.window!!.attributes = lp
-
-
-            d.imgPickButton.setOnClickListener {
-                // check runtime permission
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (context!!.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                        PackageManager.PERMISSION_DENIED){
-                        // permission denied
-                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        // show popup to request runtime permission
-                        requestPermissions(permissions,
-                            PERMISSION_CODE
-                        )
+            speedDial.setOnActionSelectedListener {
+                when (it.id) {
+                    R.id.fab_add_sensor -> {
+                        findNavController().navigate(SiteFragmentDirections.actionSiteToCreateSensor(args.siteId))
+                        false
                     }
-                    else{
-                        // permission already granted
-                        pickImageFromGallery()
+                    R.id.fab_change_image -> {
+                        changeImage()
+                        false
                     }
+                    else -> true
                 }
-                else{
-                    // system OS is < Marshmallow
-                    pickImageFromGallery()
-                }
-
             }
-        }
-
-        // open add sensor modal
-        addSensorbutton.setOnClickListener {
-            findNavController().navigate(SiteFragmentDirections.actionSiteToCreateSensor(args.siteId))
         }
 
         // SwipeRefreshLayout
@@ -139,6 +117,45 @@ class SiteFragment : Fragment(),
         }
 
         swipeContainer.linkToList(sensorList)
+
+        sensorList.addItemDecoration(DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL))
+    }
+
+    fun changeImage() {
+        val mBuilder = AlertDialog.Builder(context!!)
+        mBuilder.setTitle("Aggiungi mappa")
+        val d = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_map, null)).create()
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(d.window!!.attributes)
+        lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
+        lp.height = (resources.displayMetrics.heightPixels * 0.35).toInt()
+        d.show()
+        d.window!!.attributes = lp
+
+
+        d.imgPickButton.setOnClickListener {
+            // check runtime permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (context!!.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_DENIED){
+                    // permission denied
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    // show popup to request runtime permission
+                    requestPermissions(permissions,
+                        PERMISSION_CODE
+                    )
+                }
+                else{
+                    // permission already granted
+                    pickImageFromGallery()
+                }
+            }
+            else{
+                // system OS is < Marshmallow
+                pickImageFromGallery()
+            }
+
+        }
     }
 
     override fun onRefresh() {
@@ -164,7 +181,7 @@ class SiteFragment : Fragment(),
         when (item.itemId) {
             R.id.remove -> {
                 val mBuilder = AlertDialog.Builder(context!!)
-                val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(remove_museum, null)).create()
+                val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.remove_museum, null)).create()
                 val lp = WindowManager.LayoutParams()
                 lp.copyFrom(dialog.window!!.attributes)
                 lp.width = (resources.displayMetrics.widthPixels * 0.75).toInt()
@@ -206,33 +223,39 @@ class SiteFragment : Fragment(),
 
             val list = data.site().sensors().map { SensorData(it) }
 
-            val adapter = ArrayAdapter<SensorData>(context!!, list_sensor_item, list)
-            sensorList.adapter = adapter
-            noSensorText.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+            if (data.site().hasImage()) {
+                currentImageW = data.site().imageWidth() ?: 1
+                currentImageH = data.site().imageHeight() ?: 1
+                setupMapFragment()
+
+                async {
+                    val res = downloadImageSync(requireContext(), args.siteId)
+                    Optional.ofNullable(res)
+                }.onResult { mapData ->
+                    when(mapData) {
+                        is Some -> {
+                            val data = mapData.data
+                            currentBitmap = data
+                            currentImageW = data.width
+                            currentImageH = data.height
+                        }
+                        is None -> {
+                            currentBitmap = null
+                        }
+                    }
+                    setupMapFragment()
+                }//.useLoadingBar(this)
+
+                // TODO: think
+                // Should we add a loading bar?
+                // We might ask for the last time change from the server to build a safe-cache
+            }
+
+            sensorList.adapter = MyRecyclerViewAdapter(currentSite.hasImage(), list)
+
             activity?.title = currentSite.name() ?: ""
-
+        }.onDone {
             swipeContainer.isRefreshing = false
-
-            async {
-                downloadImageSync(requireContext(), args.siteId)
-            }.onResult { mapData ->
-                if (mapData != null) {
-                    currentImageW = mapData.width
-                    currentImageH = mapData.height
-                    (childFragmentManager.findFragmentById(R.id.siteMap)!! as SiteMapFragment).onRefresh(
-                        mapData,
-                        currentSite.sensors()
-                    )
-                    noMapText.visibility = View.INVISIBLE
-                    noMapImage.visibility = View.INVISIBLE
-                } else {
-                    noMapText.visibility = View.VISIBLE
-                    noMapImage.visibility = View.VISIBLE
-                }
-            }//.useLoadingBar(this)
-            // TODO: think
-            // Should we add a loading bar?
-            // We might ask for the last time change from the server to build a safe-cache
         }
     }
 
@@ -253,8 +276,7 @@ class SiteFragment : Fragment(),
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     //permission from popup granted
                     pickImageFromGallery()
-                }
-                else{
+                } else {
                     //permission from popup denied
                     Toast.makeText(context!!, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
@@ -268,24 +290,117 @@ class SiteFragment : Fragment(),
         if (data == null) return
 
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
-            val bytes = context!!.contentResolver.openInputStream(data.data!!)!!.readBytes()
-
-            var resize: MapResizeData? = null
-
-            if (currentImageW != 0) {
-                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                resize = MapResizeData(currentImageW, currentImageH, bitmap.width, bitmap.height)
-            }
+            val inStream = context!!.contentResolver.openInputStream(data.data!!)!!
 
             async {
-                uploadImageSync(context!!, args.siteId, context!!.contentResolver.openInputStream(data.data!!)!!, resize)
+                val bytes = inStream.readBytes()
+                val opts = BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                }
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
+
+                uploadImageSync(context!!, args.siteId, context!!.contentResolver.openInputStream(data.data!!)!!, opts.outWidth, opts.outHeight)
             }.onResult {
                 reloadSite()
             }.useLoadingBar(this)
         }
     }
 
+    fun setupMapFragment() {
+        val siteMap = siteMap ?: return
+
+        siteMap.sensorSelectListener = this
+        val bmp = currentBitmap
+        if (bmp != null) {
+            siteMap.onRefresh(bmp, currentSite.sensors())
+        } else {
+            siteMap.setImageSize(currentImageW, currentImageH)
+        }
+    }
+
+    inner class MyRecyclerViewAdapter(
+        val hasImage: Boolean,
+        val values: List<SensorData>
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): RecyclerView.ViewHolder {
+            return when(viewType) {
+                ADAPTER_TYPE_HEADER -> {
+                    val view = if (hasImage) {
+                        var smap = siteMap
+
+                        if (smap == null || smap.view == null) {
+                            layoutInflater.inflate(R.layout.list_sensor_header, parent, false)
+                            smap =
+                                childFragmentManager.findFragmentById(R.id.siteMap) as SiteMapFragment
+                            siteMap = smap
+                        }
+                        setupMapFragment()
+                        smap.view!!
+                    } else {
+                        layoutInflater.inflate(R.layout.site_map_empty, parent, false)
+                    }
+                    VHHeader(view)
+                }
+                ADAPTER_TYPE_ITEM -> VHItem(layoutInflater.inflate(R.layout.list_sensor_item, parent, false) as TextView)
+                ADAPTER_TYPE_EMPTY -> {
+                    val view = layoutInflater.inflate(R.layout.list_empty_item, parent, false)
+                    view.findViewById<TextView>(R.id.textMain).text = getString(R.string.noSensorFound)
+                    return VHHeader(view)
+                }
+                else -> throw RuntimeException("Unknown type: $viewType")
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return max(1, values.size) + 1
+        }
+
+        override fun onBindViewHolder(
+            holder: RecyclerView.ViewHolder,
+            position: Int
+        ) {
+            if (holder is VHItem) {
+                val realIndex = position - 1
+
+                holder.view.text = values[realIndex].toString()
+
+                holder.view.setOnClickListener {
+                    val sensor = values[realIndex]
+
+                    findNavController().navigate(
+                        SiteFragmentDirections.actionSiteToChannel(
+                            sensor.handle.id()
+                        )
+                    )
+                }
+            }
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            if (position == 0) return ADAPTER_TYPE_HEADER
+            if (values.isEmpty()) return ADAPTER_TYPE_EMPTY
+            return ADAPTER_TYPE_ITEM
+        }
+
+        fun destroy() {
+        }
+
+        inner class VHHeader(val view: View) : RecyclerView.ViewHolder(view)
+
+        inner class VHItem(val view: TextView) : RecyclerView.ViewHolder(view)
+    }
+
+
+
     companion object {
+        // Adapter
+        const val ADAPTER_TYPE_HEADER = 0
+        const val ADAPTER_TYPE_ITEM = 1
+        const val ADAPTER_TYPE_EMPTY = 2
+
         //image pick code
         private val IMAGE_PICK_CODE = 1000
         //Permission code

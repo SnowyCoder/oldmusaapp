@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?><!-- Each List Item is displayed as TextView defined below -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/label1"
-    android:layout_width="fill_parent"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/siteMap"
+    android:name="it.cnr.oldmusa.fragments.SiteMapFragment"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dip"
     android:textSize="16dip"
     android:textStyle="bold" />
 

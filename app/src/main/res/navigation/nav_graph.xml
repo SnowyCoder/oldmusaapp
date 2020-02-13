@@ -142,10 +142,10 @@
             android:defaultValue="@null" />
     </fragment>
     <fragment
-        android:id="@+id/sensorGraph"
-        android:name="it.cnr.oldmusa.fragments.SensorGraphFragment"
-        android:label="fragment_sensor_graph"
-        tools:layout="@layout/fragment_sensor_graph" >
+        android:id="@+id/complexGraph"
+        android:name="it.cnr.oldmusa.fragments.ComplexGraphFragment"
+        android:label="fragment_complex_graph"
+        tools:layout="@layout/fragment_complex_graph" >
         <argument
             android:name="channelsId"
             app:argType="integer[]" />
@@ -163,7 +163,7 @@
         tools:layout="@layout/fragment_graph_options_builder" >
         <action
             android:id="@+id/action_graphOptionsBuilder_to_sensorGraph"
-            app:destination="@id/sensorGraph" />
+            app:destination="@id/complexGraph" />
         <argument
             android:name="sensorId"
             app:argType="integer" />

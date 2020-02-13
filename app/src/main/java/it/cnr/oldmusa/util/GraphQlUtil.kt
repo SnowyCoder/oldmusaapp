@@ -228,15 +228,10 @@ object GraphQlUtil {
         }
     }
 
-    fun uploadImageSync(context: Context, siteId: Int, image: InputStream, resizeData: MapResizeData? = null) {
+    fun uploadImageSync(context: Context, siteId: Int, image: InputStream, width: Int, height: Int) {
         val httpClient = Account.getHttpClient(context)
 
-        var fullUrl = Account.getUrl(context) + "site_map/" + siteId
-
-        if (resizeData != null) {
-            fullUrl += "?fromH=" + resizeData.fromH + "&fromW=" + resizeData.fromW +
-                    "&toH=" + resizeData.toH + "&toW=" + resizeData.toW
-        }
+        val fullUrl = Account.getUrl(context) + "site_map/$siteId?width=$width&height=$height"
 
         val req = Request.Builder().run {
             url(fullUrl)
@@ -249,11 +244,4 @@ object GraphQlUtil {
             throw ServiceGraphQlException.fromHttpCode("SiteImageUpload", res.code, res.body?.toString())
         }
     }
-
-    data class MapResizeData(
-        val fromW: Int,
-        val fromH: Int,
-        val toW: Int,
-        val toH: Int
-    )
 }

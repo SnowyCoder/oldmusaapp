@@ -28,6 +28,10 @@
     <string name="delete_user">Delete user</string>
     <string name="about">About</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="noSensorFound">No sensor found</string>
+    <string name="noSiteFound">No site found</string>
+    <string name="noChannelFound">No channel found</string>
+    <string name="tryAddingOne">Try adding one</string>
+    <string name="no_image_found">No image found</string>
+
 </resources>

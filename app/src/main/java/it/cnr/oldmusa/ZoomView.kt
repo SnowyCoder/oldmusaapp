@@ -1,23 +1,24 @@
 package it.cnr.oldmusa
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import androidx.core.view.NestedScrollingChild3
+import androidx.core.view.NestedScrollingChildHelper
 
 /**
  * Zooming view.
  */
-class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout(context, attributes) {
+class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout(context, attributes), NestedScrollingChild3 {
 
     // zooming
     var zoom = 1.0f
         internal set
+
+    private val scrollingChildHelper = NestedScrollingChildHelper(this)
+
     internal var maxZoom = 4.0f
     internal var smoothZoom = 1.0f
     internal var zoomX: Float = 0f
@@ -122,12 +123,14 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        var used = true
+
         // single touch
         if (ev.pointerCount == 1) {
-            processSingleTouchEvent(ev)
+            used = used && processSingleTouchEvent(ev)
         }
 
-        // // double touch
+        // double touch
         if (ev.pointerCount == 2) {
             processDoubleTouchEvent(ev)
         }
@@ -136,11 +139,10 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
         rootView.invalidate()
         invalidate()
 
-        return true
+        return used
     }
 
-    private fun processSingleTouchEvent(ev: MotionEvent) {
-
+    private fun processSingleTouchEvent(ev: MotionEvent): Boolean {
         val x = ev.x
         val y = ev.y
 
@@ -148,8 +150,9 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
         val h = miniMapHeight.toFloat()
         val touchingMiniMap = x >= 10.0f && x <= 10.0f + w && y >= 10.0f && y <= 10.0f + h
 
-        if (isMiniMapEnabled && smoothZoom > 1.0f && touchingMiniMap) {
+        return if (isMiniMapEnabled && smoothZoom > 1.0f && touchingMiniMap) {
             processSingleTouchOnMinimap(ev)
+            true
         } else {
             processSingleTouchOutsideMinimap(ev)
         }
@@ -166,7 +169,7 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
         smoothZoomTo(smoothZoom, zx, zy)
     }
 
-    private fun processSingleTouchOutsideMinimap(ev: MotionEvent) {
+    private fun processSingleTouchOutsideMinimap(ev: MotionEvent): Boolean {
         val x = ev.x
         val y = ev.y
         var lx = x - touchStartX
@@ -188,23 +191,43 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
                 lx = 0f
                 ly = 0f
                 scrolling = false
+                if (smoothZoom > 1.0f) {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                }
             }
 
             MotionEvent.ACTION_MOVE -> if (scrolling || smoothZoom > 1.0f && distanceFromTouchStart > 30.0f) {
-                matrix
                 if (!scrolling && !super.dispatchTouchEvent(ev)) {
                     scrolling = true
                     ev.action = MotionEvent.ACTION_CANCEL
                 }
                 if (scrolling) {
-                    smoothZoomX -= dx / zoom
-                    smoothZoomY -= dy / zoom
+                    updateSmoothZoomX(-dx / zoom)
+                    updateSmoothZoomY(-dy / zoom)
+                    /* NOTHING ABOUT THE NESTED SCROLLING IS DOCUMENTED AND NOTHING WORKS, THANKS GOOGLE
+                    val diffX = updateSmoothZoomX(-dx / zoom) * -zoom
+                    val diffY = updateSmoothZoomY(-dy / zoom) * -zoom
+
+                    val consumedX = (dx - diffX).toInt()
+                    val consumedY = (dy - diffY).toInt()
+                    val unconsumedX = diffX.toInt()
+                    val unconsumedY = diffY.toInt()
+
+                    Log.e("SCROLL", "$diffX, $diffY")
+                    dispatchNestedPreScroll(dx.toInt(), dy.toInt(), intArrayOf(consumedX, consumedY), null)
+                    dispatchNestedScroll(
+                        consumedX, consumedY, unconsumedX, unconsumedY, null,
+                        ViewCompat.TYPE_TOUCH
+                    )
+                    */
+                    parent.requestDisallowInterceptTouchEvent(true)
+                    return true
                 }
-                return
+
+                return false
             }
 
-            MotionEvent.ACTION_OUTSIDE, MotionEvent.ACTION_UP ->
-
+            MotionEvent.ACTION_OUTSIDE, MotionEvent.ACTION_UP -> {
                 // tap
                 if (distanceFromTouchStart < 30.0f) {
                     // check double tap
@@ -217,14 +240,14 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
                         lastTapTime = 0
                         ev.action = MotionEvent.ACTION_CANCEL
                         super.dispatchTouchEvent(ev)
-                        return
+                        return true
                     }
 
                     lastTapTime = System.currentTimeMillis()
 
                     performClick()
                 }
-
+            }
             else -> {
             }
         }
@@ -235,9 +258,12 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
         ev.y
 
         super.dispatchTouchEvent(ev)
+        return true
     }
 
     private fun processDoubleTouchEvent(ev: MotionEvent) {
+        parent.requestDisallowInterceptTouchEvent(true)
+
         val x1 = ev.getX(0)
         val dx1 = x1 - lastdx1
         lastdx1 = x1
@@ -291,16 +317,29 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
         return if (Math.abs(b - a) >= k) a + k * Math.signum(b - a) else b
     }
 
+    fun updateSmoothZoomX(diff: Float): Float {
+        val new = smoothZoomX + diff
+        smoothZoomX = clamp(0.5f * width / smoothZoom, new, width - 0.5f * width / smoothZoom)
+        return new - smoothZoomX
+    }
+
+    fun updateSmoothZoomY(diff: Float): Float {
+        val new = smoothZoomY + diff
+        smoothZoomY = clamp(0.5f * height / smoothZoom, new, height - 0.5f * height / smoothZoom)
+        return new - smoothZoomY
+    }
+
     override fun dispatchDraw(canvas: Canvas) {
         // do zoom
         zoom = lerp(bias(zoom, smoothZoom, 0.05f), smoothZoom, 0.2f)
-        smoothZoomX = clamp(0.5f * width / smoothZoom, smoothZoomX, width - 0.5f * width / smoothZoom)
-        smoothZoomY = clamp(0.5f * height / smoothZoom, smoothZoomY, height - 0.5f * height / smoothZoom)
+
+        updateSmoothZoomX(0f)
+        updateSmoothZoomY(0f)
 
         zoomX = lerp(bias(zoomX, smoothZoomX, 0.1f), smoothZoomX, 0.35f)
         zoomY = lerp(bias(zoomY, smoothZoomY, 0.1f), smoothZoomY, 0.35f)
-        if (zoom != smoothZoom && listener != null) {
-            listener!!.onZooming(zoom, zoomX, zoomY)
+        if (zoom != smoothZoom) {
+            listener?.onZooming(zoom, zoomX, zoomY)
         }
 
         val animating = (Math.abs(zoom - smoothZoom) > 0.0000001f
@@ -367,5 +406,59 @@ class ZoomView(context: Context, attributes: AttributeSet? = null) : FrameLayout
         rootView.invalidate()
         invalidate()
         // }
+    }
+
+    override fun setNestedScrollingEnabled(enabled: Boolean) {
+        scrollingChildHelper.isNestedScrollingEnabled = enabled
+    }
+
+    override fun isNestedScrollingEnabled(): Boolean {
+        return scrollingChildHelper.isNestedScrollingEnabled
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        offsetInWindow: IntArray?,
+        type: Int,
+        consumed: IntArray
+    ) {
+        scrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed,
+            dyUnconsumed, offsetInWindow, type, consumed)
+    }
+
+    override fun dispatchNestedScroll(
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        offsetInWindow: IntArray?,
+        type: Int
+    ): Boolean {
+        return scrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type)
+    }
+
+    override fun dispatchNestedPreScroll(
+        dx: Int,
+        dy: Int,
+        consumed: IntArray?,
+        offsetInWindow: IntArray?,
+        type: Int
+    ): Boolean {
+        return scrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
+    }
+
+    override fun stopNestedScroll(type: Int) {
+        scrollingChildHelper.stopNestedScroll(type)
+    }
+
+    override fun hasNestedScrollingParent(type: Int): Boolean {
+        return scrollingChildHelper.hasNestedScrollingParent(type)
+    }
+
+    override fun startNestedScroll(axes: Int, type: Int): Boolean {
+        return scrollingChildHelper.startNestedScroll(axes, type)
     }
 }

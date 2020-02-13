@@ -22,6 +22,7 @@ import it.cnr.oldmusa.util.AsyncUtil.async
 import it.cnr.oldmusa.util.GraphQlUtil.downloadImageSync
 import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
+import it.cnr.oldmusa.util.Optional
 import kotlinx.android.synthetic.main.fragment_sensor.*
 import kotlinx.android.synthetic.main.remove_sensor.*
 
@@ -123,10 +124,11 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
             R.id.resetPosition -> {
                 // This will be slow as hell
                 async {
-                    downloadImageSync(requireContext(), currentSensor.siteId())
+                    Optional.ofNullable(downloadImageSync(requireContext(), currentSensor.siteId()))
                 }.onResult {
-                    val x = it?.width ?: 0
-                    val y = it?.height ?: 0
+                    val image = it.asNullable()
+                    val x = image?.width ?: 0
+                    val y = image?.height ?: 0
 
                     mutate(UpdateSensorMutation(
                         args.sensorId,

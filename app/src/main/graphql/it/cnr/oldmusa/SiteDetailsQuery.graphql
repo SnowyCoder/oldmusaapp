@@ -1,6 +1,6 @@
 query SiteDetails($id: Int!) {
   site(id: $id) {
-    name, idCnr,
+    name, idCnr, hasImage, imageWidth, imageHeight,
     sensors {
       id, name, locX, locY, status
     }
