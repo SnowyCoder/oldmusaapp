@@ -152,7 +152,7 @@ class SensorFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener{
         query(SensorDetailsQuery(args.sensorId)).onResult { data ->
             currentSensor = data.sensor()
             activity?.title = currentSensor.name() ?: "Sensore"
-            this.channels = currentSensor.channels()
+            this.channels = currentSensor.channels().sortedBy { it.id() }
 
             val nameList = channels.map { it.name() ?: "null" }
 

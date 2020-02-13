@@ -71,7 +71,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
 
         query(SiteListQuery()).onResult { data ->
-            this.sites = data.sites()
+            this.sites = data.sites().sortedBy { it.id() }
 
             val nameList = sites.map { it.name() ?: "null" }
 

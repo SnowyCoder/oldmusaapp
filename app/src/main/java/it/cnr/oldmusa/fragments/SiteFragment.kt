@@ -221,7 +221,10 @@ class SiteFragment : Fragment(),
         query(SiteDetailsQuery(siteId)).onResult { data ->
             currentSite = data.site()
 
-            val list = data.site().sensors().map { SensorData(it) }
+            val list = data.site()
+                .sensors()
+                .sortedBy { it.id() }
+                .map { SensorData(it) }
 
             if (data.site().hasImage()) {
                 currentImageW = data.site().imageWidth() ?: 1
