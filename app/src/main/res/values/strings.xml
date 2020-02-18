@@ -24,6 +24,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string name="change_site_access">Change Site Access</string>
     <string name="delete_user">Delete user</string>
     <string name="about">About</string>
@@ -33,5 +34,7 @@
     <string name="noChannelFound">No channel found</string>
     <string name="tryAddingOne">Try adding one</string>
     <string name="no_image_found">No image found</string>
+    <string name="delete_user_dialog_title">Delete the user?</string>
+    <string name="delete_user_dialog_message">This is a destructive operation, the user data cannot be recovered</string>
 
 </resources>

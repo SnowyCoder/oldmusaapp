@@ -1,42 +1,34 @@
 package it.cnr.oldmusa.fragments
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import it.cnr.oldmusa.AddUserMutation
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.UserListQuery
-import it.cnr.oldmusa.type.PermissionType
-import it.cnr.oldmusa.type.UserInput
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
-import it.cnr.oldmusa.util.GraphQlUtil.mutate
 import it.cnr.oldmusa.util.GraphQlUtil.query
-import kotlinx.android.synthetic.main.fragment_create_site.*
+import kotlinx.android.synthetic.main.fragment_users.*
 
 
 class ManageUsersFragment : Fragment() {
 
     lateinit var users: List<UserListQuery.User>
-    lateinit var listView: ListView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val view = inflater.inflate(R.layout.fragment_users, container, false)
+        return inflater.inflate(R.layout.fragment_users, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        listView = view.findViewById(R.id.ListUser)
-
-        loadUsers()
-
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+        userList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val action =
                 ManageUsersFragmentDirections.actionManageUsersToUserDetailsEdit(
                     users[position].id()
@@ -44,25 +36,12 @@ class ManageUsersFragment : Fragment() {
             view.findNavController().navigate(action)
         }
 
-        view.findViewById<ImageButton>(R.id.addUser).setOnClickListener {
-            val mBuilder = AlertDialog.Builder(context!!)
-            mBuilder.setTitle("Aggiungi utente")
-            val dialog = mBuilder.setView(LayoutInflater.from(context!!).inflate(R.layout.add_user, null)).create()
-            val lp = WindowManager.LayoutParams()
-            lp.copyFrom(dialog.window!!.attributes)
-            lp.title = "Aggiungi utente"
-            lp.width = (resources.displayMetrics.widthPixels * 0.80).toInt()
-            lp.height = (resources.displayMetrics.heightPixels * 0.50).toInt()
-            dialog.show()
-            dialog.window!!.attributes = lp
-
-            dialog.add.setOnClickListener { view ->
-                dialog.dismiss()
-                addUser(dialog)
-            }
+        addUser.setOnClickListener {
+            val action = ManageUsersFragmentDirections.actionManageUsersToUserDetailsEdit(-1)
+            view.findNavController().navigate(action)
         }
 
-        return view
+        loadUsers()
     }
 
     fun loadUsers() {
@@ -71,28 +50,8 @@ class ManageUsersFragment : Fragment() {
 
             val nameList = this.users.map { it.username() }
 
-            val adapter = ArrayAdapter<String>(context!!,
-                R.layout.list_museum_item, nameList)
-            listView.adapter = adapter
-        }.useLoadingBar(this)
-    }
-
-    fun addUser(dialog: Dialog) {
-        val username = dialog.findViewById<EditText>(R.id.username)!!.text
-        val password = dialog.findViewById<EditText>(R.id.password)!!.text
-
-        if (username.isNullOrEmpty() or password.isNullOrEmpty()) return
-
-        mutate(AddUserMutation(
-            UserInput.builder()
-                .username(username.toString())
-                .password(password.toString())
-                .permission(PermissionType.USER)
-                .build()
-        )).onResult {
-            val action =
-                ManageUsersFragmentDirections.actionManageUsersToUserDetailsEdit(it.addUser().id())
-            view!!.findNavController().navigate(action)
+            val adapter = ArrayAdapter<String>(context!!, R.layout.list_museum_item, nameList)
+            userList.adapter = adapter
         }.useLoadingBar(this)
     }
 

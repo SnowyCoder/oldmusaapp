@@ -8,6 +8,7 @@
     <fragment
         android:id="@+id/home"
         android:name="it.cnr.oldmusa.fragments.HomeFragment"
+        tools:layout="@layout/fragment_home"
         android:label="Home" >
         <action
             android:id="@+id/action_home_to_site"
@@ -19,6 +20,7 @@
     <fragment
         android:id="@+id/site"
         android:name="it.cnr.oldmusa.fragments.SiteFragment"
+        tools:layout="@layout/fragment_site"
         android:label="Site">
         <action
             android:id="@+id/action_site_to_channel"
@@ -36,6 +38,7 @@
     <fragment
             android:id="@+id/sensor"
             android:name="it.cnr.oldmusa.fragments.SensorFragment"
+            tools:layout="@layout/fragment_sensor"
             android:label="Sensor">
         <action
                 android:id="@+id/action_sensor_to_quickGraph"
@@ -56,6 +59,7 @@
     <fragment
         android:id="@+id/quickGraph"
         android:name="it.cnr.oldmusa.fragments.QuickGraphFragment"
+        tools:layout="@layout/fragment_quickgraph"
         android:label="QuickGraph" >
         <argument
             android:name="channelId"
@@ -67,6 +71,7 @@
     <fragment
         android:id="@+id/manageUsers"
         android:name="it.cnr.oldmusa.fragments.ManageUsersFragment"
+        tools:layout="@layout/fragment_users"
         android:label="ManageUsers" >
         <action
             android:id="@+id/action_manageUsers_to_userDetailsEdit"
@@ -93,10 +98,15 @@
             android:name="userId"
             app:argType="integer" />
     </fragment>
-    <fragment android:id="@+id/about" android:label="About" android:name="it.cnr.oldmusa.fragments.AboutFragment"/>
+    <fragment
+        android:id="@+id/about"
+        android:label="About"
+        android:name="it.cnr.oldmusa.fragments.AboutFragment"
+        tools:layout="@layout/fragment_about" />
     <fragment
         android:id="@+id/login"
         android:name="it.cnr.oldmusa.fragments.LoginFragment"
+        tools:layout="@layout/fragment_login"
         android:label="Login" />
     <fragment
         android:id="@+id/settings"
