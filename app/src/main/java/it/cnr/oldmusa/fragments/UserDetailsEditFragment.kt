@@ -155,7 +155,7 @@ class UserDetailsEditFragment : Fragment() {
 
         query(UserDetailsQuery(userId)).onResult { data ->
             user = data.user()
-            isCurrent = data.userMe().id() == user.id()
+            isCurrent = data.userMe()!!.id() == user.id()
 
             username.setText(user.username())
             newPassword.setText("")

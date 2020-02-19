@@ -2,12 +2,12 @@ package it.cnr.oldmusa.util
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import android.view.Window
 import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -37,7 +37,12 @@ object AndroidUtil {
         return str
     }
 
-    private fun addLoadingBar(context: Activity): () -> Unit {
+    private fun addLoadingBar(context: Activity, isDimActive: Boolean = false): () -> Unit {
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+
+
         val layout = RelativeLayout(context)
 
         val progressBar = ProgressBar(context, null, android.R.attr.progressBarStyleLarge)
@@ -45,14 +50,21 @@ object AndroidUtil {
         params.addRule(RelativeLayout.CENTER_IN_PARENT)
 
         layout.addView(progressBar, params)
-        context.addContentView(layout, RelativeLayout.LayoutParams(-1, -1))
-        progressBar.visibility = View.VISIBLE  // Show ProgressBar
-        context.window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+        dialog.setContentView(layout, RelativeLayout.LayoutParams(-1, -1))
+
+        dialog.window!!.attributes = dialog.window!!.attributes.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
+        }
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        if (!isDimActive) {
+            dialog.window!!.setDimAmount(0f)
+        }
+        dialog.show()
 
         return {
-            progressBar.visibility = View.GONE // Hide ProgressBar
-            (layout.parent as ViewGroup).removeView(layout)
-            context.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            dialog.dismiss()
         }
     }
 
@@ -178,26 +190,26 @@ object AndroidUtil {
      * Displays a loading bar while the query is running.
      * This also disables user interaction
      */
-    fun <P : Any> AsyncUtil.RawTask<P>.useLoadingBar(context: Activity): AsyncUtil.RawTask<P> {
-        this.onDone(addLoadingBar(context))
+    fun <P : Any> AsyncUtil.RawTask<P>.useLoadingBar(context: Activity, isDimActive: Boolean = false): AsyncUtil.RawTask<P> {
+        this.onDone(addLoadingBar(context, isDimActive))
         return this
     }
 
-    fun <P : Any> AsyncUtil.RawTask<P>.useLoadingBar(context: Fragment): AsyncUtil.RawTask<P> {
-        return useLoadingBar(context.activity!!)
+    fun <P : Any> AsyncUtil.RawTask<P>.useLoadingBar(context: Fragment, isDimActive: Boolean = false): AsyncUtil.RawTask<P> {
+        return useLoadingBar(context.activity!!, isDimActive)
     }
 
     /**
      * Displays a loading bar while the query is running.
      * This also disables user interaction
      */
-    fun <P : Any> GraphQlUtil.RawCall<P>.useLoadingBar(context: Activity): GraphQlUtil.RawCall<P> {
-        this.onDone(addLoadingBar(context))
+    fun <P : Any> GraphQlUtil.RawCall<P>.useLoadingBar(context: Activity, isDimActive: Boolean = false): GraphQlUtil.RawCall<P> {
+        this.onDone(addLoadingBar(context, isDimActive))
         return this
     }
 
-    fun <P : Any> GraphQlUtil.RawCall<P>.useLoadingBar(context: Fragment): GraphQlUtil.RawCall<P> {
-        return useLoadingBar(context.activity!!)
+    fun <P : Any> GraphQlUtil.RawCall<P>.useLoadingBar(context: Fragment, isDimActive: Boolean = false): GraphQlUtil.RawCall<P> {
+        return useLoadingBar(context.activity!!, isDimActive)
     }
 
     fun Fragment.getBackStackEntry(index: Int): NavBackStackEntry? {

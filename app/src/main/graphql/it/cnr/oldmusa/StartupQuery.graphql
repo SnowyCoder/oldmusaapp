@@ -1,4 +1,5 @@
-query CurrentUserQuery {
+query StartupQuery {
+  apiVersion,
   userMe {
     id, username, permission
   }

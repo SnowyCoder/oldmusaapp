@@ -32,6 +32,9 @@ import java.io.InputStream
 
 
 object GraphQlUtil {
+    val CURRENT_VERSION = SemVer.parseOrNull("1.0.0")!!
+
+
     class QueryCallback<R>(val query: RawCall<R>) : ApolloCall.Callback<R>() {
         override fun onResponse(response: Response<R>) {
             if (response.hasErrors()) {

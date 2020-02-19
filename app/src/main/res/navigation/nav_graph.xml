@@ -107,11 +107,20 @@
         android:id="@+id/login"
         android:name="it.cnr.oldmusa.fragments.LoginFragment"
         tools:layout="@layout/fragment_login"
-        android:label="Login" />
+        android:label="Login" >
+        <action
+            android:id="@+id/action_login_to_settings"
+            app:destination="@id/settings" />
+    </fragment>
     <fragment
         android:id="@+id/settings"
         android:name="it.cnr.oldmusa.fragments.SettingsFragment"
-        android:label="Settings" />
+        android:label="Settings">
+        <argument
+            android:name="quickLink"
+            app:argType="it.cnr.oldmusa.fragments.SettingsFragment$QuickEditNavs"
+            android:defaultValue="NONE" />
+    </fragment>
     <fragment
         android:id="@+id/createSite"
         android:name="it.cnr.oldmusa.fragments.CreateSiteFragment"
