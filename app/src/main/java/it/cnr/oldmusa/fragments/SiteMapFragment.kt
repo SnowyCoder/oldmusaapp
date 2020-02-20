@@ -1,6 +1,7 @@
 package it.cnr.oldmusa.fragments
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -59,7 +60,8 @@ class SiteMapFragment : Fragment() {
     }
 
     fun setImageSize(width: Int, height: Int) {
-        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444)
+        bmp.eraseColor(Color.TRANSPARENT)
         mapImage.setImageBitmap(bmp)
     }
 

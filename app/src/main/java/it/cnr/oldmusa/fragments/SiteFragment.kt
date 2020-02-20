@@ -13,6 +13,7 @@ import android.view.*
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -25,6 +26,7 @@ import it.cnr.oldmusa.Account.isAdmin
 import it.cnr.oldmusa.DeleteSiteMutation
 import it.cnr.oldmusa.R
 import it.cnr.oldmusa.SiteDetailsQuery
+import it.cnr.oldmusa.api.CacheModel
 import it.cnr.oldmusa.util.AndroidUtil.linkToList
 import it.cnr.oldmusa.util.AndroidUtil.useLoadingBar
 import it.cnr.oldmusa.util.AsyncUtil.async
@@ -47,6 +49,8 @@ class SiteFragment : Fragment(),
     SiteMapFragment.OnSensorSelectListener, SwipeRefreshLayout.OnRefreshListener {
 
     val args: SiteFragmentArgs by navArgs()
+
+    val cacheModel: CacheModel by activityViewModels()
 
     lateinit var currentSite: SiteDetailsQuery.Site
 
@@ -159,6 +163,7 @@ class SiteFragment : Fragment(),
     }
 
     override fun onRefresh() {
+        cacheModel.mapCache.remove(args.siteId)
         reloadSite()
     }
 
@@ -226,40 +231,53 @@ class SiteFragment : Fragment(),
                 .sortedBy { it.id() }
                 .map { SensorData(it) }
 
+            sensorList.adapter = MyRecyclerViewAdapter(currentSite.hasImage(), list)
+
             if (data.site().hasImage()) {
                 currentImageW = data.site().imageWidth() ?: 1
                 currentImageH = data.site().imageHeight() ?: 1
+
                 setupMapFragment()
-
-                async {
-                    val res = downloadImageSync(requireContext(), args.siteId)
-                    Optional.ofNullable(res)
-                }.onResult { mapData ->
-                    when(mapData) {
-                        is Some -> {
-                            val data = mapData.data
-                            currentBitmap = data
-                            currentImageW = data.width
-                            currentImageH = data.height
-                        }
-                        is None -> {
-                            currentBitmap = null
-                        }
-                    }
-                    setupMapFragment()
-                }//.useLoadingBar(this)
-
-                // TODO: think
-                // Should we add a loading bar?
-                // We might ask for the last time change from the server to build a safe-cache
+                loadImage()
             }
 
-            sensorList.adapter = MyRecyclerViewAdapter(currentSite.hasImage(), list)
 
             activity?.title = currentSite.name() ?: ""
         }.onDone {
             swipeContainer.isRefreshing = false
         }
+    }
+
+    private fun loadImage() {
+        // TODO: We might ask for the last time change from the server to build a safe-cache
+
+        async {
+            val cached = cacheModel.mapCache.get(args.siteId)
+
+            if (cached != null) {
+                return@async Optional.ofNullable(cached)
+            }
+
+            val res = downloadImageSync(requireContext(), args.siteId)
+            Optional.ofNullable(res)
+        }.onResult { mapData ->
+            mapData.asNullable()?.let {
+                cacheModel.mapCache.put(args.siteId, it)
+            }
+            onImageLoaded(mapData.asNullable())
+        }
+
+    }
+
+    private fun onImageLoaded(bmp: Bitmap?) {
+        if (bmp != null) {
+            currentBitmap = bmp
+            currentImageW = bmp.width
+            currentImageH = bmp.height
+        } else {
+            currentBitmap = null
+        }
+        setupMapFragment()
     }
 
 
@@ -304,6 +322,7 @@ class SiteFragment : Fragment(),
 
                 uploadImageSync(context!!, args.siteId, context!!.contentResolver.openInputStream(data.data!!)!!, opts.outWidth, opts.outHeight)
             }.onResult {
+                cacheModel.mapCache.remove(args.siteId)
                 reloadSite()
             }.useLoadingBar(this)
         }
