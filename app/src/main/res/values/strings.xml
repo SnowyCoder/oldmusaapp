@@ -36,5 +36,7 @@
     <string name="no_image_found">No image found</string>
     <string name="delete_user_dialog_title">Delete the user?</string>
     <string name="delete_user_dialog_message">This is a destructive operation, the user data cannot be recovered</string>
+    <string name="share">Share</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

@@ -14,6 +14,8 @@ import androidx.core.content.FileProvider
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.navArgs
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.YAxis
@@ -39,6 +41,8 @@ class ComplexGraphFragment : Fragment() {
 
     val args: ComplexGraphFragmentArgs by navArgs()
 
+    val dataHolder: PlotDataModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -60,11 +64,16 @@ class ComplexGraphFragment : Fragment() {
             setDrawGridBackground(true)
         }
 
-        loadData(args.channelsId, Date(args.startDate), Date(args.endDate))
+        val savedData = dataHolder.data
+        if (savedData == null) {
+            loadData(args.channelsId, Date(args.startDate), Date(args.endDate))
+        } else {
+            setupGraph(savedData, dataHolder.startDate)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.sensor_graph_overflow_menu, menu)
+        inflater.inflate(R.menu.complex_graph_overflow_menu, menu)
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -75,6 +84,9 @@ class ComplexGraphFragment : Fragment() {
             }
             R.id.save -> {
                 exportChart()
+            }
+            R.id.refresh -> {
+                loadData(args.channelsId, Date(args.startDate), Date(args.endDate))
             }
         }
         return super.onOptionsItemSelected(item)
@@ -141,7 +153,10 @@ class ComplexGraphFragment : Fragment() {
         os.close()
     }
 
-    fun setupGraph(data: List<Channel>, startDate: Calendar) {
+    fun setupGraph(data: List<Channel>, startDate: Long) {
+        dataHolder.data = data
+        dataHolder.startDate = startDate
+
         val measureUnits = data.mapNotNull { it.measureUnit() }
             .distinct()
 
@@ -149,7 +164,7 @@ class ComplexGraphFragment : Fragment() {
             val entries = channel.readings().map { entry ->
                 // Compress coordinates (from the 1970 to the beginning of the day
                 // it should fit nicely in a float (with more precision, I hope)
-                val diff = entry.date().time - startDate.timeInMillis
+                val diff = entry.date().time - startDate
 
                 Entry(diff.toFloat(), entry.valueMin().toFloat(), entry)
             }
@@ -183,6 +198,7 @@ class ComplexGraphFragment : Fragment() {
                 enableGridDashedLine(10f, 10f, 0f)
                 isEnabled = true
                 if (measureUnits.size <= 2) {
+                    valueFormatter = null// reset to default
                     valueFormatter = CustomMeasureFormatter(valueFormatter, measureUnits[0])
                 }
             }
@@ -190,6 +206,7 @@ class ComplexGraphFragment : Fragment() {
             axisRight.apply {
                 if (measureUnits.size == 2) {
                     isEnabled = true
+                    valueFormatter = null// reset to default
                     valueFormatter = CustomMeasureFormatter(valueFormatter, measureUnits[1])
                 } else {
                     isEnabled = false
@@ -208,9 +225,7 @@ class ComplexGraphFragment : Fragment() {
 
     fun loadData(channelsId: IntArray, begin: Date, end: Date) {
         query(ComplexChannelReadingsQuery(channelsId.asList(), begin, end)).onResult {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = begin.time
-            setupGraph(it.channels(), calendar)
+            setupGraph(it.channels(), begin.time)
         }.useLoadingBar(this)
     }
 
@@ -229,18 +244,18 @@ class ComplexGraphFragment : Fragment() {
         }
     }
 
-    class CustomTimeFormatter(val referenceDate: Calendar) : ValueFormatter() {
+    class CustomTimeFormatter(val referenceDate: Long) : ValueFormatter() {
         private val formatter = SimpleDateFormat.getTimeInstance()
 
         override fun getFormattedValue(value: Float): String {
             // Value saved as milliseconds from the start of the day
             val millis = value.toLong()
-            return formatter.format(Date(referenceDate.timeInMillis + millis))
+            return formatter.format(Date(referenceDate + millis))
         }
 
         override fun getAxisLabel(value: Float, axis: AxisBase): String {
             val cal = Calendar.getInstance()
-            cal.timeInMillis = referenceDate.timeInMillis + value.toLong()
+            cal.timeInMillis = referenceDate + value.toLong()
 
             val last = axis.mEntries[axis.mEntryCount - 1]
             val first = axis.mEntries[0]
@@ -271,6 +286,11 @@ class ComplexGraphFragment : Fragment() {
         override fun getFormattedValue(value: Float): String {
             return formatter.getFormattedValue(value) + " " + measureName
         }
+    }
+
+    class PlotDataModel : ViewModel() {
+        var data: List<Channel>? = null
+        var startDate: Long = 0L
     }
 
     companion object {

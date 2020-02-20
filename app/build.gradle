@@ -22,7 +22,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.apollographql.android'
+apply plugin: 'com.apollographql.apollo'
 
 android {
     compileSdkVersion 28
